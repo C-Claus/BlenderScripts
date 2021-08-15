@@ -9,7 +9,7 @@ collection_name = "Collection"
 
 
 
-def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, bricks_z_direction, bed_joint, horizontal_joint):
+def make_brick_wall(brick_height, brick_length, brick_width, bricks_x_direction, bricks_z_direction, bed_joint, horizontal_joint):
     
     #hardcode coordinates of vertices of brick
     vertices_brick = [  (0,0,0),
@@ -72,7 +72,7 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, 
     z_list = [x * z_vector for x in range(0, len(x_move_list))]
   
     #amount of brick in x-direction
-    for i in range(0,bricks_y_direction):
+    for i in range(0, bricks_x_direction):
         x += (vertices_brick[2][0]) + horizontal_joint
         
         for x_move, z in zip(x_move_list, z_list):
@@ -115,7 +115,7 @@ wall_height = 3
 make_brick_wall(brick_height=brick_height, 
                 brick_length=brick_length, 
                 brick_width=brick_width, 
-                bricks_y_direction=15, 
+                bricks_x_direction=15, 
                 bricks_z_direction=15,
                 bed_joint=0.01,
                 horizontal_joint=0.01)   
