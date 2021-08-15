@@ -73,12 +73,10 @@ def make_brick_wall(brick_height, brick_length, brick_width, bricks_x_direction,
   
     #amount of brick in x-direction
     for i in range(0, bricks_x_direction):
-        x += (vertices_brick[2][0]) + horizontal_joint
-        
         for x_move, z in zip(x_move_list, z_list):
-    
             xyz_list.append([x+x_move, 0.0, z])
             add_row(object=new_object, x=x+x_move, y=y, z=z)
+        x += (vertices_brick[2][0]) + horizontal_joint
 
            
              
