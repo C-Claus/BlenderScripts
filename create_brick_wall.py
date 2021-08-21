@@ -4,14 +4,21 @@ import mathutils
 from itertools import repeat
 
 
+
 mesh_name = "brick" 
 collection_name = "Collection" 
 
+#collection = bpy.data.collections.new("MyTestCollection")
+#bpy.ops.collection.create("MyTestCollection")
+#collection = bpy.data.collections["MyTestCollection"]
+
+#brick_collection = bpy.data.collections.new("Brick")
+#bpy.context.scene.collection.children.link(brick_collection)
 
 
-def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, bricks_z_direction, bed_joint, horizontal_joint):
+def make_brick_wall(brick_height, brick_length, brick_width,bricks_x_direction, bricks_z_direction, bed_joint, horizontal_joint):
     
-    #hardcode coordinates of vertices of brick
+   
     vertices_brick = [  (0,0,0),
                         (0,brick_width,0),
                         (brick_length,brick_width,0),
@@ -24,7 +31,6 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, 
                         ]
 
     edges = []
-    
     
 
     faces = [(0,1,2,3),
@@ -39,26 +45,25 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, 
     new_mesh = bpy.data.meshes.new('brick_mesh')
     new_mesh.from_pydata(vertices_brick, edges, faces)
     new_mesh.update()
+    
+    
 
     # make object from mesh
     new_object = bpy.data.objects.new(mesh_name, new_mesh)
 
     # make collection
     new_collection = bpy.data.collections.new(collection_name)
-
+    print (new_collection)
 
     # add object to scene collection
     new_collection.objects.link(new_object)
-
-    
+  
     x = 0.0
     y = 0.0
-    z = 0.0 
+    #z = 0.0 
     
-    
-    
-    x_vector = (vertices_brick[2][0])/2 #=1.1
-    z_vector =  (vertices_brick[4][2])+bed_joint#=0.6
+    x_vector = (vertices_brick[2][0])/2
+    z_vector =  (vertices_brick[4][2])+bed_joint
     x_move_list=[]
     xyz_list = []
     
@@ -72,12 +77,12 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_y_direction, 
     z_list = [x * z_vector for x in range(0, len(x_move_list))]
   
     #amount of brick in x-direction
-    for i in range(0,bricks_y_direction):
+    for i in range(0,bricks_x_direction):
         x += (vertices_brick[2][0]) + horizontal_joint
         
         for x_move, z in zip(x_move_list, z_list):
     
-            xyz_list.append([x+x_move, 0.0, z])
+            #xyz_list.append([x+x_move, 0.0, z])
             add_row(object=new_object, x=x+x_move, y=y, z=z)
 
            
@@ -109,17 +114,28 @@ brick_length = 0.21
 brick_width = 0.1
 brick_height = 0.05
 
-wall_length = 6
-wall_height = 3
+bed_joint = 0.01
+horizontal_joint = 0.01
+
+wall_length = 1
+wall_height = 0.5
+
+
+amount_bricks_z = (wall_height/(brick_height+bed_joint))/2
+amount_bricks_x = (wall_length)/(brick_length+horizontal_joint)
+actual_wall_height = (amount_bricks_z)*(brick_height+bed_joint)*2-(2*brick_height+bed_joint)
+actual_wall_length = (amount_bricks_x)
+
+print ("lagenmaat:" , actual_wall_height)
+
            
 make_brick_wall(brick_height=brick_height, 
                 brick_length=brick_length, 
                 brick_width=brick_width, 
-                bricks_y_direction=15, 
-                bricks_z_direction=15,
-                bed_joint=0.01,
-                horizontal_joint=0.01)   
-
+                bricks_x_direction=int(amount_bricks_x), 
+                bricks_z_direction=int(amount_bricks_z),
+                bed_joint=bed_joint,
+                horizontal_joint=horizontal_joint)   
 
 #bricks = [obj for obj in bpy.data.objects if obj.name.startswith(mesh_name)] 
 
