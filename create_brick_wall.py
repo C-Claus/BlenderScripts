@@ -4,16 +4,9 @@ import mathutils
 from itertools import repeat
 
 
-
 mesh_name = "brick" 
-collection_name = "Collection" 
-
-#collection = bpy.data.collections.new("MyTestCollection")
-#bpy.ops.collection.create("MyTestCollection")
-#collection = bpy.data.collections["MyTestCollection"]
-
-#brick_collection = bpy.data.collections.new("Brick")
-#bpy.context.scene.collection.children.link(brick_collection)
+collection_name = bpy.data.collections.new("BrickCollection")
+bpy.context.scene.collection.children.link(collection_name)
 
 
 def make_brick_wall(brick_height, brick_length, brick_width,bricks_x_direction, bricks_z_direction, bed_joint, horizontal_joint):
@@ -46,17 +39,8 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_x_direction, 
     new_mesh.from_pydata(vertices_brick, edges, faces)
     new_mesh.update()
     
-    
-
     # make object from mesh
     new_object = bpy.data.objects.new(mesh_name, new_mesh)
-
-    # make collection
-    new_collection = bpy.data.collections.new(collection_name)
-    print (new_collection)
-
-    # add object to scene collection
-    new_collection.objects.link(new_object)
   
     x = 0.0
     y = 0.0
@@ -95,7 +79,7 @@ def add_row(object, x, y, z):
     new_object = object            
     new_obj = new_object.copy()
     new_obj.animation_data_clear()
-    C.collection.objects.link(new_obj)  
+    collection_name.objects.link(new_obj)  
     
  
     # one blender unit in x-direction
@@ -118,7 +102,7 @@ bed_joint = 0.01
 horizontal_joint = 0.01
 
 wall_length = 1
-wall_height = 0.5
+wall_height = 1
 
 
 amount_bricks_z = (wall_height/(brick_height+bed_joint))/2
@@ -140,8 +124,3 @@ make_brick_wall(brick_height=brick_height,
 #bricks = [obj for obj in bpy.data.objects if obj.name.startswith(mesh_name)] 
 
 
-#1 schaal goed zetten
-#2 blockmaat ingeven
-#3 onderzoek andere verbanden
-#4 koppenmaat einde hoek
-#5 overschijf na selectie        
