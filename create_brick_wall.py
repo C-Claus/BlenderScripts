@@ -4,6 +4,7 @@ import mathutils
 from itertools import repeat
 
 
+
 mesh_name = "brick" 
 collection_name = bpy.data.collections.new("BrickCollection")
 bpy.context.scene.collection.children.link(collection_name)
@@ -39,6 +40,8 @@ def make_brick_wall(brick_height, brick_length, brick_width,bricks_x_direction, 
     new_mesh.from_pydata(vertices_brick, edges, faces)
     new_mesh.update()
     
+    
+
     # make object from mesh
     new_object = bpy.data.objects.new(mesh_name, new_mesh)
   
@@ -101,8 +104,8 @@ brick_height = 0.05
 bed_joint = 0.01
 horizontal_joint = 0.01
 
-wall_length = 1
-wall_height = 1
+wall_length = 5
+wall_height = 2.7
 
 
 amount_bricks_z = (wall_height/(brick_height+bed_joint))/2
