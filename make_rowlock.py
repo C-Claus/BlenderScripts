@@ -9,7 +9,7 @@ def add_curve():
     bpy.context.scene.collection.children.link(collection_name)
 
     #coordinates which describe a b-spine or bezier curve
-    coords_list = [[0,0,0], [10,3,0], [20,3,0],[30,0,0]]
+    coords_list = [[0,0,0], [10,10,0], [20,10,0],[30,0,0]]
 
     # make a new curve
     crv = bpy.data.curves.new('crv', 'CURVE')
@@ -86,7 +86,7 @@ def add_array():
 
     
 
-    bpy.data.objects[0].modifiers["Array"].count = 11
+    bpy.data.objects[0].modifiers["Array"].count = 12
     
     #xyz = [0][1][2]
     bpy.data.objects[0].modifiers["Array"].relative_offset_displace[0] = 1.0
@@ -113,8 +113,8 @@ def add_array():
    
    
       
-add_curve()
+#add_curve()
 add_brick()
-add_array()
+#add_array()
 
 
