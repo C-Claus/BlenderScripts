@@ -1,7 +1,7 @@
-import bpy
-from mathutils import Vector
-
 import csv
+import bpy
+import mathutils
+from mathutils import Vector
 
 def get_hea_data():
     
@@ -9,7 +9,6 @@ def get_hea_data():
 
     with open("C:\\Algemeen\\07_prive\\02_Blender_Python_scripts\\hea.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
-        #line_count = 0
         
         next(csv_reader, None) 
         
@@ -21,7 +20,7 @@ def get_hea_data():
           
           
 
-get_hea_data()
+
 
 def create_profile_HEA(profile_name, h,b,tw,tf):
     
@@ -59,8 +58,27 @@ def create_profile_HEA(profile_name, h,b,tw,tf):
         polyline.points[num].co = (x, y, z, w)
         
  
+scale_factor = 1000
+move_factor = 0
+
 for i in get_hea_data():
-    print (i[0])      
+    #print (i[0])      
     
+    move_factor += 1
     #create_profile_HEA(profile_name='HEA'+str(i[0], h=96,b=100,tw=5,tf=8) 
-    create_profile_HEA(profile_name=('HEA'+str(i[0])), h=float(i[1]),b=float(i[2]),tw=float(i[3]),tf=float(i[4]))
+    create_profile_HEA(profile_name=(  'HEA'+str(i[0])), 
+                                        h=float(i[1])/scale_factor,
+                                        b=float(i[2])/scale_factor,
+                                        tw=float(i[3])/scale_factor,
+                                        tf=float(i[4])/scale_factor)
+                                        
+                                        
+                                        
+    hea_profile = bpy.data.objects['HEA'+str(i[0])]
+  
+    vec = mathutils.Vector((move_factor, 0.0, 0.0))
+    inv = hea_profile.matrix_world.copy()
+    inv.invert()
+ 
+    vec_rot = vec @ inv
+    hea_profile.location = hea_profile.location + vec_rot
