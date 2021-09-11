@@ -1,0 +1,36 @@
+                    
+                    Vector((b/2-tw-r,tf,0)),
+                    #Vector((b/2-tw-m,tf+m,0)),
+                    Vector((b/2-tw,tf+r,0)),
+                    
+     
+                    #LINKERBOVENHOEK FLENS LIJF
+                    Vector((b/2-tw,h-tf-r,0)),
+                    Vector((b/2-tw-m,h-tf-m,0)),
+                    Vector((b/2-tw-r,h-tf,0)),
+                    
+                    
+
+                    Vector((0,h-tf,0)),    
+                    Vector((0,h,0)), 
+                    Vector((b,h,0)),
+                    Vector((b,h-tf,0)),  
+                    
+               
+                    #RECHTERBOVENHOEK FLENS LIJF
+                    Vector((b/2+tw+r,h-tf,0)), 
+                    Vector((b/2+tw+m,h-tf-m,0)), 
+                    Vector((b/2+tw,h-tf-r,0)), 
+                    
+                    
+                    #RECHTERONDERHOEK FLENS LIJF
+                    Vector((b/2+tw,tf+r,0)),
+                    Vector((b/2+tw+m,tf+m,0)),
+                    Vector((b/2+tw+r,tf,0)),
+                    
+                    
+                    Vector((b,tf,0)),
+                    Vector((b,0,0)),
+                    Vector((0,0,0))
+                                       
+                  ] 
