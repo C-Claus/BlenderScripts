@@ -9,9 +9,12 @@ collection_name = bpy.data.collections.new("BeamCollection")
 def create_profile(profile_name, profile_height, profile_width):
     
     context = bpy.context
+    
+    
     scene = context.scene
     
     for c in scene.collection.children:
+        print (c)
         scene.collection.children.unlink(c)
     
     #collection_name = bpy.data.collections.new("BeamCollection")
@@ -90,10 +93,12 @@ def create_path(path_length):
         polyline.points[num].co = (x, y, z, w)
         
         
+
+    
     return bpy.data.objects[objectdata.name]
 
 
-def extrude_profile_along_path(profile, path):
+def extrude_profile_along_path(profile, path, center_to_center_distance):
     
     print (profile.name)
     
@@ -102,9 +107,20 @@ def extrude_profile_along_path(profile, path):
     
     #sets active objects
     bpy.context.view_layer.objects.active = profile
-     
+    
+    #scene.objects.active = profile
+    #bpy.ops.object.convert(target="MESH")
+    #bpy.ops.object.convert(target='MESH')
+
+
+    # Convert from a curve to a mesh.
+    #bpy.ops.object.convert(target='MESH')
+
+   
+ 
     #selects active object
     #profile.select_set(True)
+  
     
     bpy.context.object.data.bevel_mode = 'OBJECT'
     
@@ -117,8 +133,13 @@ def extrude_profile_along_path(profile, path):
     z = 0.0
     
     for i in range(0, 10):
-        y += 4
+        y += center_to_center_distance
         make_array(object=profile, x=x, y=y, z=z)
+      
+
+
+    
+
 
 
 def make_array(object, x, y, z):      
@@ -126,7 +147,8 @@ def make_array(object, x, y, z):
     
     C = bpy.context
     
-    new_object = object            
+    new_object = object  
+          
     new_obj = new_object.copy()
     new_obj.animation_data_clear()
     collection_name.objects.link(new_obj)  
@@ -139,12 +161,16 @@ def make_array(object, x, y, z):
     
     # vector aligned to local axis in Blender 2.8+
     vec_rot = vec @ inv
-    new_obj.location = new_obj.location + vec_rot   
+    new_obj.location = new_obj.location + vec_rot  
     
-         
+  
+ 
     
-extrude_profile_along_path(profile=create_profile(profile_name="Beam",profile_height=2, profile_width=1),
-                           path=create_path(path_length=5))
+
+#extrude_profile_along_path(profile=create_profile(profile_name="poep",profile_height=15, profile_width=2),
+#                           path=create_path(path_length=75),
+#                           center_to_center_distance=5)
     
 
 
+#bpy.ops.object.convert(target='MESH')
