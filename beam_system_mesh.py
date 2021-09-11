@@ -6,7 +6,7 @@ from mathutils import Vector
 
 collection_name = bpy.data.collections.new("BeamCollection")
 
-def create_beam(profile_name, profile_height, profile_width, beam_length):
+def create_beam(profile_name, profile_height, profile_width, beam_length, direction):
     
     context = bpy.context
     scene = context.scene
@@ -48,6 +48,10 @@ def create_beam(profile_name, profile_height, profile_width, beam_length):
         polyline.points[num].co = (x, y, z, w)
         
     context.view_layer.objects.active = objectdata
+    
+    
+    
+    
     objectdata.select_set(True)
     bpy.ops.object.convert(target='MESH')
     
@@ -87,6 +91,11 @@ def create_beam(profile_name, profile_height, profile_width, beam_length):
     
     bpy.ops.object.mode_set(mode="OBJECT")
     bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN', center='MEDIAN')
+    
+    
+    if direction == "y":
+        bpy.ops.transform.rotate(value=1.5708, orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_matrix_type='GLOBAL', constraint_axis=(False, False, True), mirror=True, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1, use_proportional_connected=False, use_proportional_projected=False)
+
 
 
     return bpy.data.objects[objectdata.name]
@@ -135,15 +144,15 @@ def make_array(object, x, y, z):
     vec_rot = vec @ inv
     new_obj.location = new_obj.location + vec_rot  
    
-   
-   
+                    
     
 create_beam_system( count=9, 
                     center_to_center_distance=0.6,
                     beam = create_beam(profile_name="Beam",
                     profile_height=0.05, 
-                    profile_width=0.02,
-                    beam_length=6 ))
+                    profile_width=0.025,
+                    beam_length=7,
+                    direction="x" ))
     
 
 
