@@ -87,31 +87,34 @@ def create_beam(profile_name, profile_height, profile_width, beam_length, direct
                                         "use_automerge_and_split":False})
                                         
                                         
- 
     
     bpy.ops.object.mode_set(mode="OBJECT")
     bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN', center='MEDIAN')
     
     
     if direction == "y":
-        bpy.ops.transform.rotate(value=1.5708, orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_matrix_type='GLOBAL', constraint_axis=(False, False, True), mirror=True, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1, use_proportional_connected=False, use_proportional_projected=False)
-
-
+        bpy.ops.transform.rotate(value=1.5708, orient_axis='Z', 
+                                    orient_type='GLOBAL', 
+                                    orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), 
+                                    orient_matrix_type='GLOBAL', 
+                                    constraint_axis=(False, False, True),
+                                    mirror=True,
+                                    use_proportional_edit=False, 
+                                    proportional_edit_falloff='SMOOTH',
+                                    proportional_size=1,
+                                    use_proportional_connected=False,
+                                    use_proportional_projected=False)
 
     return bpy.data.objects[objectdata.name]
         
 
-
 def create_beam_system(count, center_to_center_distance, beam):
 
-    
     context = bpy.context
     scene = context.scene
     
-    
     #sets active objects
     bpy.context.view_layer.objects.active = beam
-    
     
     x = 0.0
     y = 0.0
@@ -122,10 +125,8 @@ def create_beam_system(count, center_to_center_distance, beam):
         make_array(object=beam, x=x, y=y, z=z)
 
 
-
 def make_array(object, x, y, z):      
  
-    
     C = bpy.context
     
     new_object = object  
@@ -144,16 +145,12 @@ def make_array(object, x, y, z):
     vec_rot = vec @ inv
     new_obj.location = new_obj.location + vec_rot  
    
-                    
+                     
+create_beam_system( count=7, 
+                    center_to_center_distance=1,
+                    beam = create_beam(profile_name="ligger",
+                    profile_height=0.5, 
+                    profile_width=0.25,
+                    beam_length=10,
+                    direction="y" ))
     
-create_beam_system( count=9, 
-                    center_to_center_distance=0.6,
-                    beam = create_beam(profile_name="Beam",
-                    profile_height=0.05, 
-                    profile_width=0.025,
-                    beam_length=7,
-                    direction="x" ))
-    
-
-
-
