@@ -6,13 +6,15 @@ from mathutils import Vector
 
 collection_name = bpy.data.collections.new("BeamCollection")
 
-def create_beam(profile_name, profile_height, profile_width):
+def create_beam(profile_name, profile_height, profile_width, beam_length):
     
     context = bpy.context
     scene = context.scene
     
     for c in scene.collection.children:
-        scene.collection.children.unlink(c)
+        
+        if c.name[0:(len(c.name)-4)] in collection_name.name:
+            scene.collection.children.unlink(c)
     
 
     bpy.context.scene.collection.children.link(collection_name)
@@ -57,7 +59,7 @@ def create_beam(profile_name, profile_height, profile_width):
     
     bpy.ops.mesh.extrude_context_move(MESH_OT_extrude_context={"use_normal_flip":False, 
                                         "use_dissolve_ortho_edges":False, "mirror":False}, 
-                                        TRANSFORM_OT_translate={"value":(0, 0, 50), 
+                                        TRANSFORM_OT_translate={"value":(0, 0, beam_length), 
                                         "orient_type":'NORMAL',
                                         "orient_matrix":((0, -1, 0), (0, 0, -1), (1, 0, 0)),
                                         "orient_matrix_type":'NORMAL', 
@@ -84,13 +86,11 @@ def create_beam(profile_name, profile_height, profile_width):
  
     
     bpy.ops.object.mode_set(mode="OBJECT")
-
+    bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN', center='MEDIAN')
 
 
     return bpy.data.objects[objectdata.name]
         
-
-
 
 
 def create_beam_system(count, center_to_center_distance, beam):
@@ -111,10 +111,7 @@ def create_beam_system(count, center_to_center_distance, beam):
     for i in range(0, count-1):
         y += center_to_center_distance
         make_array(object=beam, x=x, y=y, z=z)
-      
 
-
-    
 
 
 def make_array(object, x, y, z):      
@@ -142,8 +139,11 @@ def make_array(object, x, y, z):
    
     
 create_beam_system( count=9, 
-                    center_to_center_distance=10,
-                    beam=create_beam(profile_name="Beam",profile_height=15, profile_width=2 ))
+                    center_to_center_distance=0.6,
+                    beam = create_beam(profile_name="Beam",
+                    profile_height=0.05, 
+                    profile_width=0.02,
+                    beam_length=6 ))
     
 
 
