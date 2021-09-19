@@ -12,15 +12,12 @@ def create_beam(profile_name, profile_height, profile_width, beam_length, direct
     scene = context.scene
     
     for c in scene.collection.children:
-        
         if c.name[0:(len(c.name)-4)] in collection_name.name:
             scene.collection.children.unlink(c)
     
-
     bpy.context.scene.collection.children.link(collection_name)
 
     w = 1     
-    
     
     cList = [   Vector((0,0,0)),
                 Vector((0,profile_width,0)),
@@ -33,24 +30,17 @@ def create_beam(profile_name, profile_height, profile_width, beam_length, direct
     curvedata.dimensions = '3D'
 
     objectdata = bpy.data.objects.new(profile_name, curvedata)
-    objectdata.location = (0,0,0) 
-
-    
+    objectdata.location = (0,0,0)  
     collection_name.objects.link(objectdata) 
    
-
     polyline = curvedata.splines.new('POLY')
     polyline.points.add(len(cList)-1)
-    
     
     for num in range(len(cList)):
         x, y, z = cList[num]
         polyline.points[num].co = (x, y, z, w)
         
     context.view_layer.objects.active = objectdata
-    
-    
-    
     
     objectdata.select_set(True)
     bpy.ops.object.convert(target='MESH')
@@ -104,6 +94,7 @@ def create_beam(profile_name, profile_height, profile_width, beam_length, direct
                                     proportional_size=1,
                                     use_proportional_connected=False,
                                     use_proportional_projected=False)
+    #objectdata = mesh                                
 
     return bpy.data.objects[objectdata.name]
         
@@ -123,6 +114,9 @@ def create_beam_system(count, center_to_center_distance, beam):
     for i in range(0, count-1):
         y += center_to_center_distance
         make_array(object=beam, x=x, y=y, z=z)
+        
+    #bpy.ops.object.join()
+
 
 
 def make_array(object, x, y, z):      
@@ -144,13 +138,40 @@ def make_array(object, x, y, z):
     # vector aligned to local axis in Blender 2.8+
     vec_rot = vec @ inv
     new_obj.location = new_obj.location + vec_rot  
-   
+ 
+"""  
                      
 create_beam_system( count=7, 
                     center_to_center_distance=1,
-                    beam = create_beam(profile_name="ligger",
+                    beam = create_beam(profile_name="beam",
                     profile_height=0.5, 
                     profile_width=0.25,
                     beam_length=10,
-                    direction="y" ))
+                    direction="x" ))
+ """
+  
+  
+def create_underlayment():
     
+ 
+    boarding_width = 1.22                
+    create_beam_system( count=5, 
+                        center_to_center_distance=boarding_width,
+                        beam = create_beam(profile_name="underlayment",
+                        profile_height=0.018, 
+                        profile_width=boarding_width,
+                        beam_length=2.44,
+                        direction="x" ))
+                        
+    """                    
+    bpy.ops.material.new()
+    bpy.context.object.active_material_index = 0
+
+    bpy.context.object.active_material.name = "underlayment"
+    bpy.context.object.active_material.use_nodes = False
+    
+    bpy.context.object.active_material.diffuse_color = (0.8, 0.576262, 0.258928, 1)
+    """                  
+                        
+                        
+create_underlayment()
