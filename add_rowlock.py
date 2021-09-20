@@ -6,17 +6,13 @@ from itertools import repeat
 
 
 mesh_name = "brick" 
-collection_name = bpy.data.collections.new("BrickCollection")
+collection_name = bpy.data.collections.new("RowLockCollection")
 bpy.context.scene.collection.children.link(collection_name)
 
 
 def add_single_brick(brick_width, brick_length, brick_height, horizontal_joint, amount_of_bricks):
-    print ("add single brick")
-    
-   
-    
+ 
 
-    
     vertices_brick = [  (0,0,0),
                         (0,brick_width,0),
                         (brick_length,brick_width,0),
@@ -134,19 +130,12 @@ def create_rowlock():
     context = bpy.context
     scene = context.scene
 
-    #for c in scene.collection.children:
-    #    if c.name[0:(len(c.name)-4)] in collection_name.name:
-    #        scene.collection.children.unlink(c) 
-        
-
+ 
     brick_length = 0.21
     brick_width = 0.1
     brick_height = 0.05    
     horizontal_joint = 0.01    
     amount_of_bricks = 10
-
-
-
 
      
     add_single_brick(brick_width=brick_height, 
@@ -157,7 +146,13 @@ def create_rowlock():
                     
     join_all_bricks() 
     
-def delete_collection(): 
+    
+    
+def delete_collection():
+    
+    context = bpy.context
+    scene = context.scene
+     
     for c in scene.collection.children:
         if c.name[0:(len(c.name)-4)] in collection_name.name:
             scene.collection.children.unlink(c) 
