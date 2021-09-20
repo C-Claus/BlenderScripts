@@ -13,6 +13,8 @@ bpy.context.scene.collection.children.link(collection_name)
 def add_single_brick(brick_width, brick_length, brick_height, horizontal_joint, amount_of_bricks):
     print ("add single brick")
     
+   
+    
 
     
     vertices_brick = [  (0,0,0),
@@ -52,7 +54,7 @@ def add_single_brick(brick_width, brick_length, brick_height, horizontal_joint, 
     #z = 0.0 
     
   
-    for y_move in range(0, amount_of_bricks):
+    for y_move in range(0, amount_of_bricks-1):
        
         y  += (brick_width+horizontal_joint)
     
@@ -95,31 +97,29 @@ def join_all_bricks():
     context['active_object'] = bricks_list[0]
     context['selected_editable_objects'] = bricks_list
     
-
     bpy.ops.object.join(context)
     
+
+    obj = bpy.context.window.scene.objects[0]
+    bpy.context.view_layer.objects.active = obj  
+    obj.select_set(True)  # 'obj' is the active object now
     
-    for obj in bpy.data.objects:
-        if (obj.name).startswith(mesh_name):
+    bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN') 
     
-            #select object and set geometry to origin 
-            object = bpy.data.objects[str(obj.name)]
-            object.select_set(True)
-            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN') 
-            
-            #return object
-        
-            add_simple_deform_modifier(object)
+    add_simple_deform_modifier(rowlock_object=obj)
     
+
+  
     
-def add_simple_deform_modifier(object):
+def add_simple_deform_modifier(rowlock_object):
     
     context = bpy.context
     scene = context.scene
     
+
  
-    context.view_layer.objects.active = object
-    object.select_set(True)
+    context.view_layer.objects.active = rowlock_object
+    rowlock_object.select_set(True)
     
           
     bpy.ops.object.modifier_add(type='SIMPLE_DEFORM')
@@ -127,29 +127,45 @@ def add_simple_deform_modifier(object):
     bpy.context.object.modifiers["SimpleDeform"].deform_axis = 'Z'
     bpy.context.object.modifiers["SimpleDeform"].factor = 0.2    
     
+    
+    
 
-brick_length = 0.21
-brick_width = 0.1
-brick_height = 0.05    
-horizontal_joint = 0.01    
-amount_of_bricks = 10
+def create_rowlock():    
+    context = bpy.context
+    scene = context.scene
 
+    #for c in scene.collection.children:
+    #    if c.name[0:(len(c.name)-4)] in collection_name.name:
+    #        scene.collection.children.unlink(c) 
+        
 
-
- 
-add_single_brick(brick_width=brick_height, 
-                brick_length=brick_width, 
-                brick_height=brick_length,
-                horizontal_joint=horizontal_joint,
-                amount_of_bricks=amount_of_bricks)
-                
-join_all_bricks() 
-
-
-
-add_simple_deform_modifier(object)
+    brick_length = 0.21
+    brick_width = 0.1
+    brick_height = 0.05    
+    horizontal_joint = 0.01    
+    amount_of_bricks = 10
 
 
+
+
+     
+    add_single_brick(brick_width=brick_height, 
+                    brick_length=brick_width, 
+                    brick_height=brick_length,
+                    horizontal_joint=horizontal_joint,
+                    amount_of_bricks=amount_of_bricks)
+                    
+    join_all_bricks() 
+    
+def delete_collection(): 
+    for c in scene.collection.children:
+        if c.name[0:(len(c.name)-4)] in collection_name.name:
+            scene.collection.children.unlink(c) 
+
+
+
+
+create_rowlock()
 
 
 
