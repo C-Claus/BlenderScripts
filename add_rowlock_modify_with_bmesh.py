@@ -1,13 +1,26 @@
 
 import bpy
+import bmesh
 import mathutils
 from itertools import repeat
 
+me = bpy.context.object.data
 
 
-mesh_name = "brick" 
-collection_name = bpy.data.collections.new("RowLockCollection")
-bpy.context.scene.collection.children.link(collection_name)
+print (me)
+
+bm = bmesh.new()
+bm.from_mesh(me)
+
+for v in bm.verts:
+    v.co.x += 10.0
+    print (v.co)
+ 
+bm.to_mesh(me)
+bm.free()   
+#mesh_name = "brick" 
+#collection_name = bpy.data.collections.new("RowLockCollection")
+#bpy.context.scene.collection.children.link(collection_name)
 
 
 def add_single_brick(brick_width, brick_length, brick_height, horizontal_joint, amount_of_bricks):
@@ -102,7 +115,7 @@ def join_all_bricks():
     
     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN') 
     
-    add_simple_deform_modifier(rowlock_object=obj)
+    #add_simple_deform_modifier(rowlock_object=obj)
     
 
   
@@ -171,7 +184,7 @@ def delete_collection():
 
 
 
-create_rowlock()
+#create_rowlock()
 
 
 

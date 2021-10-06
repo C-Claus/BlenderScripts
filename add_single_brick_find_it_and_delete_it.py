@@ -4,11 +4,15 @@ import mathutils
 from itertools import repeat
 
 
+name_collection = "brick_collection"
+name_object = "brick"
+name_mesh = "brick"
+
 def add_single_brick(brick_width, brick_length, brick_height):
     
     
-    mesh_name = "brick" 
-    collection_name = bpy.data.collections.new("BrickCollection")
+    mesh_name = name_mesh 
+    collection_name = bpy.data.collections.new(name_collection)
     bpy.context.scene.collection.children.link(collection_name)
     
     vertices_brick = [  (0,0,0),
@@ -33,7 +37,7 @@ def add_single_brick(brick_width, brick_length, brick_height):
              ]
 
 
-    new_mesh = bpy.data.meshes.new('brick_mesh')
+    new_mesh = bpy.data.meshes.new(name_mesh)
     new_mesh.from_pydata(vertices_brick, edges, faces)
     new_mesh.update()
     
@@ -45,8 +49,28 @@ def add_single_brick(brick_width, brick_length, brick_height):
     
 
 
-brick_length = 0.21
-brick_width = 0.1
-brick_height = 0.05    
+def remove_brick_collection():
     
-add_single_brick(brick_width=brick_width, brick_length=brick_length, brick_height=brick_height)
+    bpy.ops.object.select_all(action='DESELECT')
+    
+    if (bool(bpy.data.collections.get(name_collection))) == True:
+        print ("hallo")
+        collection = bpy.data.collections.get(name_collection)
+        bpy.data.collections.remove(collection)
+        
+    else:
+        print ("doei")
+        
+
+        
+         
+ 
+brick_length = 0.21
+brick_width = 0.10
+brick_height = 0.05         
+       
+remove_brick_collection()       
+add_single_brick(brick_width=brick_width, brick_length=brick_length, brick_height=brick_height)  
+     
+
+
