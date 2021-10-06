@@ -91,7 +91,7 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
     if stretcher == 1:
         y_move_list =[]
         
-        for y_move in range(0, amount_of_bricks-1):
+        for y_move in range(0, amount_of_bricks):
             y += (brick_width+horizontal_joint)
             add_row(object=new_object, x=0, y=y, z=0.0)
             y_move_list.append(y)
@@ -104,7 +104,7 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
         
         y_move_list =[]
         
-        for y_move in range(0, amount_of_bricks-1):
+        for y_move in range(0, amount_of_bricks):
             y += (brick_width+horizontal_joint)
             y_move_list.append(y)
             
@@ -218,13 +218,14 @@ def add_rowlock():
     brick_height = 0.21   
     horizontal_joint = 0.01
        
-    brick_amount = 15
-    
+   
+    brick_amount = 10
     
     taper_factor = 0.2
     
-    #stretchers is either 1, 1.5, 2 or 2.5
+    #stretcher is either 1 or 1.5 at the moment
     stretcher = 1.5
+    
          
       
     remove_brick_collection()   
@@ -242,4 +243,3 @@ def add_rowlock():
     
 
 add_rowlock()
-
