@@ -151,7 +151,7 @@ def add_rowlock():
     brick_width = 0.05
     brick_height = 0.21   
        
-    brick_amount = 5
+    brick_amount = 10
     horizontal_joint = 0.01
            
     remove_brick_collection()       
