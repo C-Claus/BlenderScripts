@@ -108,17 +108,20 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
             y += (brick_width+horizontal_joint)
             y_move_list.append(y)
             
+       
+            
         z_repeat_list = [0,brick_height/2+horizontal_joint] * amount_of_bricks
-        z_repeat_list_half = [brick_height/2+horizontal_joint, 0] * amount_of_bricks
+        z_repeat_list_half = [(brick_height+horizontal_joint), 0] * amount_of_bricks
         
+        #adds whole bricks
         for y, z in zip(y_move_list, z_repeat_list):
             add_row(object=new_object, x=0, y=y, z=z)
-            
+           
+        #adds half bricks 
         for y, z in zip(y_move_list, z_repeat_list_half):
-            add_row(object=new_half_object, x=0, y=y, z=z)
+           add_row(object=new_half_object, x=0, y=y, z=z)
             
-        for y, z in zip(y_move_list, z_repeat_list_half):
-            add_row(object=new_half_object, x=0, y=y, z=brick_height+(horizontal_joint*2))
+    
             
     collection_name.objects.unlink(new_object) 
     collection_name.objects.unlink(new_half_object) 
@@ -219,7 +222,7 @@ def add_rowlock():
     horizontal_joint = 0.01
        
    
-    brick_amount = 10
+    brick_amount = 16
     
     taper_factor = 0.2
     
