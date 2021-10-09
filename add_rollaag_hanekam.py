@@ -9,7 +9,7 @@ name_mesh = "brick"
 name_mesh_half = "half_brick"
 
 
-def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_length, brick_height, stretcher):
+def add_single_brick(amount_of_bricks, joint, brick_width, brick_length, brick_height, stretcher):
     
     mesh_name = name_mesh 
     collection_name = bpy.data.collections.new(name_collection)
@@ -79,11 +79,12 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
     new_half_object = bpy.data.objects.new(name_mesh_half, new_mesh_half)
     collection_name.objects.link(new_half_object) 
     
-    
-     
+
     x=0
     y=0
     z=0
+    
+   
     
     #######################################################
     ############ add one stretcher rowlock ################
@@ -92,11 +93,12 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
         y_move_list =[]
         
         for y_move in range(0, amount_of_bricks):
-            y += (brick_width+horizontal_joint)
+            y += (brick_width+joint)
+            
+            #adds whole brick
             add_row(object=new_object, x=0, y=y, z=0.0)
-            y_move_list.append(y)
-        
-          
+            
+      
     #######################################################
     ########### add one and half stretcher ################
     #######################################################
@@ -105,13 +107,11 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
         y_move_list =[]
         
         for y_move in range(0, amount_of_bricks):
-            y += (brick_width+horizontal_joint)
+            y += (brick_width+joint)
             y_move_list.append(y)
             
-       
-            
-        z_repeat_list = [0,brick_height/2+horizontal_joint] * amount_of_bricks
-        z_repeat_list_half = [(brick_height+horizontal_joint), 0] * amount_of_bricks
+        z_repeat_list = [0,brick_height/2+joint] * amount_of_bricks
+        z_repeat_list_half = [(brick_height+joint), 0] * amount_of_bricks
         
         #adds whole bricks
         for y, z in zip(y_move_list, z_repeat_list):
@@ -120,6 +120,10 @@ def add_single_brick(amount_of_bricks, horizontal_joint, brick_width, brick_leng
         #adds half bricks 
         for y, z in zip(y_move_list, z_repeat_list_half):
            add_row(object=new_half_object, x=0, y=y, z=z)
+       
+
+    
+   
             
     
             
@@ -219,22 +223,19 @@ def add_rowlock():
     brick_length = 0.10
     brick_width = 0.05
     brick_height = 0.21   
-    horizontal_joint = 0.01
+    joint = 0.01
        
-   
     brick_amount = 16
-    
-    taper_factor = 0.2
+    taper_factor = 0.0
     
     #stretcher is either 1 or 1.5 at the moment
-    stretcher = 1.5
-    
+    stretcher = 1
          
       
     remove_brick_collection()   
         
     add_single_brick(amount_of_bricks=brick_amount,
-                     horizontal_joint=horizontal_joint,
+                     joint=joint,
                      brick_width=brick_width, 
                      brick_length=brick_length, 
                      brick_height=brick_height,
