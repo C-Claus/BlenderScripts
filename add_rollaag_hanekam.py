@@ -3,6 +3,11 @@ import bpy
 import mathutils
 from itertools import repeat
 
+import lxml
+import xlsxwriter
+
+
+
 name_collection = "brick_collection"
 name_object = "brick"
 name_mesh = "brick" 
@@ -125,10 +130,18 @@ def add_single_brick(amount_of_bricks, joint, brick_width, brick_length, brick_h
     
    
             
+    #bpy.ops.object.select_all(action='DESELECT')
+    #bpy.data.objects[new_object.name].select_set(True)
+    #bpy.ops.object.delete()
     
+    #new_object.obj.remove(objs[new_object.name], do_unlink=True) 
             
     collection_name.objects.unlink(new_object) 
     collection_name.objects.unlink(new_half_object) 
+    
+    #print (new_object.location)
+    
+  
         
         
      
@@ -225,11 +238,11 @@ def add_rowlock():
     brick_height = 0.21   
     joint = 0.01
        
-    brick_amount = 16
-    taper_factor = 0.0
+    brick_amount = 10
+    taper_factor = 0.2
     
     #stretcher is either 1 or 1.5 at the moment
-    stretcher = 1
+    stretcher = 1.5
          
       
     remove_brick_collection()   
