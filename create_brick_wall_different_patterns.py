@@ -94,15 +94,14 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
 
     x=0
     y=0
+    y2=0 #used for half bricks in various bonds
     z=0
     
     
     #head_joint vertical 
     #bed_joint  horizontal 
     
-    #y2 = (brick_width)+(brick_width/2)/2
-    
-    y2 = 0
+   
      
     if bond == 'stretcher':
        
@@ -129,11 +128,9 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
          for half_bricks in range(0, amount_of_half_bricks):
              
             y2 += (brick_width/2)+head_joint
-            
-            #y2 += 0 #brick_width/2/2
-            
+
             #adds half brick
-            add_row(object=new_half_object, x=0, y=y2, z=brick_thickness+bed_joint)
+            add_row(object=new_half_object, x=0, y=y2+(brick_width/4), z=brick_thickness+bed_joint)
        
  
     #remove initial brick and half brick
@@ -265,7 +262,7 @@ def add_wall():
     #dutch
     #brazillian
     
-    bond_type = 'english'
+    bond_type = 'stretcher'
            
     remove_brick_collection()   
         
