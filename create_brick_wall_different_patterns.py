@@ -95,24 +95,16 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     z=0
     
     
-
     #head_joint vertical 
     #bed_joint  horizontal 
     
     y2 = (brick_width)+(brick_width/2)/2
-    
-    z_vector = brick_thickness + bed_joint
-    
-    print (z_vector)
-
- 
+     
     if bond == 'stretcher':
-        y_move_list =[]
-        
-        for y_move in range(0, amount_of_whole_bricks):
+       
+        for bricks in range(0, amount_of_whole_bricks):
             y += (brick_width+head_joint)
             
-      
             #adds whole brick
             add_row(object=new_object, x=0, y=y, z=0.0)
             add_row(object=new_object, x=0, y=y+brick_width/2+head_joint, z=brick_thickness+bed_joint)
@@ -141,26 +133,13 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             
             #adds half brick
             add_row(object=new_half_object, x=0, y=y2, z=brick_thickness+bed_joint)
-
-            
+       
  
     #remove initial brick and half brick
     objs = bpy.data.objects
     objs.remove(objs[new_object.name], do_unlink=True)
     objs.remove(objs[new_half_object.name], do_unlink=True)
-    
-  
-
-    
-    
-    
-    
-
-    
-  
-        
-        
-     
+      
     
 def add_row(object, x, y, z):      
  
@@ -184,9 +163,7 @@ def add_row(object, x, y, z):
         # vector aligned to local axis in Blender 2.8+
         vec_rot = vec @ inv
         new_obj.location = new_obj.location + vec_rot  
-        
-
-        
+              
         
 def join_all_and_create_array(wall_height, bed_joint):
     
@@ -203,16 +180,14 @@ def join_all_and_create_array(wall_height, bed_joint):
     ################################################
     ############# join all objects #################
     ################################################
-    
     bpy.ops.object.join(context)
-    bpy.ops.object.select_all(action='SELECT')
+    #bpy.ops.object.select_all(action='SELECT')
     
-   
     
     if (bool(bpy.data.collections.get(name_collection))) == True:
       
         collection = bpy.data.collections.get(name_collection)
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+        #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
         
         for joined_object in bpy.data.collections[name_collection].all_objects:
          
@@ -241,9 +216,14 @@ def join_all_and_create_array(wall_height, bed_joint):
             
             bpy.context.object.modifiers["Array"].fit_type = 'FIT_LENGTH'
             bpy.context.object.modifiers["Array"].fit_length = wall_height
+            
+            bpy.ops.object.modifier_apply(modifier="Array")
+            
+            #bpy.ops.object.join(context)
+            
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
 
 
-        
         bpy.ops.object.select_all(action='DESELECT')
 
   
@@ -263,14 +243,12 @@ def remove_brick_collection():
     else:
         print ("no collection found")
         
-        
-
   
 def add_wall():  
     
     
     
-    wall_length = 1
+    wall_length = 2
     wall_height = 1
     
     brick_length = 0.11
@@ -310,6 +288,15 @@ def add_wall():
              
     join_all_and_create_array(wall_height=wall_height,bed_joint=bed_joint)   
     
+
+def export_to_ifc():
+    
+    bpy.ops.bim.create_project()
+    
+    #bpy.ops.bim.create_project()
+    
+    bpy.context.scene.BIMRootProperties.ifc_class = 'IfcWall'
+
 
     
     
