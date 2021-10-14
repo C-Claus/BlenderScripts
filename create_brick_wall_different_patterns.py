@@ -9,19 +9,21 @@ import xlsxwriter
 
 name_collection = "brick_collection"
 name_object = "brick_wall"
-name_mesh = "brick_wall" 
-name_mesh_half = "half_brick"
+name_mesh = "brick_whole" 
+name_mesh_half = "brick_half"
 
 
 
 def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_width, brick_thickness, bond):
+    
+    scale_factor = 1000
     
     amount_of_whole_bricks = int((wall_length/brick_width+head_joint))
     amount_of_half_bricks = int((wall_length/(brick_width/2)+head_joint))
     
 
     
-    mesh_name = name_mesh + "_" + bond
+    mesh_name = name_mesh + "_" + bond + "_"  + str(int(brick_width*scale_factor)) + "x" + str(int(brick_length*scale_factor)) + "x" + str(int(brick_thickness*scale_factor))
     collection_name = bpy.data.collections.new(name_collection)
     bpy.context.scene.collection.children.link(collection_name)
     
@@ -98,7 +100,9 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     #head_joint vertical 
     #bed_joint  horizontal 
     
-    y2 = (brick_width)+(brick_width/2)/2
+    #y2 = (brick_width)+(brick_width/2)/2
+    
+    y2 = 0
      
     if bond == 'stretcher':
        
@@ -119,11 +123,8 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
          for whole_bricks in range(0, amount_of_whole_bricks):
             y += (brick_width+(head_joint))
         
- 
             #adds whole brick
             add_row(object=new_object, x=0, y=y, z=0.0)
-            
-        
             
          for half_bricks in range(0, amount_of_half_bricks):
              
@@ -193,9 +194,6 @@ def join_all_and_create_array(wall_height, bed_joint):
          
             
             bpy.ops.object.select_all(action='DESELECT')
-            
-            
-            
             object_selected = bpy.data.objects[joined_object.name]
             object_selected.select_set(True)    
             bpy.context.view_layer.objects.active = object_selected
@@ -267,7 +265,7 @@ def add_wall():
     #dutch
     #brazillian
     
-    bond_type = 'stretcher'
+    bond_type = 'english'
            
     remove_brick_collection()   
         
@@ -295,12 +293,35 @@ def export_to_ifc():
     
     #bpy.ops.bim.create_project()
     
-    bpy.context.scene.BIMRootProperties.ifc_class = 'IfcWall'
+    if (bool(bpy.data.collections.get(name_collection))) == True:
+      
+        collection = bpy.data.collections.get(name_collection)
+        #bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+        
+        for joined_object in bpy.data.collections[name_collection].all_objects:
+            print (joined_object)
+            
+            bpy.ops.object.select_all(action='DESELECT')
+            object_selected = bpy.data.objects[joined_object.name]
+            object_selected.select_set(True)    
+            bpy.context.view_layer.objects.active = object_selected
+    
+            bpy.context.scene.BIMRootProperties.ifc_class = 'IfcWall'
+            
+            #bpy.ops.bim.edit_object_placement(obj="IfcWall/brick_wall_stretcher_110x210x50.008")
+            #bpy.ops.bim.add_representation(obj="IfcWall/brick_wall_stretcher_110x210x50.008", context_id=0, ifc_representation_class="")
+            bpy.ops.bim.assign_class(ifc_class="IfcWall", 
+                                     predefined_type="ELEMENTEDWALL",
+                                     )
+
+
+
 
 
     
     
 
 add_wall()
+#export_to_ifc()
 
 
