@@ -97,13 +97,13 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     ###############  2/3 brick quoin ######################
     #######################################################
     vertices_two_third_brick = [  (0,0,0),
-                            (0,brick_width*(2/3),0),
-                            (brick_length,brick_width*(2/3),0),
+                            (0,brick_width*(3/4),0),
+                            (brick_length,brick_width*(3/4),0),
                             (brick_length,0,0),
                             
                             (0,0,brick_thickness),
-                            (0,brick_width*(2/3),brick_thickness),
-                            (brick_length,brick_width*(2/3),brick_thickness),
+                            (0,brick_width*(3/4),brick_thickness),
+                            (brick_length,brick_width*(3/4),brick_thickness),
                             (brick_length,0,brick_thickness)
                         ]
 
@@ -124,15 +124,6 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     new_two_third_object = bpy.data.objects.new(name_mesh_two_third, new_mesh_two_third)
     collection_name.objects.link(new_two_third_object) 
              
-             
-             
-             
-             
-             
-             
-             
-    
-    
 
     x=0
     y=0
@@ -140,15 +131,9 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     y3=(2/3)*brick_width + head_joint 
     z=0
     
-   
     
-    #head_joint vertical 
-    #bed_joint  horizontal 
-    
-   
-     
     if bond == 'stretcher':   
-        for bricks in range(0, amount_of_whole_bricks):
+        for bricks in range(0, amount_of_bricks):
             y += (brick_width+head_joint)
             
             #adds whole brickl
@@ -157,7 +142,7 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             
             #adds half bricks at the end
             add_row(object=new_half_object, x=0, y=brick_width+head_joint, z=brick_thickness+bed_joint)
-            add_row(object=new_half_object, x=0, y=brick_width+head_joint+amount_of_whole_bricks*(brick_width+head_joint), z=0.0)
+            add_row(object=new_half_object, x=0, y=brick_width+head_joint+amount_of_bricks*(brick_width+head_joint), z=0.0)
             
             
     if bond == 'flemish':
@@ -174,13 +159,14 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             add_row(object=new_half_object, x=0, y=y-y2+(brick_width)-head_joint, z=brick_thickness+bed_joint)
             
             
-            #print (brick_width*(3/4)+brick_width/2 + head_joint) 
-            #add 2third bricks at ends 
+            y_end = (brick_width*(3/4) + (brick_width/2) - head_joint + head_joint/2)
+            
+            #add bricks at ends 
             add_row(object=new_two_third_object, x=0, y=(brick_width)*(2/3) + (head_joint*2)+head_joint/2,z=0)
             move_brick_y =  (amount_of_bricks)*brick_width + (amount_of_bricks)*brick_width/2 + (amount_of_bricks)*head_joint 
             add_row(object=new_two_third_object,
                     x=0, 
-                     y=move_brick_y+0.275,
+                     y=move_brick_y+y_end,#0.2575,
                      z=brick_thickness+bed_joint)
        
  
@@ -241,7 +227,7 @@ def join_all_and_create_array(wall_height, bed_joint):
         
         for joined_object in bpy.data.collections[name_collection].all_objects:
          
-            """
+            
             bpy.ops.object.select_all(action='DESELECT')
             object_selected = bpy.data.objects[joined_object.name]
             object_selected.select_set(True)    
@@ -270,14 +256,10 @@ def join_all_and_create_array(wall_height, bed_joint):
             #bpy.ops.object.join(context)
             
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-            """
             
-
-
+            
         bpy.ops.object.select_all(action='DESELECT')
        
-
-  
     else:
         print ("no collection found")
       
@@ -318,7 +300,7 @@ def add_wall():
     #dutch
     #brazillian
     
-    bond_type = 'flemish'
+    bond_type = 'stretcher'
            
     remove_brick_collection()   
         
