@@ -94,21 +94,21 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
 
     x=0
     y=0
-    y2=0 #used for half bricks in various bonds
+    y2=(brick_width/4)*3 + head_joint #dimension of 1/3 brick , used for half bricks in various bonds
     z=0
     
+   
     
     #head_joint vertical 
     #bed_joint  horizontal 
     
    
      
-    if bond == 'stretcher':
-       
+    if bond == 'stretcher':   
         for bricks in range(0, amount_of_whole_bricks):
             y += (brick_width+head_joint)
             
-            #adds whole brick
+            #adds whole brickl
             add_row(object=new_object, x=0, y=y, z=0.0)
             add_row(object=new_object, x=0, y=y+brick_width/2+head_joint, z=brick_thickness+bed_joint)
             
@@ -117,20 +117,18 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             add_row(object=new_half_object, x=0, y=brick_width+head_joint+amount_of_whole_bricks*(brick_width+head_joint), z=0.0)
             
             
-    if bond == 'english':
+    if bond == 'flemish':
+         for bricks in range(0, amount_of_whole_bricks):
+            y += (brick_width+(head_joint)) + (brick_width/2) + (head_joint)
         
-         for whole_bricks in range(0, amount_of_whole_bricks):
-            y += (brick_width+(head_joint))
-        
-            #adds whole brick
+            #adds  brick
             add_row(object=new_object, x=0, y=y, z=0.0)
-            
-         for half_bricks in range(0, amount_of_half_bricks):
+            add_row(object=new_half_object, x=0, y=y+brick_width+head_joint, z=0.0)
              
-            y2 += (brick_width/2)+head_joint
 
-            #adds half brick
-            add_row(object=new_half_object, x=0, y=y2+(brick_width/4), z=brick_thickness+bed_joint)
+            #adds  brick
+            add_row(object=new_object, x=0, y=y-y2, z=brick_thickness+bed_joint)
+            add_row(object=new_half_object, x=0, y=y+brick_width+head_joint-y2, z=brick_thickness+bed_joint)
        
  
     #remove initial brick and half brick
@@ -198,6 +196,7 @@ def join_all_and_create_array(wall_height, bed_joint):
             ################################################
             ### start of array modifier for Z-direction ####
             ################################################
+           
             bpy.ops.object.modifier_add(type='ARRAY')
             
             #relative offset
@@ -217,9 +216,11 @@ def join_all_and_create_array(wall_height, bed_joint):
             #bpy.ops.object.join(context)
             
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+            
 
 
         bpy.ops.object.select_all(action='DESELECT')
+       
 
   
     else:
