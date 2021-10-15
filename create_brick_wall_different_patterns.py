@@ -11,14 +11,14 @@ name_collection = "brick_collection"
 name_object = "brick_wall"
 name_mesh = "brick_whole" 
 name_mesh_half = "brick_half"
-
+name_mesh_two_third = "brick_two_third"
 
 
 def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_width, brick_thickness, bond):
     
     scale_factor = 1000
     
-    amount_of_whole_bricks = int((wall_length/brick_width+head_joint))
+    amount_of_bricks = int((wall_length/brick_width+head_joint))
     amount_of_half_bricks = int((wall_length/(brick_width/2)+head_joint))
     
 
@@ -90,11 +90,54 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
     
     new_half_object = bpy.data.objects.new(name_mesh_half, new_mesh_half)
     collection_name.objects.link(new_half_object) 
+             
+             
+             
+    #######################################################
+    ###############  2/3 brick quoin ######################
+    #######################################################
+    vertices_two_third_brick = [  (0,0,0),
+                            (0,brick_width*(2/3),0),
+                            (brick_length,brick_width*(2/3),0),
+                            (brick_length,0,0),
+                            
+                            (0,0,brick_thickness),
+                            (0,brick_width*(2/3),brick_thickness),
+                            (brick_length,brick_width*(2/3),brick_thickness),
+                            (brick_length,0,brick_thickness)
+                        ]
+
+    edges_two_third_brick = []
+
+    faces_two_third_brick = [(0,1,2,3),
+             (4,5,6,7),
+             (0,4,5,1), 
+             (1,5,6,2),
+             (2,6,7,3),
+             (3,7,4,0)
+             ]
+             
+    new_mesh_two_third = bpy.data.meshes.new(name_mesh_two_third)
+    new_mesh_two_third.from_pydata(vertices_two_third_brick, edges_two_third_brick, faces_two_third_brick)
+    new_mesh_two_third.update()
+    
+    new_two_third_object = bpy.data.objects.new(name_mesh_two_third, new_mesh_two_third)
+    collection_name.objects.link(new_two_third_object) 
+             
+             
+             
+             
+             
+             
+             
+             
+    
     
 
     x=0
     y=0
-    y2=(brick_width/4)*3 + head_joint #dimension of 1/3 brick , used for half bricks in various bonds
+    y2=(2/3)*brick_width + head_joint
+    y3=(2/3)*brick_width + head_joint 
     z=0
     
    
@@ -118,23 +161,34 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             
             
     if bond == 'flemish':
-         for bricks in range(0, amount_of_whole_bricks):
+         for bricks in range(0, amount_of_bricks):
             y += (brick_width+(head_joint)) + (brick_width/2) + (head_joint)
         
-            #adds  brick
+            #add bottom row
             add_row(object=new_object, x=0, y=y, z=0.0)
             add_row(object=new_half_object, x=0, y=y+brick_width+head_joint, z=0.0)
              
 
-            #adds  brick
-            add_row(object=new_object, x=0, y=y-y2, z=brick_thickness+bed_joint)
-            add_row(object=new_half_object, x=0, y=y+brick_width+head_joint-y2, z=brick_thickness+bed_joint)
+            #add top row
+            add_row(object=new_object, x=0, y=y-y2-head_joint-head_joint, z=brick_thickness+bed_joint)
+            add_row(object=new_half_object, x=0, y=y-y2+(brick_width)-head_joint, z=brick_thickness+bed_joint)
+            
+            
+            #print (brick_width*(3/4)+brick_width/2 + head_joint) 
+            #add 2third bricks at ends 
+            add_row(object=new_two_third_object, x=0, y=(brick_width)*(2/3) + (head_joint*2)+head_joint/2,z=0)
+            move_brick_y =  (amount_of_bricks)*brick_width + (amount_of_bricks)*brick_width/2 + (amount_of_bricks)*head_joint 
+            add_row(object=new_two_third_object,
+                    x=0, 
+                     y=move_brick_y+0.275,
+                     z=brick_thickness+bed_joint)
        
  
     #remove initial brick and half brick
     objs = bpy.data.objects
     objs.remove(objs[new_object.name], do_unlink=True)
     objs.remove(objs[new_half_object.name], do_unlink=True)
+    objs.remove(objs[new_two_third_object.name], do_unlink=True)
       
     
 def add_row(object, x, y, z):      
@@ -187,7 +241,7 @@ def join_all_and_create_array(wall_height, bed_joint):
         
         for joined_object in bpy.data.collections[name_collection].all_objects:
          
-            
+            """
             bpy.ops.object.select_all(action='DESELECT')
             object_selected = bpy.data.objects[joined_object.name]
             object_selected.select_set(True)    
@@ -216,6 +270,7 @@ def join_all_and_create_array(wall_height, bed_joint):
             #bpy.ops.object.join(context)
             
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+            """
             
 
 
@@ -263,7 +318,7 @@ def add_wall():
     #dutch
     #brazillian
     
-    bond_type = 'stretcher'
+    bond_type = 'flemish'
            
     remove_brick_collection()   
         
