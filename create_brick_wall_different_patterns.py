@@ -158,15 +158,21 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
             add_row(object=new_object, x=0, y=y-y2-head_joint-head_joint, z=brick_thickness+bed_joint)
             add_row(object=new_half_object, x=0, y=y-y2+(brick_width)-head_joint, z=brick_thickness+bed_joint)
             
+       
             
-            y_end = (brick_width*(3/4) + (brick_width/2) - head_joint + head_joint/2)
+            #calculation to add bricks at end
+            y_end_0 = (brick_width*(3/4))
+            y_end_1 = (brick_width+head_joint)*(amount_of_bricks)
+            y_end_2 = ((brick_width/2)+head_joint)*amount_of_bricks
+            y_move = (y_end_0+y_end_1+y_end_2+head_joint)
+          
             
             #add bricks at ends 
             add_row(object=new_two_third_object, x=0, y=(brick_width)*(2/3) + (head_joint*2)+head_joint/2,z=0)
             move_brick_y =  (amount_of_bricks)*brick_width + (amount_of_bricks)*brick_width/2 + (amount_of_bricks)*head_joint 
-            add_row(object=new_two_third_object,
-                    x=0, 
-                     y=move_brick_y+y_end,#0.2575,
+            add_row( object=new_two_third_object,
+                     x=0, 
+                     y=y_move,
                      z=brick_thickness+bed_joint)
        
  
@@ -281,8 +287,8 @@ def add_wall():
     
     
     
-    wall_length = 2
-    wall_height = 1
+    wall_length = 4
+    wall_height = 1.5
     
     brick_length = 0.11
     brick_width = 0.21
@@ -300,7 +306,7 @@ def add_wall():
     #dutch
     #brazillian
     
-    bond_type = 'stretcher'
+    bond_type = 'flemish'
            
     remove_brick_collection()   
         
