@@ -168,8 +168,22 @@ def add_single_brick(wall_length, head_joint, bed_joint, brick_length, brick_wid
           
             
             #add bricks at ends 
-            add_row(object=new_two_third_object, x=0, y=(brick_width)*(2/3) + (head_joint*2)+head_joint/2,z=0)
-            move_brick_y =  (amount_of_bricks)*brick_width + (amount_of_bricks)*brick_width/2 + (amount_of_bricks)*head_joint 
+            #add_row(object=new_two_third_object, x=0, y=(brick_width)*(2/3) + (head_joint*2)+head_joint/2,z=0)
+            
+            #add_row(object=new_two_third_object, x=0, y=(brick_width)-(head_joint*amount_of_bricks),z=0)
+            
+            #add_row(object=new_two_third_object, x=0, y=((brick_width)-head_joint*amount_of_bricks),z=0)
+            
+            #move_brick_y =  (amount_of_bricks)*brick_width + (amount_of_bricks)*brick_width/2 + (amount_of_bricks)*head_joint 
+            
+            
+            add_row( object=new_two_third_object,
+                     x=0, 
+                     y=brick_width+head_joint -(brick_width-(brick_width*(3/4))) ,
+                     z=0)
+            
+            
+            
             add_row( object=new_two_third_object,
                      x=0, 
                      y=y_move,
@@ -282,12 +296,79 @@ def remove_brick_collection():
     else:
         print ("no collection found")
         
+        
+        
+def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_length):
+    
+    print ('add mortar')
+    
+    print (brick_width, brick_length)
+    
+    amount_of_bricks = int((wall_length/brick_width+head_joint))
+    
+    name_mesh='mortar'
+    mesh_name = name_mesh
+    
+    
+    
+    
+    #get coordinates outside bricks
+    #two coordiantes begin brick bottom = (x,y,z) = (brick_width, brick_length, 0) (brick_width, 0,0)
+    #two coordinates end brick bottom (x,y,z) = (brick_formula, brick_length, 0)(,brick_width, brick_length,0)
+    
+    #two coordinates begin brick top 
+    #two coordinates end brick top
+    
+    brick_length = brick_length-0.01
+    brick_width = brick_width+head_joint+amount_of_bricks*(brick_width+head_joint)
+    
+    #######################################################
+    ##################### mortar ##########################
+    #######################################################
+    vertices_mortar = [  (0,0,0),
+                        (0,brick_width,0),
+                        (brick_length,brick_width,0),
+                        (brick_length,0,0),
+                        
+                        (0,0,brick_thickness),
+                        (0,brick_width,brick_thickness),
+                        (brick_length,brick_width,brick_thickness),
+                        (brick_length,0,brick_thickness)
+                        ]
+
+    edges_mortar = []
+
+    faces_mortar = [(0,1,2,3),
+             (4,5,6,7),
+             (0,4,5,1), 
+             (1,5,6,2),
+             (2,6,7,3),
+             (3,7,4,0)
+             ]
+
+    new_mesh = bpy.data.meshes.new(name_mesh)
+    new_mesh.from_pydata(vertices_mortar, edges_mortar, faces_mortar)
+    new_mesh.update()
+    
+    # make object from mesh
+    new_object = bpy.data.objects.new(mesh_name, new_mesh)
+    #collection_name.objects.link(new_object)
+    
+    if (bool(bpy.data.collections.get(name_collection))) == True:
+      
+        collection = bpy.data.collections.get(name_collection)
+    
+        (collection.objects.link(new_object))
+    
+
+    
+        
   
 def add_wall():  
     
+    #brick width can't exceed wall_length
     
-    
-    wall_length = 4
+    wall_length = 5
     wall_height = 1.5
     
     brick_length = 0.11
@@ -304,9 +385,9 @@ def add_wall():
     #flemish
     #monk
     #dutch
-    #brazillian
+  
     
-    bond_type = 'flemish'
+    bond_type = 'stretcher'
            
     remove_brick_collection()   
         
@@ -324,8 +405,16 @@ def add_wall():
                      
                   
                      bond=bond_type) 
+                     
+    
              
     join_all_and_create_array(wall_height=wall_height,bed_joint=bed_joint)   
+    
+    add_mortar(brick_width=brick_width, 
+                brick_length=brick_length,
+                brick_thickness=brick_thickness,
+                head_joint=head_joint,
+                wall_length=wall_length)
     
 
 def export_to_ifc():
