@@ -3,9 +3,6 @@ import bpy
 import mathutils
 from itertools import repeat
 
-import lxml
-import xlsxwriter
-
 
 name_collection = "brick_collection"
 name_object = "brick_wall"
@@ -309,9 +306,7 @@ def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_leng
     name_mesh='mortar'
     mesh_name = name_mesh
     
-    
-    
-    
+ 
     #get coordinates outside bricks
     #two coordiantes begin brick bottom = (x,y,z) = (brick_width, brick_length, 0) (brick_width, 0,0)
     #two coordinates end brick bottom (x,y,z) = (brick_formula, brick_length, 0)(,brick_width, brick_length,0)
@@ -350,9 +345,9 @@ def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_leng
     new_mesh.from_pydata(vertices_mortar, edges_mortar, faces_mortar)
     new_mesh.update()
     
-    # make object from mesh
+
     new_object = bpy.data.objects.new(mesh_name, new_mesh)
-    #collection_name.objects.link(new_object)
+
     
     if (bool(bpy.data.collections.get(name_collection))) == True:
       
@@ -410,11 +405,13 @@ def add_wall():
              
     join_all_and_create_array(wall_height=wall_height,bed_joint=bed_joint)   
     
+    """
     add_mortar(brick_width=brick_width, 
                 brick_length=brick_length,
                 brick_thickness=brick_thickness,
                 head_joint=head_joint,
                 wall_length=wall_length)
+    """
     
 
 def export_to_ifc():
