@@ -8,9 +8,9 @@ import xlsxwriter
 
 
 
-name_collection = "brick_collection"
-name_object = "brick"
-name_mesh = "brick" 
+name_collection = "rowlock_collection"
+name_object = "rowlock"
+name_mesh = "rowlock" 
 name_mesh_half = "half_brick"
 
 
@@ -128,18 +128,11 @@ def add_single_brick(amount_of_bricks, joint, brick_width, brick_length, brick_h
        
 
     
+    #remove initial brick and half brick
+    objs = bpy.data.objects
+    objs.remove(objs[new_object.name], do_unlink=True)
+    objs.remove(objs[new_half_object.name], do_unlink=True)
    
-            
-    #bpy.ops.object.select_all(action='DESELECT')
-    #bpy.data.objects[new_object.name].select_set(True)
-    #bpy.ops.object.delete()
-    
-    #new_object.obj.remove(objs[new_object.name], do_unlink=True) 
-            
-    collection_name.objects.unlink(new_object) 
-    collection_name.objects.unlink(new_half_object) 
-    
-    #print (new_object.location)
     
   
         
@@ -239,7 +232,7 @@ def add_rowlock():
     joint = 0.01
        
     brick_amount = 10
-    taper_factor = 0.2
+    taper_factor = 0.0
     
     #stretcher is either 1 or 1.5 at the moment
     stretcher = 1.5

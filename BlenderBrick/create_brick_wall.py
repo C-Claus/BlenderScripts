@@ -295,40 +295,33 @@ def remove_brick_collection():
         
         
         
-def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_length):
+def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_length, wall_height):
     
-    print ('add mortar')
-    
-    print (brick_width, brick_length)
     
     amount_of_bricks = int((wall_length/brick_width+head_joint))
     
     name_mesh='mortar'
     mesh_name = name_mesh
     
- 
-    #get coordinates outside bricks
-    #two coordiantes begin brick bottom = (x,y,z) = (brick_width, brick_length, 0) (brick_width, 0,0)
-    #two coordinates end brick bottom (x,y,z) = (brick_formula, brick_length, 0)(,brick_width, brick_length,0)
+    inset = 0.01
+    inset_top = 0.02
+    origin = brick_width
+    brick_length = brick_length-inset
+    brick_width = brick_width+head_joint+amount_of_bricks*(brick_width+head_joint)+(brick_width*(1/2))
     
-    #two coordinates begin brick top 
-    #two coordinates end brick top
-    
-    brick_length = brick_length-0.01
-    brick_width = brick_width+head_joint+amount_of_bricks*(brick_width+head_joint)
     
     #######################################################
     ##################### mortar ##########################
     #######################################################
-    vertices_mortar = [  (0,0,0),
-                        (0,brick_width,0),
-                        (brick_length,brick_width,0),
-                        (brick_length,0,0),
+    vertices_mortar = [  (inset,origin+inset_top,0),
+                        (inset,brick_width-inset_top,0),
+                        (brick_length,brick_width-inset_top,0),
+                        (brick_length,origin+inset_top,0),
                         
-                        (0,0,brick_thickness),
-                        (0,brick_width,brick_thickness),
-                        (brick_length,brick_width,brick_thickness),
-                        (brick_length,0,brick_thickness)
+                        (inset,origin+inset_top,brick_thickness+wall_height),
+                        (inset,brick_width-inset_top,brick_thickness+wall_height),
+                        (brick_length,brick_width-inset_top,brick_thickness+wall_height),
+                        (brick_length,origin+inset_top,brick_thickness+wall_height)
                         ]
 
     edges_mortar = []
@@ -363,7 +356,7 @@ def add_wall():
     
     #brick width can't exceed wall_length
     
-    wall_length = 5
+    wall_length = 2
     wall_height = 1.5
     
     brick_length = 0.11
@@ -383,6 +376,7 @@ def add_wall():
   
     
     bond_type = 'stretcher'
+    mortar = 'y' #y or no
            
     remove_brick_collection()   
         
@@ -402,16 +396,23 @@ def add_wall():
                      bond=bond_type) 
                      
     
-             
-    join_all_and_create_array(wall_height=wall_height,bed_joint=bed_joint)   
+    join_all_and_create_array(wall_height=wall_height,bed_joint=bed_joint)     
+     
     
-    """
-    add_mortar(brick_width=brick_width, 
-                brick_length=brick_length,
-                brick_thickness=brick_thickness,
-                head_joint=head_joint,
-                wall_length=wall_length)
-    """
+    if mortar == 'y':
+  
+        add_mortar(brick_width=brick_width, 
+                    brick_length=brick_length,
+                    brick_thickness=brick_thickness,
+                    head_joint=head_joint,
+                    wall_length=wall_length,
+                    wall_height=wall_height)
+                    
+    if mortar != 'y':
+        print ('no mortar added')
+                
+     
+  
     
 
 def export_to_ifc():
