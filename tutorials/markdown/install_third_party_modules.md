@@ -13,6 +13,7 @@ The modules needed are:
 
 ## 1. Run Blender in Administrator Mode 
 
+![Adminstrator_Blender](https://github.com/C-Claus/02_Blender_Python_scripts/blob/master/tutorials/images/00_run_as_adminstrator.png)
 
 
 
