@@ -134,3 +134,17 @@ def add_brick(head_joint, bed_joint, brick_length, brick_width, brick_thickness)
     new_object = bpy.data.objects.new(mesh_name, new_mesh)
     collection_name.objects.link(new_object)
 ```
+
+Running the script creates the brick with the correct dimensions from Wikipedia:
+
+![Console_Blender](https://github.com/C-Claus/02_Blender_Python_scripts/blob/master/tutorials/images/charleroi_brick.PNG)
+
+# The final result
+
+
+https://github.com/C-Claus/02_Blender_Python_scripts/blob/master/tutorials/python/webcrawler.py
+
+
+
+
+
