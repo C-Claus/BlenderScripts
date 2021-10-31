@@ -19,6 +19,8 @@ The modules needed are:
 
 ## 2. Copy paste this in the scripting module of Blender
 
+In the scripting module of Blender, use the following script. 
+
 ```python
 import subprocess
 import bpy
@@ -37,6 +39,7 @@ subprocess.call([str(py_exec),"-m", "pip", "install", "--user", "lxml"])
 
 ## 3. Restart Blender
 
+Restart Blender, in the following script the URL https://nl.wikipedia.org/wiki/Lijst_van_baksteenformaten is used. 
 
 ```python
 import requests
