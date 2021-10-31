@@ -22,7 +22,7 @@ brick_table = soup.find_all("table",{"class":"wikitable sortable"})
 df = pd.read_html(str(brick_table))
 df = pd.concat(df)
 
-no_index = 5
+no_index = 4
 
 formaat = (df.iloc[no_index].Formaat)
 breedte = (df.iloc[no_index].Breedte)
