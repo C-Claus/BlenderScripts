@@ -90,4 +90,47 @@ or use ```python print df``` to see the entire output:
 
 # Creating the geometry
 
-From these values a mesh geometry in Blender is constructed.
+From these values a simple mesh geometry in Blender is constructed. In this function we can use the data we just collected from Wikipedia.
+
+```python
+name_collection =  "brick_collection"
+name_object = str(formaat)
+name_mesh = str(formaat)
+
+
+def add_brick(head_joint, bed_joint, brick_length, brick_width, brick_thickness):
+    
+    scale_factor = 1000
+    
+    mesh_name = name_mesh + "_"   + str((brick_width/scale_factor)) + "x" + str((brick_length/scale_factor)) + "x" + str((brick_thickness/scale_factor))
+    collection_name = bpy.data.collections.new(name_collection)
+    bpy.context.scene.collection.children.link(collection_name)
+    
+    vertices_whole_brick = [  (0,0,0),
+                        (0,brick_width/scale_factor,0),
+                        (brick_length/scale_factor,brick_width/scale_factor,0),
+                        (brick_length/scale_factor,0,0),
+                        
+                        (0,0,brick_thickness/scale_factor),
+                        (0,brick_width/scale_factor,brick_thickness/scale_factor),
+                        (brick_length/scale_factor,brick_width/scale_factor,brick_thickness/scale_factor),
+                        (brick_length/scale_factor,0,brick_thickness/scale_factor)
+                        ]
+
+    edges_whole_brick = []
+
+    faces_whole_brick = [(0,1,2,3),
+             (4,5,6,7),
+             (0,4,5,1), 
+             (1,5,6,2),
+             (2,6,7,3),
+             (3,7,4,0)
+             ]
+
+    new_mesh = bpy.data.meshes.new(name_mesh)
+    new_mesh.from_pydata(vertices_whole_brick, edges_whole_brick, faces_whole_brick)
+    new_mesh.update()
+    
+    new_object = bpy.data.objects.new(mesh_name, new_mesh)
+    collection_name.objects.link(new_object)
+```
