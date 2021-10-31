@@ -1,10 +1,11 @@
-# 02_Blender_Python_scripts
-
-# Script to install third-party modules in Blender's Python on Windows 10
-
-# Run Blender in Administrator Mode 
 
 
+## Script to install third-party modules in Blender's Python on Windows 10
+
+## Run Blender in Administrator Mode 
+
+
+## Copy paste this in the script module of Blender
 
 ```python
 import subprocess
