@@ -44,6 +44,7 @@ Under Window -> Toggle System Console to see the Python output.
 Restart Blender, in the following script the URL https://nl.wikipedia.org/wiki/Lijst_van_baksteenformaten is used to parse data from wikipedia tables.
 
 ```python
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -57,30 +58,30 @@ soup = BeautifulSoup(response.text, 'html.parser')
 title = soup.find(id="firstHeading")
 
 #use beautifulsoup to parse table and pass it into pandas module
-brick_tables = soup.find_all("table",{"class":"wikitable sortable"})
-dataframe_list = []
-for brick_table in brick_tables:
+brick_table = soup.find_all("table",{"class":"wikitable sortable"})
 
-dataframe = pd.read_html(str(brick_table))
-dataframe_list.append(pd.read_html(str(brick_table)))
+df = pd.read_html(str(brick_table))
+df = pd.concat(df)
 
-
-pd.set_option('display.max_columns', 100)
-pd.set_option('display.max_rows',100)
-pd.set_option('display.min_rows',100)
-pd.set_option('display.width', 120)
-pd.set_option('expand_frame_repr',True)
-
-
-for data_frame in dataframe_list:
-	print (data_frame)
+formaat = (df.iloc[5].Formaat)
+breedte = (df.iloc[5].Breedte)
+hoogte = (df.iloc[5].Hoogte)
+lengte = (df.iloc[5].Lengte)
 
 ```
 
-Run this script and Blender will output the data from wikipedia to the console
+
+Run this script and Blender console will give back the data from wikipedia to the console for one brick, the Charleroi brick. Because it's fifth in the table.
 
 
-
+```python
+100
+Charleroi
+100
+65
+210
+```
+or use ```ptyhon print df``` to see the entire output:
 
 ![Console_Blender](https://github.com/C-Claus/02_Blender_Python_scripts/blob/master/tutorials/images/console_blender.png)
 
