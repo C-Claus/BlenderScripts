@@ -1,8 +1,10 @@
+# Getting data from Wikipedia to create geometry with Blender
 
+This script shows how one is able to install third party modules in Blender to eventually create geometry from wikipedia data. The final result is a brick wall with data harvest from wikipedia.
 
 ## Script to install third-party modules in Blender's Python on Windows 10
 
-In this example a webcrawler is used to harvest brick dimensions from a wikipedia table. These dimensions are used in Blender to create brick walls made from different brick sizes. Before be able to webcrawl from Blender we need to install third-party modules in the bundled Python folder which comes with installing Blender.
+In this example a webcrawler is used to harvest brick dimensions from a wikipedia table. These dimensions are used in Blender to create brick walls made from different brick sizes. Third-party modules in the bundled Python folder need to be installed.
 
 The modules needed are:
  - beautifulsoup4
@@ -19,7 +21,7 @@ The modules needed are:
 
 ## 2. Copy paste this in the scripting module of Blender
 
-In the scripting module of Blender, use the following script. 
+In the scripting module of Blender, use the following script. This script installs the modules in the python Blender folder.
 
 ```python
 import subprocess
@@ -42,6 +44,7 @@ Under Window -> Toggle System Console to see the Python output.
 ## 3. Restart Blender
 
 Restart Blender, in the following script the URL https://nl.wikipedia.org/wiki/Lijst_van_baksteenformaten is used to parse data from wikipedia tables.
+This script uses the modules beautifulsoup and pandas to get one type of brick dimensions from wikipedia.
 
 ```python
 
@@ -81,7 +84,10 @@ Charleroi
 65
 210
 ```
-or use ```ptyhon print df``` to see the entire output:
+or use ```python print df``` to see the entire output:
 
 ![Console_Blender](https://github.com/C-Claus/02_Blender_Python_scripts/blob/master/tutorials/images/console_blender.png)
 
+# Creating the geometry
+
+From these values a mesh geometry in Blender is constructed.
