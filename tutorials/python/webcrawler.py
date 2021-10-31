@@ -30,7 +30,7 @@ hoogte = (df.iloc[no_index].Hoogte)
 lengte = (df.iloc[no_index].Lengte)
 
 
-name_collection =  "brick_collection"
+name_collection =  str(formaat)
 name_object = str(formaat)
 name_mesh = str(formaat)
 
