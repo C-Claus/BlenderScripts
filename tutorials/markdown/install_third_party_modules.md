@@ -77,5 +77,9 @@ for data_frame in dataframe_list:
 
 ```
 
+Run this script and Blender will output the data from wikipedia to the console
+
+
+
 
 
