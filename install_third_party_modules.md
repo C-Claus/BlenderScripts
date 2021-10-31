@@ -2,10 +2,15 @@
 
 ## Script to install third-party modules in Blender's Python on Windows 10
 
-## Run Blender in Administrator Mode 
+In this example beautifulsoup4, pandas and lxml is installed to parse data from wikipedia about brick sizes. These dimensions are used in Blender to create brick walls made from different brick sizes. Before be able to webcrawl from Blender we need to install third-party modules in the bundled Python folder which comes with installing Blender.
 
 
-## Copy paste this in the script module of Blender
+## 1. Run Blender in Administrator Mode 
+
+
+
+
+## 2. Copy paste this in the script module of Blender
 
 ```python
 import subprocess
