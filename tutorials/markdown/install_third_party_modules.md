@@ -36,10 +36,12 @@ subprocess.call([str(py_exec),"-m", "pip", "install", "--user", "beautifulsoup4"
 subprocess.call([str(py_exec),"-m", "pip", "install", "--user", "pandas"])
 subprocess.call([str(py_exec),"-m", "pip", "install", "--user", "lxml"])
 ```
+Under Window -> Toggle System Console to see the Python output.
+
 
 ## 3. Restart Blender
 
-Restart Blender, in the following script the URL https://nl.wikipedia.org/wiki/Lijst_van_baksteenformaten is used. 
+Restart Blender, in the following script the URL https://nl.wikipedia.org/wiki/Lijst_van_baksteenformaten is used to parse data from wikipedia tables.
 
 ```python
 import requests
