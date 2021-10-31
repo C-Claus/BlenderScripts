@@ -348,6 +348,22 @@ def add_mortar(brick_width, brick_length, brick_thickness, head_joint, wall_leng
     
         (collection.objects.link(new_object))
     
+def create_material():
+    bpy.context.space_data.context = 'MATERIAL'
+    bpy.ops.material.new()
+    bpy.context.object.active_material.name = "metselwerk"
+
+    bpy.context.object.active_material.use_nodes = False
+    bpy.context.object.active_material.diffuse_color = (0.8, 0.188893, 0.0900083, 1)
+    bpy.ops.bim.add_material()
+    
+    
+    bpy.ops.bim.assign_material()
+
+
+
+
+
 
     
         

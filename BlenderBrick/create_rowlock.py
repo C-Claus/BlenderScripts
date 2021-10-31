@@ -3,9 +3,6 @@ import bpy
 import mathutils
 from itertools import repeat
 
-import lxml
-import xlsxwriter
-
 
 
 name_collection = "rowlock_collection"
