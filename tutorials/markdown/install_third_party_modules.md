@@ -1,6 +1,6 @@
 # Getting data from Wikipedia to create geometry with Blender
 
-This script shows how one is able to install third party modules in Blender to eventually create geometry from wikipedia data. The final result is a brick wall with data harvest from wikipedia.
+
 
 ## Script to install third-party modules in Blender's Python on Windows 10
 
