@@ -94,18 +94,25 @@ def get_filtered_data_from_excel(excel_file):
 def hide_isolate_in_view(guid_list):
     print ('hide isolate in view')
     
-    for guid in guid_list:
-        print (guid)
-    
-        bpy.ops.bim.select_global_id(global_id=guid)
+    #bpy.ops.object.hide_view_clear()
+  
+    bpy.ops.object.select_all(action='DESELECT')
 
     
-    
-    
+    for guid in guid_list:
+        
+        #bpy.context.scene.BIMSearchProperties.global_id = guid
+        bpy.ops.bim.select_global_id(global_id=guid)
+
+
+    #bpy.ops.object.hide_view_set(unselected=True)
+    #bpy.data.objects.foreach_set("hide_viewport", (True,) * len(bpy.data.objects))
+
     #obj = bpy.context.active_object
     #IfcStore.get_file().by_id(obj.BIMObjectProperties.ifc_definition_id).GlobalId
     
             
 #get_filtered_data_from_excel(excel_file=excel_file_path)        
 
+#write_to_excel()
 hide_isolate_in_view(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path) )    
