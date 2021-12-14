@@ -16,51 +16,45 @@ def write_to_excel(ifc_file, excel_file):
     ifc_file = ifcopenshell.open(ifc_file)
     products = ifc_file.by_type('IfcProduct')
     
-    
-    workbook = xlsxwriter.Workbook(excel_file)
-    worksheet = workbook.add_worksheet('IfcProduct')
+    workbook_xlsx = xlsxwriter.Workbook(excel_file)
+    worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
 
-    #cell_format = workbook.add_format({'bold': True, 'font_color': 'red'})
-    #worksheet.set_row(0, 1, cell_format)
+    worksheet_xlsx.write('A1', 'GlobalId')
+    worksheet_xlsx.write('B1', 'IfcProduct')
+    worksheet_xlsx.write('C1', 'Name')
+    worksheet_xlsx.write('D1', 'Description')
 
+    worksheet_xlsx.set_column(0, 1, 25)
+    worksheet_xlsx.set_column(1, 1, 25)
+    worksheet_xlsx.set_column(2, 1, 25)
 
-    worksheet.write('A1', 'GlobalId')
-    worksheet.write('B1', 'IfcProduct')
-    worksheet.write('C1', 'Name')
-
-    worksheet.set_column(0, 1, 25)
-    worksheet.set_column(1, 1, 25)
-    worksheet.set_column(2, 1, 25)
-
-    worksheet.autofilter('A1:C' + str(len(products)) )
+    worksheet_xlsx.autofilter('A1:C' + str(len(products)) )
 
     for i, product in enumerate(products):
-        worksheet.write('A' + str(i+2), str(product.GlobalId))
-        worksheet.write('B' + str(i+2), str(product.is_a()))
-        worksheet.write('C' + str(i+2), str(product.Name))
-        
-    workbook.close()
+        worksheet_xlsx.write('A' + str(i+2), str(product.GlobalId))
+        worksheet_xlsx.write('B' + str(i+2), str(product.is_a()))
+        worksheet_xlsx.write('C' + str(i+2), str(product.Name))
+        worksheet_xlsx.write('D' + str(i+2), str(product.Description))
+
+    workbook_xlsx.close()
     os.startfile(excel_file)
 
 
 def get_filtered_data_from_excel(excel_file):
-    wb = load_workbook(excel_file)
-    ws = wb['IfcProduct'] 
+    workbook_openpyxl = load_workbook(excel_file)
+    worksheet_openpyxl = workbook_openpyxl['IfcProduct'] 
     
     global_id_filtered_list = []
-    
-    #wb.save(filename = excel_file)
 
-    for row in ws:     
-        if ws.row_dimensions[row[0].row].hidden == False:
+    for row in worksheet_openpyxl:     
+        if worksheet_openpyxl.row_dimensions[row[0].row].hidden == False:
             for cell in row:  
-                if cell in ws['A']:  
+                if cell in worksheet_openpyxl['A']:  
                     global_id_filtered_list.append(cell.value)
                     
     return global_id_filtered_list[1:]
                 
-                
-                             
+                                            
 def select_IFC_elements_in_blender(guid_list):
    
     for guid in guid_list:
@@ -77,3 +71,12 @@ write_to_excel(ifc_file=IfcStore.path, excel_file=excel_file_path)
 #select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path) )   
 
 
+#mini backlog
+#1. export propertyset to a sheet
+#2. export materials to a sheet
+#3. export quantities to a sheet
+#4. find out how to bundle python dependencies in a blender add-on
+#5. small user interface with pyqt or blender
+#6. check if excel is installed on the system or running
+#7. refactor function write_to_excel()
+#8. write back data from excel into ifc
