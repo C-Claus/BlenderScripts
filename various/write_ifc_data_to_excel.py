@@ -18,17 +18,14 @@ def write_to_excel(ifc_file, excel_file):
     
     workbook_xlsx = xlsxwriter.Workbook(excel_file)
     worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
+    
+    product_entity_list = [['A1','GlobalId'],['B1','IfcProduct'],['C1','Name'],['D1','Description']]
+    
+    for i, product_entity in enumerate(product_entity_list):
+        worksheet_xlsx.write(product_entity[0], product_entity[1])
+        worksheet_xlsx.set_column(i, 1, 25)
 
-    worksheet_xlsx.write('A1', 'GlobalId')
-    worksheet_xlsx.write('B1', 'IfcProduct')
-    worksheet_xlsx.write('C1', 'Name')
-    worksheet_xlsx.write('D1', 'Description')
-
-    worksheet_xlsx.set_column(0, 1, 25)
-    worksheet_xlsx.set_column(1, 1, 25)
-    worksheet_xlsx.set_column(2, 1, 25)
-
-    worksheet_xlsx.autofilter('A1:C' + str(len(products)) )
+    worksheet_xlsx.autofilter('A1:D' + str(len(products)) )
 
     for i, product in enumerate(products):
         worksheet_xlsx.write('A' + str(i+2), str(product.GlobalId))
@@ -38,6 +35,7 @@ def write_to_excel(ifc_file, excel_file):
 
     workbook_xlsx.close()
     os.startfile(excel_file)
+   
 
 
 def get_filtered_data_from_excel(excel_file):
