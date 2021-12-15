@@ -9,7 +9,9 @@ import blenderbim.bim.import_ifc
 
 from openpyxl import load_workbook
 from blenderbim.bim.ifc import IfcStore
+import blenderbim.tool as tool
 
+import time
 
 def write_to_excel(ifc_file, excel_file):
     
@@ -25,7 +27,7 @@ def write_to_excel(ifc_file, excel_file):
         worksheet_xlsx.write(product_entity[0], product_entity[1])
         worksheet_xlsx.set_column(i, 1, 25)
 
-    worksheet_xlsx.autofilter('A1:D' + str(len(products)) )
+    worksheet_xlsx.autofilter('A1:D1' + str(len(products)) )
 
     for i, product in enumerate(products):
         worksheet_xlsx.write('A' + str(i+2), str(product.GlobalId))
@@ -54,20 +56,40 @@ def get_filtered_data_from_excel(excel_file):
                 
                                             
 def select_IFC_elements_in_blender(guid_list):
+    #bpy.context.space_data.show_restrict_column_viewport = True
+
+    bpy.ops.object.select_all(action='DESELECT')
    
-    for guid in guid_list:
-        bpy.ops.bim.select_global_id(global_id=guid)
-        
-         
+    #for guid in guid_list:
+    #   bpy.ops.bim.select_global_id(global_id=guid)
+    
+  
+    for obj in bpy.context.view_layer.objects:
+        element = tool.Ifc.get_entity(obj)
+        if element is None:        
+            obj.hide_viewport = True
+            continue
+        data = element.get_info()
+      
+        obj.hide_viewport = data.get("GlobalId", False) not in guid_list
+
+    bpy.ops.object.select_all(action='SELECT')
+  
+def unhide_all():
+    for obj in bpy.data.objects:
+        obj.hide_viewport = False        
+   
        
 excel_file_path = (os.path.dirname(IfcStore.path) + '\\' + (os.path.basename(IfcStore.path).replace('.ifc','.xlsx')) )
 
 #1 needs to  happen on user input
-write_to_excel(ifc_file=IfcStore.path, excel_file=excel_file_path)
+#write_to_excel(ifc_file=IfcStore.path, excel_file=excel_file_path)
 
 #2 check if excel is running and saved before using this function
-#select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path) )   
+select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path) )   
 
+#reset hide isolate
+#unhide_all()
 
 #mini backlog
 #1. export propertyset to a sheet
