@@ -19,7 +19,7 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
     
     workbook_xlsx = xlsxwriter.Workbook(excel_file)
     worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
-    worksheet_xlsx.autofilter('A1:J1' + str(len(products)) )
+    #worksheet_xlsx.autofilter('A1:J1' + str(len(products)) )
     worksheet_xlsx.add_table('A1:J' + str(len(products)))
     
     product_entity_list = [ ['A1','GlobalId'],
