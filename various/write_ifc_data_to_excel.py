@@ -20,6 +20,7 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
     workbook_xlsx = xlsxwriter.Workbook(excel_file)
     worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
     worksheet_xlsx.autofilter('A1:J1' + str(len(products)) )
+    worksheet_xlsx.add_table('A1:J' + str(len(products)))
     
     product_entity_list = [ ['A1','GlobalId'],
                             ['B1','IfcProduct'],
@@ -250,10 +251,10 @@ def unhide_all():
 excel_file_path = (os.path.dirname(IfcStore.path) + '\\' + (os.path.basename(IfcStore.path).replace('.ifc','.xlsx')) )
 
 #1 export the excel first
-#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
+write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
 
 #2 check if excel is running and saved before using this function
-select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path )   
+#select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path )   
 
 #reset hide isolate
 #unhide_all()
