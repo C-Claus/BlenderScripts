@@ -5,6 +5,13 @@ This is a proof of concept Python script which explores the possibilities of ext
 The information is exported to Excel. The end user uses MS Excel to make filters. These filters can be applied 
 in the BlenderBIM add-on to highlight the filtered IFC elements.
 
+# Why does this script exist?
+IFC is a very useful open standard for exchanging Building Information. BlenderBIM is an open source add-on which is able to modify, read and update IFC files.
+MS Excel is a widely used spreadsheet program. The idea is to bundle the possibilities of MS Excel with BlenderBIM add-on . This way the end user can experience a fast workflow to do the following tasks:
+- Checking IFC according to the IDM
+- Creating schedules in Excel from IFC
+- Writing back data from Excel to IFC
+
 # Dependencies & set up instructions (Tested on Windows 10)
 - Blender 2.93
 - BlenderBIM add-on 
@@ -47,4 +54,9 @@ Now saving the Excel file and calling the function
 
 ```select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)```
 
-Makes all the elements visible in Blender
+Makes all the filtered Excel elements visible in Blender:
+
+![image](https://user-images.githubusercontent.com/14906760/146614951-1e27494a-d287-4d6c-8afd-c544d1177215.png)
+
+
+
