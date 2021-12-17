@@ -58,5 +58,23 @@ Makes all the filtered Excel elements visible in Blender:
 
 ![image](https://user-images.githubusercontent.com/14906760/146614951-1e27494a-d287-4d6c-8afd-c544d1177215.png)
 
+Now we see all ```03 Metselwerk - kalkzandsteen C``` on the IfcBuildingStorey called  ```00 begane grond```. if we want to see all ```03 Metselwerk - kalkzandsteen C``` on each IfcBuildingStorey we can just easily filter it in Excel and call the function again, don't forget to save the Excel file!:
+
+```select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)```
+
+![image](https://user-images.githubusercontent.com/14906760/146615667-3f195607-5122-4846-aa95-e05dc6bf446d.png)
+
+If we want to make everything visible again we can call the following function:
+
+```#unhide_all()```
+
+![image](https://user-images.githubusercontent.com/14906760/146615769-679d0b2d-5227-4d48-a3f6-aec06deed651.png)
+
+
+
+
+
+
+
 
 
