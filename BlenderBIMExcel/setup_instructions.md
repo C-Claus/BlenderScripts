@@ -13,11 +13,14 @@ MS Excel is a widely used spreadsheet program. The idea is to bundle the possibi
 - Writing back data from Excel to IFC
 
 # Dependencies & set up instructions (Tested on Windows 10)
-- Blender 2.93
-- BlenderBIM add-on 
-- ifcopenshell
-- xlsxwriter
-- openpyxl
+
+Software/dependency | Version 
+------------ | ------------- 
+Blender | 2.93
+BlenderBIM add-on | 0.0.211117
+ifcopenshell | 
+xlsxwriter |
+openpyxl | 
 
 To install the modules in Blender navigate to
 
@@ -37,7 +40,7 @@ Importing an existing IFC using the BlenderBIM add-on:
 ![image](https://user-images.githubusercontent.com/14906760/146614060-0ffc6d3d-1b91-4da8-b971-870417135abf.png)
 
 
-The function ```#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)``` opens the IFC file and writes the IFC information to Excel and opens Excel for you.
+The function ```write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)``` opens the IFC file and writes the IFC information to Excel and opens Excel for you.
 The Excel file is saved in the same location as where you saved your .ifc file.
 
 ![image](https://user-images.githubusercontent.com/14906760/146614294-44158ef5-2cdc-4c81-bb81-718958c636fd.png)
@@ -66,7 +69,7 @@ Now we see all ```03 Metselwerk - kalkzandsteen C``` on the IfcBuildingStorey ca
 
 If we want to make everything visible again we can call the following function:
 
-```#unhide_all()```
+```unhide_all()```
 
 ![image](https://user-images.githubusercontent.com/14906760/146615769-679d0b2d-5227-4d48-a3f6-aec06deed651.png)
 
