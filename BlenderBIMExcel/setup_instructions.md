@@ -75,7 +75,9 @@ If we want to make everything visible again we can call the following function:
 
 
 
-
+Future work for this script:
+- adding a Graphical User Interface which allows the end-user control over what they want to export to MS Excel.
+- adding a column in MS excel for user defined parameters which can be written back to IFC.
 
 
 
