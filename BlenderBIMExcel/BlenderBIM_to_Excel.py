@@ -19,8 +19,9 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
     
     workbook_xlsx = xlsxwriter.Workbook(excel_file)
     worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
+   
     #worksheet_xlsx.autofilter('A1:J1' + str(len(products)) )
-    worksheet_xlsx.add_table('A1:J' + str(len(products)+1))
+    worksheet_xlsx.add_table('A1:M' + str(len(products)+1))
     
     product_entity_list = [ ['A1','GlobalId'],
                             ['B1','IfcProduct'],
@@ -31,7 +32,10 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
                             ['G1','IfcMaterial'],
                             ['H1','IsExternal'],
                             ['I1','LoadBearing'],
-                            ['J1','FireRating']]
+                            ['J1','FireRating'],
+                            ['K1', 'Length'],
+                            ['L1','Area'],
+                            ['M1','Volume']]
     
     for i, product_entity in enumerate(product_entity_list):
         worksheet_xlsx.write(product_entity[0], product_entity[1])
@@ -48,6 +52,14 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
         worksheet_xlsx.write('H' + str(i+2),(get_isexternal(ifcproduct=product)[0][0]))
         worksheet_xlsx.write('I' + str(i+2),(get_loadbearing(ifcproduct=product)[0][0]))
         worksheet_xlsx.write('J' + str(i+2),(get_firerating(ifcproduct=product)[0][0]))
+   
+        
+        if (len(get_wall_quantities_length(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('K' + str(i+2), str(get_wall_quantities_length(ifcproduct=product)[0]))
+            
+        if (len(get_wall_quantities_area(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('L' + str(i+2), str(get_wall_quantities_area(ifcproduct=product)[0]))
+            
             
     workbook_xlsx.close()
     os.startfile(excel_file)
@@ -205,6 +217,36 @@ def get_firerating(ifcproduct):
                          
     return [fire_rating_list]
 
+def get_wall_quantities_length(ifcproduct):
+    
+    wall_quantity_length_list = []
+
+    if ifcproduct.is_a().startswith('IfcWall') or  ifcproduct.is_a().startswith('IfcWallStandardCase'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'Length':
+                            wall_quantity_length_list.append(str(quantities.LengthValue))
+              
+    return wall_quantity_length_list
+
+
+def get_wall_quantities_area(ifcproduct):
+    
+    wall_quantity_area_list = []
+
+    if ifcproduct.is_a().startswith('IfcWall') or  ifcproduct.is_a().startswith('IfcWallStandardCase'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'NetSideArea':
+                            wall_quantity_area_list.append(str(quantities.AreaValue))
+              
+    return wall_quantity_area_list
+                        
+
 
 def get_filtered_data_from_excel(excel_file):
     workbook_openpyxl = load_workbook(excel_file)
@@ -251,10 +293,10 @@ def unhide_all():
 excel_file_path = (os.path.dirname(IfcStore.path) + '\\' + (os.path.basename(IfcStore.path).replace('.ifc','.xlsx')) )
 
 #1 export the excel first
-write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
+#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
 
 #2 check if excel is running and saved before using this function
-#select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path )   
+select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)   
 
 #reset hide isolate
 #unhide_all()
