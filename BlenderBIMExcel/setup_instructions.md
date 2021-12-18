@@ -73,10 +73,13 @@ If we want to make everything visible again we can call the following function:
 
 ![image](https://user-images.githubusercontent.com/14906760/146615769-679d0b2d-5227-4d48-a3f6-aec06deed651.png)
 
-So we can make every Excel filter combination visible in Blender:
+So we can make every Excel filter combination visible in Blender, which could also be used for an animated timeline of the construction:
+
+![image](https://user-images.githubusercontent.com/14906760/146639418-2e6db32c-5eb2-492a-b404-a3a74ac1daa6.png)
 
 ![image](https://user-images.githubusercontent.com/14906760/146639280-f48ef78d-9a75-46a5-8c95-3e070d0d5a89.png)
 
+![image](https://user-images.githubusercontent.com/14906760/146639390-225b9586-d20c-45fd-af02-93a5d1a4c7d7.png)
 
 
 Future work for this script:
