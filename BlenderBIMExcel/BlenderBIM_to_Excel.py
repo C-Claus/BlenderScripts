@@ -23,7 +23,7 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
     header_index = 2
    
     #worksheet_xlsx.autofilter('A1:O + str(len(products)) )
-    worksheet_xlsx.add_table('A1:O' + str(len(products)+1))
+    worksheet_xlsx.add_table('A1:P' + str(len(products)+1))
     
     
     product_entity_list = [ ['A1','GlobalId'],
@@ -40,7 +40,8 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
                             ['L1','Width'],
                             ['M1','Height'],
                             ['N1','Area'],
-                            ['O1','Volume']]
+                            ['O1','Volume'],
+                            ['P1','Perimeter']]
     
     for i, product_entity in enumerate(product_entity_list):
         worksheet_xlsx.write(product_entity[0], product_entity[1])
@@ -87,6 +88,14 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
         
         if (len(get_slab_quantities_area(ifcproduct=product))) != 0:
             worksheet_xlsx.write('N' + str(i+header_index), str(get_slab_quantities_area(ifcproduct=product)[0]))
+            
+        if (len(get_slab_quantities_perimeter(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('P' + str(i+header_index), str(get_slab_quantities_perimeter(ifcproduct=product)[0]))
+            
+        if (len(get_slab_quantities_width(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('L' + str(i+header_index), str(get_slab_quantities_width(ifcproduct=product)[0]))    
+                        
+            
         
         
             
@@ -337,6 +346,37 @@ def get_slab_quantities_area(ifcproduct):
                                 slab_quantity_area_list.append(str(quantities.AreaValue))
                                                                    
     return slab_quantity_area_list                                                                    
+    
+    
+def get_slab_quantities_perimeter(ifcproduct):
+    
+    slab_quantity_perimeter_list = []
+    
+    if ifcproduct.is_a().startswith('IfcSlab'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                         if quantities.Name == 'Perimeter':
+                            slab_quantity_perimeter_list.append(str(quantities.LengthValue))
+                                                                   
+    return slab_quantity_perimeter_list   
+
+
+def get_slab_quantities_width(ifcproduct):
+    
+    slab_quantity_width_list = []
+    
+    if ifcproduct.is_a().startswith('IfcSlab'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                         if quantities.Name == 'Width':
+                            slab_quantity_width_list.append(str(quantities.LengthValue))
+                                                                   
+    return slab_quantity_width_list    
+    
     
     
 
