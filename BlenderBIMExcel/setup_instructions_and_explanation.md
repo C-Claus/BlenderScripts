@@ -13,11 +13,14 @@ MS Excel is a widely used spreadsheet program. The idea is to bundle the possibi
 - Writing back data from Excel to IFC
 
 # Dependencies & set up instructions (Tested on Windows 10)
-- Blender 2.93
-- BlenderBIM add-on 
-- ifcopenshell
-- xlsxwriter
-- openpyxl
+
+Software/dependency | Version 
+------------ | ------------- 
+Blender | 2.93
+BlenderBIM add-on | 0.0.211117
+ifcopenshell | 
+xlsxwriter |
+openpyxl | 
 
 To install the modules in Blender navigate to
 
@@ -37,7 +40,7 @@ Importing an existing IFC using the BlenderBIM add-on:
 ![image](https://user-images.githubusercontent.com/14906760/146614060-0ffc6d3d-1b91-4da8-b971-870417135abf.png)
 
 
-The function ```#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)``` opens the IFC file and writes the IFC information to Excel and opens Excel for you.
+The function ```write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)``` opens the IFC file and writes the IFC information to Excel and opens Excel for you.
 The Excel file is saved in the same location as where you saved your .ifc file.
 
 ![image](https://user-images.githubusercontent.com/14906760/146614294-44158ef5-2cdc-4c81-bb81-718958c636fd.png)
@@ -66,13 +69,22 @@ Now we see all ```03 Metselwerk - kalkzandsteen C``` on the IfcBuildingStorey ca
 
 If we want to make everything visible again we can call the following function:
 
-```#unhide_all()```
+```unhide_all()```
 
 ![image](https://user-images.githubusercontent.com/14906760/146615769-679d0b2d-5227-4d48-a3f6-aec06deed651.png)
 
+So we can make every Excel filter combination visible in Blender, which could also be used for an animated timeline of the construction:
+
+![image](https://user-images.githubusercontent.com/14906760/146639418-2e6db32c-5eb2-492a-b404-a3a74ac1daa6.png)
+
+![image](https://user-images.githubusercontent.com/14906760/146639280-f48ef78d-9a75-46a5-8c95-3e070d0d5a89.png)
+
+![image](https://user-images.githubusercontent.com/14906760/146639390-225b9586-d20c-45fd-af02-93a5d1a4c7d7.png)
 
 
-
+Future work for this script:
+- adding a Graphical User Interface which allows the end-user control over what they want to export to MS Excel.
+- adding a column in MS excel for user defined parameters which can be written back to IFC.
 
 
 
