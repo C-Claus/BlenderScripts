@@ -19,9 +19,12 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
     
     workbook_xlsx = xlsxwriter.Workbook(excel_file)
     worksheet_xlsx = workbook_xlsx.add_worksheet('IfcProduct')
+    
+    header_index = 2
    
-    #worksheet_xlsx.autofilter('A1:J1' + str(len(products)) )
-    worksheet_xlsx.add_table('A1:M' + str(len(products)+1))
+    #worksheet_xlsx.autofilter('A1:O + str(len(products)) )
+    worksheet_xlsx.add_table('A1:O' + str(len(products)+1))
+    
     
     product_entity_list = [ ['A1','GlobalId'],
                             ['B1','IfcProduct'],
@@ -33,32 +36,43 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
                             ['H1','IsExternal'],
                             ['I1','LoadBearing'],
                             ['J1','FireRating'],
-                            ['K1', 'Length'],
-                            ['L1','Area'],
-                            ['M1','Volume']]
+                            ['K1','Length'],
+                            ['L1','Width'],
+                            ['M1','Height'],
+                            ['N1','Area'],
+                            ['O1','Volume']]
     
     for i, product_entity in enumerate(product_entity_list):
         worksheet_xlsx.write(product_entity[0], product_entity[1])
         worksheet_xlsx.set_column(i, 1, 30)
     
     for i, product in enumerate(products):
-        worksheet_xlsx.write('A' + str(i+2), str(product.GlobalId))
-        worksheet_xlsx.write('B' + str(i+2),(get_ifcproduct(ifcproduct=product)[0]))
-        worksheet_xlsx.write('C' + str(i+2),(get_ifcbuildingstorey(ifcproduct=product)[0]))
-        worksheet_xlsx.write('D' + str(i+2), str(product.Name))
-        worksheet_xlsx.write('E' + str(i+2),(get_ifcproducttype_name(ifcproduct=product)[0]))
-        worksheet_xlsx.write('F' + str(i+2),(get_classification_code(ifcproduct=product)[0]))
-        worksheet_xlsx.write('G' + str(i+2),(get_materials(ifcproduct=product)[0]))
-        worksheet_xlsx.write('H' + str(i+2),(get_isexternal(ifcproduct=product)[0][0]))
-        worksheet_xlsx.write('I' + str(i+2),(get_loadbearing(ifcproduct=product)[0][0]))
-        worksheet_xlsx.write('J' + str(i+2),(get_firerating(ifcproduct=product)[0][0]))
+        worksheet_xlsx.write('A' + str(i+header_index), str(product.GlobalId))
+        worksheet_xlsx.write('B' + str(i+header_index),(get_ifcproduct(ifcproduct=product)[0]))
+        worksheet_xlsx.write('C' + str(i+header_index),(get_ifcbuildingstorey(ifcproduct=product)[0]))
+        worksheet_xlsx.write('D' + str(i+header_index), str(product.Name))
+        worksheet_xlsx.write('E' + str(i+header_index),(get_ifcproducttype_name(ifcproduct=product)[0]))
+        worksheet_xlsx.write('F' + str(i+header_index),(get_classification_code(ifcproduct=product)[0]))
+        worksheet_xlsx.write('G' + str(i+header_index),(get_materials(ifcproduct=product)[0]))
+        worksheet_xlsx.write('H' + str(i+header_index),(get_isexternal(ifcproduct=product)[0][0]))
+        worksheet_xlsx.write('I' + str(i+header_index),(get_loadbearing(ifcproduct=product)[0][0]))
+        worksheet_xlsx.write('J' + str(i+header_index),(get_firerating(ifcproduct=product)[0][0]))
    
         
         if (len(get_wall_quantities_length(ifcproduct=product))) != 0:
-            worksheet_xlsx.write('K' + str(i+2), str(get_wall_quantities_length(ifcproduct=product)[0]))
+            worksheet_xlsx.write('K' + str(i+header_index), str(get_wall_quantities_length(ifcproduct=product)[0]))
+            
+        if (len(get_wall_quantities_width(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('L' + str(i+header_index), str(get_wall_quantities_width(ifcproduct=product)[0]))   
+            
+        if (len(get_wall_quantities_height(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('M' + str(i+header_index), str(get_wall_quantities_height(ifcproduct=product)[0]))  
             
         if (len(get_wall_quantities_area(ifcproduct=product))) != 0:
-            worksheet_xlsx.write('L' + str(i+2), str(get_wall_quantities_area(ifcproduct=product)[0]))
+            worksheet_xlsx.write('N' + str(i+header_index), str(get_wall_quantities_area(ifcproduct=product)[0]))
+            
+        if (len(get_wall_quantities_volume(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('O' + str(i+header_index), str(get_wall_quantities_volume(ifcproduct=product)[0]))
             
             
     workbook_xlsx.close()
@@ -231,6 +245,38 @@ def get_wall_quantities_length(ifcproduct):
               
     return wall_quantity_length_list
 
+def get_wall_quantities_width(ifcproduct):
+    
+    wall_quantity_width_list = []
+
+    if ifcproduct.is_a().startswith('IfcWall') or  ifcproduct.is_a().startswith('IfcWallStandardCase'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        #print (quantities.Name)
+                        if (quantities.Name) == 'Width':
+                            #print (quantities)
+                            wall_quantity_width_list.append(str(quantities.LengthValue))
+              
+    return wall_quantity_width_list
+
+def get_wall_quantities_height(ifcproduct):
+    
+    wall_quantity_height_list = []
+
+    if ifcproduct.is_a().startswith('IfcWall') or  ifcproduct.is_a().startswith('IfcWallStandardCase'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        #print (quantities.Name)
+                        if (quantities.Name) == 'Height':
+                            #print (quantities)
+                            wall_quantity_height_list.append(str(quantities.LengthValue))
+              
+    return wall_quantity_height_list
+
 
 def get_wall_quantities_area(ifcproduct):
     
@@ -246,7 +292,20 @@ def get_wall_quantities_area(ifcproduct):
               
     return wall_quantity_area_list
                         
+def get_wall_quantities_volume(ifcproduct):
+    
+    wall_quantity_volume_list = []
 
+    if ifcproduct.is_a().startswith('IfcWall') or  ifcproduct.is_a().startswith('IfcWallStandardCase'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        print ('i',quantities)
+                        if (quantities.Name) == 'Net Volume':
+                            wall_quantity_volume_list.append(str(quantities.VolumeValue))
+              
+    return wall_quantity_volume_list
 
 def get_filtered_data_from_excel(excel_file):
     workbook_openpyxl = load_workbook(excel_file)
@@ -293,10 +352,10 @@ def unhide_all():
 excel_file_path = (os.path.dirname(IfcStore.path) + '\\' + (os.path.basename(IfcStore.path).replace('.ifc','.xlsx')) )
 
 #1 export the excel first
-#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
+write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
 
 #2 check if excel is running and saved before using this function
-select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)   
+#select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)   
 
 #reset hide isolate
 #unhide_all()
