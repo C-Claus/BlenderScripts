@@ -85,7 +85,8 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
         ####################################### IfcSlab BaseQuantities ###########################################
         ##########################################################################################################
         
-        #perimeter, area, volume
+        if (len(get_slab_quantities_area(ifcproduct=product))) != 0:
+            worksheet_xlsx.write('N' + str(i+header_index), str(get_slab_quantities_area(ifcproduct=product)[0]))
         
         
             
@@ -303,7 +304,7 @@ def get_wall_quantities_area(ifcproduct):
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        if (quantities.Name) == 'NetSideArea':
+                         if quantities.Name == 'NetArea' or (quantities.Name) == 'NetSideArea':
                             wall_quantity_area_list.append(str(quantities.AreaValue))
               
     return wall_quantity_area_list
@@ -317,11 +318,27 @@ def get_wall_quantities_volume(ifcproduct):
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        print ('i',quantities)
                         if (quantities.Name) == 'Net Volume':
                             wall_quantity_volume_list.append(str(quantities.VolumeValue))
               
     return wall_quantity_volume_list
+
+
+def get_slab_quantities_area(ifcproduct):
+    
+    slab_quantity_area_list = []
+    
+    if ifcproduct.is_a().startswith('IfcSlab'):
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                         if quantities.Name == 'NetArea' or (quantities.Name) == 'NetSideArea':
+                                slab_quantity_area_list.append(str(quantities.AreaValue))
+                                                                   
+    return slab_quantity_area_list                                                                    
+    
+    
 
 def get_filtered_data_from_excel(excel_file):
     workbook_openpyxl = load_workbook(excel_file)
@@ -368,21 +385,18 @@ def unhide_all():
 excel_file_path = (os.path.dirname(IfcStore.path) + '\\' + (os.path.basename(IfcStore.path).replace('.ifc','.xlsx')) )
 
 #1 export the excel first
-write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
+#write_to_excel_from_ifc(ifc_file=IfcStore.path, excel_file=excel_file_path)
 
 #2 check if excel is running and saved before using this function
-#select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)   
+select_IFC_elements_in_blender(guid_list=get_filtered_data_from_excel(excel_file=excel_file_path), excel_file=excel_file_path)   
 
 #reset hide isolate
 #unhide_all()
 
 #mini backlog
-#0. remove spatial elements to another column ifcbuildingstorey
-#1. export propertyset to a sheet
-#2. export materials to a sheet
-#3. export quantities to a sheet
-#4. find out how to bundle python dependencies in a blender add-on
-#5. small user interface with pyqt or blender
-#6. check if excel is installed on the system or running
-#7. refactor function write_to_excel()
-#8. write back data from excel into ifc
+
+#1. find out how to bundle python dependencies in a blender add-on
+#2. small user interface with pyqt or blender
+#3. check if excel is installed on the system or running
+#4. refactor function write_to_excel() with pandas module
+#5. write back data from excel into ifc
