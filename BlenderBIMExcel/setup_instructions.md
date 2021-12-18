@@ -73,6 +73,10 @@ If we want to make everything visible again we can call the following function:
 
 ![image](https://user-images.githubusercontent.com/14906760/146615769-679d0b2d-5227-4d48-a3f6-aec06deed651.png)
 
+So we can make every Excel filter combination visible in Blender:
+
+![image](https://user-images.githubusercontent.com/14906760/146639280-f48ef78d-9a75-46a5-8c95-3e070d0d5a89.png)
+
 
 
 Future work for this script:
