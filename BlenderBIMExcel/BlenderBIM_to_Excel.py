@@ -57,7 +57,11 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
         worksheet_xlsx.write('H' + str(i+header_index),(get_isexternal(ifcproduct=product)[0][0]))
         worksheet_xlsx.write('I' + str(i+header_index),(get_loadbearing(ifcproduct=product)[0][0]))
         worksheet_xlsx.write('J' + str(i+header_index),(get_firerating(ifcproduct=product)[0][0]))
-   
+        
+        
+        ##########################################################################################################
+        ####################################### IfcWall BaseQuantities ###########################################
+        ##########################################################################################################
         
         if (len(get_wall_quantities_length(ifcproduct=product))) != 0:
             worksheet_xlsx.write('K' + str(i+header_index), str(get_wall_quantities_length(ifcproduct=product)[0]))
@@ -73,6 +77,21 @@ def write_to_excel_from_ifc(ifc_file,excel_file):
             
         if (len(get_wall_quantities_volume(ifcproduct=product))) != 0:
             worksheet_xlsx.write('O' + str(i+header_index), str(get_wall_quantities_volume(ifcproduct=product)[0]))
+            
+            
+            
+            
+        ##########################################################################################################
+        ####################################### IfcSlab BaseQuantities ###########################################
+        ##########################################################################################################
+        
+        #perimeter, area, volume
+        
+        
+            
+            
+            
+            
             
             
     workbook_xlsx.close()
@@ -231,6 +250,7 @@ def get_firerating(ifcproduct):
                          
     return [fire_rating_list]
 
+
 def get_wall_quantities_length(ifcproduct):
     
     wall_quantity_length_list = []
@@ -254,9 +274,7 @@ def get_wall_quantities_width(ifcproduct):
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        #print (quantities.Name)
                         if (quantities.Name) == 'Width':
-                            #print (quantities)
                             wall_quantity_width_list.append(str(quantities.LengthValue))
               
     return wall_quantity_width_list
@@ -270,9 +288,7 @@ def get_wall_quantities_height(ifcproduct):
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        #print (quantities.Name)
                         if (quantities.Name) == 'Height':
-                            #print (quantities)
                             wall_quantity_height_list.append(str(quantities.LengthValue))
               
     return wall_quantity_height_list
