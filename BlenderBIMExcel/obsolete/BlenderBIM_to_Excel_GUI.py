@@ -4,6 +4,7 @@ sys.path.append('C:\Python 39\Lib\site-packages')
 
 import bpy
 import logging
+
 import blenderbim.bim.import_ifc
 from blenderbim.bim.ifc import IfcStore
 import blenderbim.tool as tool
@@ -60,16 +61,23 @@ class ExportWindow(QMainWindow, QWidget):
     def open_excel(self):
         print("Open Excel")
         
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_name, _ = QFileDialog.getOpenFileName(self,"-", IfcStore.path,"All Files (*);;Excel Files (*.xlsx)", options=options)
+        if file_name:
+            print(file_name)
+     
+            #file_name = QFileDialog.getOpenFileName(self, 'Open file', str(IfcStore.path))
         
-        file_name = QFileDialog.getOpenFileName(self, 'Open file', str(IfcStore.path))
+            global excel_file
+            excel_file = file_name
+            os.startfile(file_name)
+            self.button_filter.setEnabled(True)
         
-        global excel_file
-        excel_file = file_name[0]
-        os.startfile(file_name[0])
-        self.button_filter.setEnabled(True)
-        
-        self.button_filter.clicked.connect(self.get_filtered_data_from_excel)
-        
+            self.button_filter.clicked.connect(self.get_filtered_data_from_excel)
+            
+            
+        """
         #os.startfile(str(IfcStore.path))
         
         #if file_name[0] is not None:
@@ -85,6 +93,7 @@ class ExportWindow(QMainWindow, QWidget):
             #button_filter.setGeometry(0, 560, 350, 40)
             #button_filter.clicked.connect(self.get_filtered_data_from_excel()
             
+        """
             
  
     def get_filtered_data_from_excel(self):
@@ -104,13 +113,16 @@ class ExportWindow(QMainWindow, QWidget):
               
               
               
-        print (global_id_filtered_list)
+        print (global_id_filtered_list[1:])
         
-
+        for guid in global_id_filtered_list[1:]:
+            bpy.ops.bim.select_global_id(global_id=guid)
+        
+        """
         #blender crasht hierop
-        #print (bpy.context.screen)
+        print (dir(bpy.context.screen))
         
-        """    
+        
         outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
         outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
         
@@ -126,8 +138,8 @@ class ExportWindow(QMainWindow, QWidget):
             obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list
 
         bpy.ops.object.select_all(action='SELECT')
-        
         """
+    
           
           
                 
