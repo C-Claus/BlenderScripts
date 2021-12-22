@@ -27,7 +27,7 @@ class WriteToExcel(bpy.types.Operator):
 
 class OpenExcelFile(bpy.types.Operator, ImportHelper):
     """Open an existing Excel file"""
-    bl_idname = "object.simple_operator"
+    bl_idname = "object.open_excel"
     bl_label = "Open Excel"
     
     filter_glob: StringProperty(
@@ -57,6 +57,19 @@ class OpenExcelFile(bpy.types.Operator, ImportHelper):
         
         return {'FINISHED'}
     
+class ShowExcelFile(bpy.types.Operator):
+    """Show Excel file"""
+    bl_idname = "object.show_excel"
+    bl_label = "Show Path to Excel file"
+
+
+    def execute(self, context):
+        print("Show Excel")
+        
+    
+        return {'FINISHED'}
+    
+    
 class FilterIFCElements(bpy.types.Operator):
     """Show the IFC elements you filtered in Excel"""
     bl_idname = "object.filter_ifc_elements"
@@ -66,7 +79,7 @@ class FilterIFCElements(bpy.types.Operator):
     def execute(self, context):
         print("filter IFC elements")
         
-        print (excel_file)
+        #excel_file = None   
         
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl['IfcProduct'] 
@@ -129,12 +142,23 @@ class BlenderBIMExcelPanel(bpy.types.Panel):
 
     def draw(self, context):
         
+    
+       
+        
+        
         
         self.layout.operator(WriteToExcel.bl_idname, text="Write to Excel", icon="FILE")
         self.layout.operator(OpenExcelFile.bl_idname, text="Open Excel File", icon="FILE_FOLDER")
         
+        
+        
+        self.layout.label(text="File location: {}".format(excel_file))
+        
+      
+        #self.layout.operator(OpenExcelFile.bl_idname, text="Open Excel folder location", icon="FILE_FOLDER")
+        
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
-        #self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LAMP")
+        self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
         
         
         # Tip : enable Icon Viewer addon to have a list of available icons
@@ -145,6 +169,7 @@ class BlenderBIMExcelPanel(bpy.types.Panel):
 def register():
     bpy.utils.register_class(WriteToExcel)
     bpy.utils.register_class(OpenExcelFile)
+    bpy.utils.register_class(ShowExcelFile)
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
     bpy.utils.register_class(BlenderBIMExcelPanel)
@@ -153,6 +178,7 @@ def register():
 def unregister(): 
     bpy.utils.unregister_class(WriteToExcel)
     bpy.utils.unregister_class(OpenExcelFile)
+    bpy.utils.unregister_class(ShowExcelFile)
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
     bpy.utils.unregister_class(BlenderBIMExcelPanel)
