@@ -29,25 +29,35 @@ class WriteToExcel(bpy.types.Operator):
         sheet_name_custom = 'IfcProduct'
         
         global_id_list = []
-        product_type_list = []
-        product_name_list = []
+        ifc_product_type_list = []
+        ifc_product_name_list = []
         ifc_building_storey_list = []
+        ifc_classification_list = []
+        ifc_materials_list = []
+        ifc_isexternal_list = []
+        ifc_loadbearing_list = []
+        ifc_firerating_list = []
+        
         
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx')   
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
         
-        for i, product in enumerate(products):
+        for product in products:
             global_id_list.append(product.GlobalId)
-            product_type_list.append(str(product.is_a()))
-            product_name_list.append(str(product.Name))
+            ifc_product_type_list.append(str(product.is_a()))
+            ifc_product_name_list.append(str(product.Name))
             ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
+            ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
+            ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
             
         ifc_dictionary['GlobalId'] = global_id_list
-        ifc_dictionary['IfcProduct'] = product_type_list
-        ifc_dictionary['Name'] = product_name_list
+        ifc_dictionary['IfcProduct'] = ifc_product_type_list
+        ifc_dictionary['Name'] = ifc_product_name_list
         ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
+        ifc_dictionary['Classification'] = ifc_classification_list
+        ifc_dictionary['Materials'] = ifc_materials_list
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -99,6 +109,60 @@ class WriteToExcel(bpy.types.Operator):
             building_storey_list.append('N/A')
              
         return building_storey_list 
+    
+    def get_classification_code(self, context, ifcproduct):
+    
+        #Classifications of an object may be referenced from an external source rather than being
+        #contained within the IFC model. This is done through the IfcClassificationReference class.
+        
+        assembly_code_list = []
+
+        if ifcproduct.HasAssociations:
+            if ifcproduct.HasAssociations[0].is_a() == 'IfcRelAssociatesClassification':
+                assembly_code_list.append(ifcproduct.HasAssociations[0].RelatingClassification.ItemReference)
+                
+            if ifcproduct.HasAssociations[0].is_a() == 'IfcRelAssociatesMaterial':
+                for i in ifcproduct.HasAssociations:
+                    if i.is_a() == 'IfcRelAssociatesClassification' :
+                        assembly_code_list.append(i.RelatingClassification.ItemReference)
+                
+                                               
+        if len(assembly_code_list) == 0:
+            assembly_code_list.append('N/A')
+            
+        if assembly_code_list[0] == None:
+            assembly_code_list.append('N/A')
+            
+        return assembly_code_list
+    
+    def get_materials(self, context, ifcproduct):
+        
+        material_list = []
+        
+        if ifcproduct.HasAssociations:
+            for i in ifcproduct.HasAssociations:
+                if i.is_a('IfcRelAssociatesMaterial'):
+                    
+                    if i.RelatingMaterial.is_a('IfcMaterial'):
+                        material_list.append(i.RelatingMaterial.Name)
+                       
+                    if i.RelatingMaterial.is_a('IfcMaterialList'):
+                        for materials in i.RelatingMaterial.Materials:
+                            material_list.append(materials.Name)
+                             
+                    if i.RelatingMaterial.is_a('IfcMaterialLayerSetUsage'):
+                        for materials in i.RelatingMaterial.ForLayerSet.MaterialLayers:
+                            material_list.append(materials.Material.Name)
+                            
+                    else:
+                        pass
+                          
+        if len(material_list) == 0:
+            material_list.append('N/A')
+           
+        joined_material_list = ' | '.join(material_list)
+                             
+        return [joined_material_list] 
         
     
 
