@@ -39,6 +39,9 @@ class WriteToExcel(bpy.types.Operator):
         ifc_firerating_list = []
         
         ifc_quantities_length_list = []
+        ifc_quantities_width_list = []
+        ifc_quantities_height_list = []
+        ifc_quantities_area_list = []
         
         global excel_file
         
@@ -59,6 +62,9 @@ class WriteToExcel(bpy.types.Operator):
             ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
             
             ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product))
+            ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
+            ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
+            #ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product))
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
@@ -70,7 +76,9 @@ class WriteToExcel(bpy.types.Operator):
         ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
         ifc_dictionary['FireRating'] = ifc_firerating_list
         ifc_dictionary['Length'] = ifc_quantities_length_list
-        
+        ifc_dictionary['Width'] = ifc_quantities_width_list
+        ifc_dictionary['Height'] = ifc_quantities_height_list
+        #ifc_dictionary['Area'] = ifc_quantities_area_list
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -247,7 +255,48 @@ class WriteToExcel(bpy.types.Operator):
                             quantity_length_list.append(str(quantities.LengthValue))
                   
         return quantity_length_list
-            
+    
+    
+    def get_quantities_width(self, context, ifcproduct):
+    
+        quantity_width_list = []
+
+        
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'Width':
+                            quantity_width_list.append(str(quantities.LengthValue))
+                  
+        return quantity_width_list
+    
+    def get_quantities_height(self, context, ifcproduct):
+    
+        quantity_height_list = []
+
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'Height':
+                            quantity_height_list.append(str(quantities.LengthValue))
+              
+        return quantity_height_list
+    
+    def get_quantities_area(ifcproduct):
+    
+        quantity_area_list = []
+
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                         if quantities.Name == 'NetArea'  or (quantities.Name) == 'NetSideArea':
+                            quantity_area_list.append(str(quantities.AreaValue))
+                  
+        return [quantity_area_list]
+                
     
 
 
