@@ -38,6 +38,7 @@ class WriteToExcel(bpy.types.Operator):
         ifc_loadbearing_list = []
         ifc_firerating_list = []
         
+        global excel_file
         
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx')   
         ifc_file = ifcopenshell.open(IfcStore.path)
@@ -51,6 +52,9 @@ class WriteToExcel(bpy.types.Operator):
             ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
             ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
             ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
+            ifc_isexternal_list.append(self.get_isexternal(context, ifcproduct=product)[0])
+            ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
+            ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
@@ -58,6 +62,10 @@ class WriteToExcel(bpy.types.Operator):
         ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
         ifc_dictionary['Classification'] = ifc_classification_list
         ifc_dictionary['Materials'] = ifc_materials_list
+        ifc_dictionary['IsExternal'] = ifc_isexternal_list
+        ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
+        ifc_dictionary['FireRating'] = ifc_firerating_list
+        
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -163,6 +171,63 @@ class WriteToExcel(bpy.types.Operator):
         joined_material_list = ' | '.join(material_list)
                              
         return [joined_material_list] 
+    
+    def get_isexternal(self, context, ifcproduct):
+        
+        externality_list = []
+     
+        if ifcproduct.IsDefinedBy:
+            if ifcproduct.IsDefinedBy[0]:
+                if ifcproduct.IsDefinedBy[0].is_a() == 'IfcRelDefinesByProperties':
+                    if ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
+                        for ifcproperty in ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.HasProperties:
+                            if ifcproperty.Name == 'IsExternal':
+                                #externality_list.append(ifcproperty.Name)
+                                externality_list.append(ifcproperty.NominalValue[0])
+                            else:
+                                pass
+                                        
+        if len(externality_list) == 0:
+            externality_list.append('N/A')  
+
+        return [externality_list]
+    
+    def get_loadbearing(self, context,ifcproduct):
+        load_bearing_list = []
+        
+        if ifcproduct.IsDefinedBy:
+            if ifcproduct.IsDefinedBy[0]:
+                if ifcproduct.IsDefinedBy[0].is_a() == 'IfcRelDefinesByProperties':
+                    if ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
+                        for ifcproperty in ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.HasProperties:
+                            if ifcproperty.Name == 'LoadBearing':
+                                load_bearing_list.append(ifcproperty.NominalValue[0])
+                            else:
+                                pass
+                                        
+        if len(load_bearing_list) == 0:
+            load_bearing_list.append('N/A')
+                             
+        return [load_bearing_list]
+    
+    def get_firerating(self, context, ifcproduct):
+        fire_rating_list = []    
+        
+        if ifcproduct.IsDefinedBy:
+            if ifcproduct.IsDefinedBy[0]:
+                if ifcproduct.IsDefinedBy[0].is_a() == 'IfcRelDefinesByProperties':
+                    if ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
+                        for ifcproperty in ifcproduct.IsDefinedBy[0].RelatingPropertyDefinition.HasProperties:
+                            if ifcproperty.Name == 'FireRating':
+                                fire_rating_list.append(ifcproperty.Name)
+                                fire_rating_list.append(ifcproperty.NominalValue[0])
+                            else:
+                                pass
+                                        
+        if len(fire_rating_list) == 0:
+            fire_rating_list.append('N/A')
+                             
+        return [fire_rating_list]
         
     
 
