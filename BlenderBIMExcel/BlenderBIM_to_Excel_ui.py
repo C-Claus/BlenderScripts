@@ -42,6 +42,8 @@ class WriteToExcel(bpy.types.Operator):
         ifc_quantities_width_list = []
         ifc_quantities_height_list = []
         ifc_quantities_area_list = []
+        ifc_quantities_volume_list = []
+        ifc_quantities_perimeter_list = []
         
         global excel_file
         
@@ -65,6 +67,8 @@ class WriteToExcel(bpy.types.Operator):
             ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
             ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
             ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product))
+            ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product))
+            ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product))
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
@@ -79,6 +83,8 @@ class WriteToExcel(bpy.types.Operator):
         ifc_dictionary['Width'] = ifc_quantities_width_list
         ifc_dictionary['Height'] = ifc_quantities_height_list
         ifc_dictionary['Area'] = ifc_quantities_area_list
+        ifc_dictionary['Volume'] = ifc_quantities_volume_list
+        ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -296,6 +302,33 @@ class WriteToExcel(bpy.types.Operator):
                             quantity_area_list.append(str(quantities.AreaValue))
                   
         return quantity_area_list
+    
+    def get_quantities_volume(self, context,ifcproduct):
+    
+        quantity_volume_list = []
+
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'Net Volume':
+                            quantity_volume_list.append(str(quantities.VolumeValue))
+          
+        return quantity_volume_list
+    
+    def get_quantities_perimeter(self, context, ifcproduct):
+    
+        quantity_perimeter_list = []
+        
+        if ifcproduct.is_a().startswith('IfcSlab'):
+            for properties in ifcproduct.IsDefinedBy:
+                if properties.is_a('IfcRelDefinesByProperties'):
+                    if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                        for quantities in properties.RelatingPropertyDefinition.Quantities:
+                             if quantities.Name == 'Perimeter':
+                                quantity_perimeter_list.append(str(quantities.LengthValue))
+                                                                       
+        return quantity_perimeter_list   
                 
     
 
