@@ -64,7 +64,7 @@ class WriteToExcel(bpy.types.Operator):
             ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product))
             ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
             ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
-            #ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product))
+            ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product))
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
@@ -78,7 +78,7 @@ class WriteToExcel(bpy.types.Operator):
         ifc_dictionary['Length'] = ifc_quantities_length_list
         ifc_dictionary['Width'] = ifc_quantities_width_list
         ifc_dictionary['Height'] = ifc_quantities_height_list
-        #ifc_dictionary['Area'] = ifc_quantities_area_list
+        ifc_dictionary['Area'] = ifc_quantities_area_list
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -284,7 +284,7 @@ class WriteToExcel(bpy.types.Operator):
               
         return quantity_height_list
     
-    def get_quantities_area(ifcproduct):
+    def get_quantities_area(self, context, ifcproduct):
     
         quantity_area_list = []
 
@@ -295,7 +295,7 @@ class WriteToExcel(bpy.types.Operator):
                          if quantities.Name == 'NetArea'  or (quantities.Name) == 'NetSideArea':
                             quantity_area_list.append(str(quantities.AreaValue))
                   
-        return [quantity_area_list]
+        return quantity_area_list
                 
     
 
