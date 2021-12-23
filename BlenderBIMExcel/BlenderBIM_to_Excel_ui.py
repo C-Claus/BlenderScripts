@@ -38,6 +38,8 @@ class WriteToExcel(bpy.types.Operator):
         ifc_loadbearing_list = []
         ifc_firerating_list = []
         
+        ifc_quantities_length_list = []
+        
         global excel_file
         
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx')   
@@ -56,6 +58,8 @@ class WriteToExcel(bpy.types.Operator):
             ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
             ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
             
+            ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product))
+            
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
         ifc_dictionary['Name'] = ifc_product_name_list
@@ -65,6 +69,7 @@ class WriteToExcel(bpy.types.Operator):
         ifc_dictionary['IsExternal'] = ifc_isexternal_list
         ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
         ifc_dictionary['FireRating'] = ifc_firerating_list
+        ifc_dictionary['Length'] = ifc_quantities_length_list
         
             
          
@@ -228,7 +233,21 @@ class WriteToExcel(bpy.types.Operator):
             fire_rating_list.append('N/A')
                              
         return [fire_rating_list]
+    
+    def get_quantities_length(self, context, ifcproduct):
+    
+        quantity_length_list = []
+
         
+        for properties in ifcproduct.IsDefinedBy:
+            if properties.is_a('IfcRelDefinesByProperties'):
+                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
+                    for quantities in properties.RelatingPropertyDefinition.Quantities:
+                        if (quantities.Name) == 'Length':
+                            quantity_length_list.append(str(quantities.LengthValue))
+                  
+        return quantity_length_list
+            
     
 
 
