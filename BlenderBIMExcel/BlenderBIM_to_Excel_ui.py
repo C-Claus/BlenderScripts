@@ -26,10 +26,12 @@ class WriteToExcel(bpy.types.Operator):
         
         header_index = 2
         ifc_dictionary = {}
+        sheet_name_custom = 'IfcProduct'
         
         global_id_list = []
         product_type_list = []
         product_name_list = []
+        ifc_building_storey_list = []
         
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx')   
         ifc_file = ifcopenshell.open(IfcStore.path)
@@ -40,19 +42,21 @@ class WriteToExcel(bpy.types.Operator):
             global_id_list.append(product.GlobalId)
             product_type_list.append(str(product.is_a()))
             product_name_list.append(str(product.Name))
+            ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = product_type_list
         ifc_dictionary['Name'] = product_name_list
+        ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
             
          
         df = pd.DataFrame(ifc_dictionary)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
     
-        df.to_excel(writer, sheet_name='Sheet1', startrow=1, header=False, index=False)
+        df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
         
         workbook  = writer.book
-        worksheet = writer.sheets['Sheet1']
+        worksheet = writer.sheets[sheet_name_custom]
         
         
         (max_row, max_col) = df.shape
@@ -66,7 +70,7 @@ class WriteToExcel(bpy.types.Operator):
         worksheet.add_table(0, 0, max_row, max_col - 1, {'columns': column_settings})
 
         # Make the columns wider for clarity.
-        worksheet.set_column(0, max_col - 1, 12)
+        worksheet.set_column(0, max_col - 1, 30)
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
@@ -74,6 +78,29 @@ class WriteToExcel(bpy.types.Operator):
         
     
         return {'FINISHED'}
+    
+    def get_ifcbuildingstorey(self, context, ifcproduct):
+        building_storey_list = []
+         
+        try:
+            if ifcproduct:
+                if ifcproduct.ContainedInStructure:            
+                    if ifcproduct.ContainedInStructure[0].RelatingStructure.is_a() == 'IfcBuildingStorey':
+                        building_storey_list.append(ifcproduct.ContainedInStructure[0].RelatingStructure.Name)
+        except:
+            pass
+        else:
+            pass
+
+        #IfcOpeningElement should not be linked directly to the spatial structure of the project,
+        #i.e. the inverse relationship ContainedInStructure shall be NIL.
+        #It is assigned to the spatial structure through the elements it penetrates.
+        if len(building_storey_list) == 0:
+            building_storey_list.append('N/A')
+             
+        return building_storey_list 
+        
+    
 
 
 
