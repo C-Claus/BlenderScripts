@@ -31,6 +31,7 @@ class WriteToExcel(bpy.types.Operator):
         global_id_list = []
         ifc_product_type_list = []
         ifc_product_name_list = []
+        ifc_product_type_name_list = []
         ifc_building_storey_list = []
         ifc_classification_list = []
         ifc_materials_list = []
@@ -56,6 +57,7 @@ class WriteToExcel(bpy.types.Operator):
             global_id_list.append(product.GlobalId)
             ifc_product_type_list.append(str(product.is_a()))
             ifc_product_name_list.append(str(product.Name))
+            ifc_product_type_name_list.append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
             ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
             ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
@@ -72,8 +74,9 @@ class WriteToExcel(bpy.types.Operator):
             
         ifc_dictionary['GlobalId'] = global_id_list
         ifc_dictionary['IfcProduct'] = ifc_product_type_list
-        ifc_dictionary['Name'] = ifc_product_name_list
         ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
+        ifc_dictionary['Name'] = ifc_product_name_list
+        ifc_dictionary['Type'] = ifc_product_type_name_list
         ifc_dictionary['Classification'] = ifc_classification_list
         ifc_dictionary['Materials'] = ifc_materials_list
         ifc_dictionary['IsExternal'] = ifc_isexternal_list
@@ -115,6 +118,21 @@ class WriteToExcel(bpy.types.Operator):
         
     
         return {'FINISHED'}
+    
+    def get_ifcproducttype_name(self, context, ifcproduct):
+        
+        type_name_list = []
+        
+        if ifcproduct:
+            type_name_list.append(ifcproduct.ObjectType)
+            
+        if len(type_name_list) == 0:
+            type_name_list.append('N/A')
+            
+        if type_name_list[0] == None:
+            type_name_list.append('N/A')
+        
+        return type_name_list
     
     def get_ifcbuildingstorey(self, context, ifcproduct):
         building_storey_list = []
