@@ -1,4 +1,8 @@
 # BlenderBIM Excel
+This script requires the BlenderBIM add-on to be installed first.
+
+Get it here:
+https://blenderbim.org/
 
 # Summary
 This is a proof of concept Python script which explores the possibilities of extracting useful information from an IFC. 
@@ -10,7 +14,7 @@ IFC is a very useful open standard for exchanging Building Information. BlenderB
 MS Excel is a widely used spreadsheet program. The idea is to bundle the possibilities of MS Excel with BlenderBIM add-on . This way the end user can experience a fast workflow to do the following tasks:
 - Checking IFC according to the IDM
 - Creating schedules in Excel from IFC
-- Writing back data from Excel to IFC
+
 
 # Dependencies & set up instructions (Tested on Windows 10)
 
@@ -19,8 +23,9 @@ Software/dependency | Version
 Blender | 2.93
 BlenderBIM add-on | 0.0.211117
 ifcopenshell | 
-xlsxwriter |
-openpyxl | 
+xlsxwriter | 1.2.9
+openpyxl | 3.0.9
+pandas | 1.3.4
 
 To install the modules in Blender navigate to
 
