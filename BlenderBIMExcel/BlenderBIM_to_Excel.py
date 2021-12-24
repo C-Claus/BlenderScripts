@@ -1,4 +1,18 @@
+bl_info = {
+    "name": "BlenderBIM Excel",
+    "author": "Coen Claus",
+    "version": (1, 0, 2),
+    "blender": (2, 93, 6),
+    "location": "Tools",
+    "description": "BlenderBIM Excel",
+    "warning": "Requires installation of dependencies",
+    "support": "COMMUNITY",
+    }
+    
+
 import os
+import sys
+import subprocess
 import bpy
 from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper 
@@ -15,6 +29,32 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
+
+
+
+
+"""
+py_exec = str(sys.executable)
+
+subprocess.call([py_exec, "-m", "ensurepip", "--user" ])
+
+# update pip (not mandatory but highly recommended)
+#subprocess.call([py_exec, "-m", "pip", "install", "--upgrade", "pip" ])
+
+# install packages
+subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "pandas"])
+subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
+subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "openpyxl"])
+"""
+
+total_objects='=IF(SUBTOTAL(103,$A:$A)=2,SUBTOTAL(103,$A:$A)-1&" object",SUBTOTAL(103,$A:$A)-1&" objecten")'
+total_length='=TEXT(SUBTOTAL(9,OFFSET(G$3,0,0,COUNTA($A:$A),1)),"#.###,000")&" mm"'
+#total_area='=TEXT(SUBTOTAL(9,OFFSET(J$3,0,0,COUNTA($A:$A),1)),"#.###,000")&" m2"'
+#total_area='SUBTOTAL(109,N3:N500)'
+total_volume='=TEXT(SUBTOTAL(9,OFFSET(K$3,0,0,COUNTA($A:$A),1)),"#.###,000")&" m3"'
+
+
+
 class WriteToExcel(bpy.types.Operator):
     """Write IFC data to Excel"""
     bl_idname = "object.write_to_excel"
@@ -24,7 +64,7 @@ class WriteToExcel(bpy.types.Operator):
     def execute(self, context):
         print("Write to Excel")
         
-        header_index = 2
+        #header_index = 3
         ifc_dictionary = {}
         sheet_name_custom = 'IfcProduct'
         
@@ -52,6 +92,10 @@ class WriteToExcel(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
+     
+        
+        
+        
         
         for product in products:
             global_id_list.append(product.GlobalId)
@@ -68,8 +112,10 @@ class WriteToExcel(bpy.types.Operator):
             ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product))
             ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
             ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
-            ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product))
-            ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product))
+            
+            #if len(self.get_quantities_area(context, ifcproduct=product)) == 1:
+            ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
+            ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product)[0])
             ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product))
             
         ifc_dictionary['GlobalId'] = global_id_list
@@ -107,10 +153,18 @@ class WriteToExcel(bpy.types.Operator):
             column_settings.append({'header': header})
 
         # Add the table.
-        worksheet.add_table(0, 0, max_row, max_col - 1, {'columns': column_settings})
+        worksheet.add_table(1, 0, max_row, max_col - 1, {'columns': column_settings})
 
         # Make the columns wider for clarity.
         worksheet.set_column(0, max_col - 1, 30)
+        
+        
+        total_area='=SUBTOTAL(109,N3:N' + str(len(products)) + ')'
+        total_volume='=SUBTOTAL(109,O3:O' + str(len(products)) + ')'
+        
+        #worksheet.write_formula('A1', total_objects)
+        worksheet.write_formula('N1', total_area)
+        worksheet.write_formula('O1', total_volume)
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
@@ -316,8 +370,11 @@ class WriteToExcel(bpy.types.Operator):
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                         if quantities.Name == 'NetArea'  or (quantities.Name) == 'NetSideArea':
-                            quantity_area_list.append(str(quantities.AreaValue))
+                         if quantities.Name == 'NetArea' or (quantities.Name) == 'NetSideArea':
+                            quantity_area_list.append(float(quantities.AreaValue))
+                            
+        if len(quantity_area_list) == 0:
+            quantity_area_list.append(None)                
                   
         return quantity_area_list
     
@@ -330,7 +387,10 @@ class WriteToExcel(bpy.types.Operator):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Net Volume':
-                            quantity_volume_list.append(str(quantities.VolumeValue))
+                            quantity_volume_list.append(float(quantities.VolumeValue))
+                            
+        if len(quantity_volume_list) == 0:
+            quantity_volume_list.append(None) 
           
         return quantity_volume_list
     
