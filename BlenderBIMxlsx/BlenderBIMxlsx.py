@@ -31,14 +31,14 @@ import ifcopenshell
 
 
 
-class WriteToExcel(bpy.types.Operator):
-    """Write IFC data to Excel"""
-    bl_idname = "object.write_to_excel"
+class WriteToXLSX(bpy.types.Operator):
+    """Write IFC data to .xlsx"""
+    bl_idname = "object.write_to_xlsx"
     bl_label = "Simple Object Operator"
 
 
     def execute(self, context):
-        print("Write to Excel")
+        print("Write to .xlsx")
    
         ifc_dictionary = {}
         sheet_name_custom = 'IfcProduct'
@@ -383,7 +383,7 @@ class WriteToExcel(bpy.types.Operator):
 
 
 
-class OpenExcelFile(bpy.types.Operator, ImportHelper):
+class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     """Open an existing Excel file"""
     bl_idname = "object.open_excel"
     bl_label = "Open Excel"
@@ -405,7 +405,7 @@ class OpenExcelFile(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         
-        print("Open Excel")
+        print("Open .xlsx file")
         
         filename, extension = os.path.splitext(self.filepath)
         
@@ -418,17 +418,6 @@ class OpenExcelFile(bpy.types.Operator, ImportHelper):
         
         return {'FINISHED'}
     
-class ShowExcelFile(bpy.types.Operator):
-    """Show Excel file"""
-    bl_idname = "object.show_excel"
-    bl_label = "Show Path to Excel file"
-    
-    filepath:bpy.props.StringProperty(subtype="FILE_PATH")
-
-    def execute(self, context):
-        print("Show Excel")
-        
-        return {'FINISHED'}
     
     
 class FilterIFCElements(bpy.types.Operator):
@@ -514,8 +503,8 @@ class BlenderBIMExcelPanel(bpy.types.Panel):
      
         
         
-        self.layout.operator(WriteToExcel.bl_idname, text="Write to Excel", icon="FILE")
-        self.layout.operator(OpenExcelFile.bl_idname, text="Open Excel File", icon="FILE_FOLDER")
+        self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
+        self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
 
@@ -542,21 +531,18 @@ def register():
         default = True)      
         
         
-        
-        
+           
             
-    bpy.utils.register_class(WriteToExcel)
-    bpy.utils.register_class(OpenExcelFile)
-    bpy.utils.register_class(ShowExcelFile)
+    bpy.utils.register_class(WriteToXLSX)
+    bpy.utils.register_class(OpenXLSXFile)
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
     bpy.utils.register_class(BlenderBIMExcelPanel)
 
 
 def unregister(): 
-    bpy.utils.unregister_class(WriteToExcel)
-    bpy.utils.unregister_class(OpenExcelFile)
-    bpy.utils.unregister_class(ShowExcelFile)
+    bpy.utils.unregister_class(WriteToXLSX)
+    bpy.utils.unregister_class(OpenXLSXFile)
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
     bpy.utils.unregister_class(BlenderBIMExcelPanel)
