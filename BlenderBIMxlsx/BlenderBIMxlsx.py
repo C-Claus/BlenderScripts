@@ -1,11 +1,11 @@
 bl_info = {
-    "name": "BlenderBIM Excel",
+    "name": "BlenderBIM xlsx",
     "author": "C. Claus",
     "version": (1, 0, 2),
     "blender": (2, 93, 6),
     "location": "Tools",
-    "description": "BlenderBIM Excel",
-    "warning": "Requires installation of dependencies",
+    "description": "BlenderBIM xlsx",
+    "warning": "Requires installation of dependencies pandas, xlsxwriter and openpyxl",
     "support": "COMMUNITY",
     }
     
@@ -482,7 +482,7 @@ class UnhideIFCElements(bpy.types.Operator):
 
 class BlenderBIMExcelPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "BlenderBIM Excel"
+    bl_label = "BlenderBIM .xlsx"
     bl_idname = "OBJECT_PT_blenderbimpanel"  # this is not strictly necessary
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
