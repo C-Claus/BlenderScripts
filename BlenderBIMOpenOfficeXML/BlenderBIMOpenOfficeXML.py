@@ -25,6 +25,7 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
+"""
 py_exec = str(sys.executable)
 # ensure pip is installed
 subprocess.call([py_exec, "-m", "ensurepip", "--user" ])
@@ -36,11 +37,15 @@ subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "pandas"])
 
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
+"""
 
 import openpyxl
 from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
+
+print (openpyxl.__version__)
+print (pd.__version__)
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
