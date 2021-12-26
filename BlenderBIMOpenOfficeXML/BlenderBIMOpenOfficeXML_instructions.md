@@ -16,7 +16,12 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_Blender.png)
 
 ### 2. Filter the file using LibreOffice or Microsoft Excel and save it.
+
+The spreadsheet in [LibreOffice](https://www.libreoffice.org/)
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_libre.png)
+
+The spreadsheet in Microsoft Excel
+![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_excel.png)
 
 ### 3. Click the 'Filter IFC elements' button to show what you filtered.
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/03_filtered_openoffice_libre_blender.png)
