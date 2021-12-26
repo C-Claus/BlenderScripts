@@ -1,6 +1,6 @@
 ## BlenderBIM Open Office XML
 
-BlenderBIM Open Office XML is a Blender add-on which creates Open Office XML files from IFC using the BlenderBIM add-on. IFC and Open Open Office XML are both open file formats. Open Office XML can be used for the creation of spreadsheets which can be ready by either Microsoft Excel or LibreOffice.
+BlenderBIM Open Office XML is a Blender add-on which creates [Open Office XML files](https://en.wikipedia.org/wiki/Office_Open_XML) from IFC using the BlenderBIM add-on. IFC and Open Open Office XML are both open file formats. Open Office XML can be used for the creation of spreadsheets which can be ready by either Microsoft Excel or LibreOffice.
 IFC is an open format widely used for BIM interoperability. 
 
 ### What's the added value of this Blender add-on?
