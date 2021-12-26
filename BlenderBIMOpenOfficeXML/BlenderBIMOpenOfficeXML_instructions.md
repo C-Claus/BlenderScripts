@@ -49,7 +49,13 @@ openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
 ### Installation on Windows
-With the installation of Blender on your system it comes with Python. 
+With the installation of Blender on your system it comes with Python installed.
+Navigate to where you have Blender installed, normally this is:
+
+```C:\Program Files\Blender Foundation\Blender 2.93\2.93\python\Scripts```
+
+Open Command Prompt by typing ```cmd``` in the Windows Explorer.
+
 
 ### Installation on Linux
 
