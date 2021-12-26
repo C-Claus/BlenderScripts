@@ -172,26 +172,23 @@ class WriteToXLSX(bpy.types.Operator):
         # Make the columns wider for clarity.
         worksheet.set_column(0, max_col - 1, 30)
         
-        
-        #total_area='=SUBTOTAL(109,N3:N' + str(len(products)) + ')'
-        total_volume='=SUBTOTAL(109,O3:O' + str(len(products)) + ')'
-        
-        
-        
+          
+        #find out from the pandas dataframe in which column the calculation needs to be positioned.
         for header_name in df.columns:
-            if (header_name) == 'Area':
+            if header_name == 'Area':
                 col_no = df.columns.get_loc("Area")
                 column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
                 
-                
                 total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
                 worksheet.write_formula(str(column_letter)+'1', total_area)
-                        
-        
-       
-    
-        #worksheet.write_formula('N1', total_area)
-        #worksheet.write_formula('O1', total_volume)
+                
+            if header_name == 'Volume':
+                col_no = df.columns.get_loc("Volume")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                
+                total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_volume)
+                
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
