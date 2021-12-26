@@ -173,9 +173,20 @@ class WriteToXLSX(bpy.types.Operator):
         worksheet.set_column(0, max_col - 1, 30)
         
         
-        total_area='=SUBTOTAL(109,N3:N' + str(len(products)) + ')'
+        #total_area='=SUBTOTAL(109,N3:N' + str(len(products)) + ')'
         total_volume='=SUBTOTAL(109,O3:O' + str(len(products)) + ')'
         
+        
+        
+        for header_name in df.columns:
+            if (header_name) == 'Area':
+                col_no = df.columns.get_loc("Area")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                
+                
+                total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_area)
+                        
         
        
     
@@ -465,9 +476,6 @@ class OpenXLSXFile(bpy.types.Operator, ImportHelper):
         print("Open .xlsx file")
         
         filename, extension = os.path.splitext(self.filepath)
-        
-        print ('selected file', self.filepath)
-        print ('selected name', filename)
         
         global excel_file
         excel_file = self.filepath
