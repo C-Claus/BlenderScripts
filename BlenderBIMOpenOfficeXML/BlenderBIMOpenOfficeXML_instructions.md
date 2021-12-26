@@ -76,8 +76,11 @@ Go to Edit>Preferences>Install and navigate to the zip file. This window should 
 
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/05_Blender_Preferences.png)
 
+Click N to show the tab, the BlenderBIM .xls panel should appear under the tab 'Tools' 
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/06_tools.PNG)
 
 ### Installation on Linux
 
 ## How to use the BlenderBIMOpenOfficeXML add-on in detail
 
+I still need to figure this out, if anyone can help me, please do.
