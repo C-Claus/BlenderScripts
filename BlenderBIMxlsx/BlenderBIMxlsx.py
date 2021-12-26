@@ -179,6 +179,9 @@ class WriteToXLSX(bpy.types.Operator):
                 col_no = df.columns.get_loc("Area")
                 column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
                 
+                #Works in MS Excel, but not in LibreOffice
+                #="Area: " &SUBTOTAL(109;F2:F3821)
+               
                 total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
                 worksheet.write_formula(str(column_letter)+'1', total_area)
                 
