@@ -29,6 +29,7 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
+"""
 from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 from bpy.types import PropertyGroup
 
@@ -38,7 +39,7 @@ class ExcelProperties(PropertyGroup):
     name: BoolProperty(name="Name", default=False)
     excel_path: StringProperty(name="Excel path", subtype='FILE_PATH')
 
-
+"""
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
@@ -97,7 +98,7 @@ class WriteToXLSX(bpy.types.Operator):
             ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
             ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
             
-            ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product))
+            ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product)[0])
             ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
             ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
             ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
@@ -311,7 +312,7 @@ class WriteToXLSX(bpy.types.Operator):
         if len(externality_list) == 0:
             externality_list.append('N/A')  
 
-        return [externality_list]
+        return externality_list
     
     def get_loadbearing(self, context,ifcproduct):
         load_bearing_list = []
@@ -329,7 +330,7 @@ class WriteToXLSX(bpy.types.Operator):
         if len(load_bearing_list) == 0:
             load_bearing_list.append('N/A')
                              
-        return [load_bearing_list]
+        return load_bearing_list
     
     def get_firerating(self, context, ifcproduct):
         fire_rating_list = []    
@@ -360,7 +361,10 @@ class WriteToXLSX(bpy.types.Operator):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Length':
-                            quantity_length_list.append(str(quantities.LengthValue))
+                            quantity_length_list.append(float(quantities.LengthValue))
+                            
+        if len(quantity_length_list) == 0:
+            quantity_length_list.append('N/A')
                   
         return quantity_length_list
     
@@ -375,7 +379,7 @@ class WriteToXLSX(bpy.types.Operator):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Width':
-                            quantity_width_list.append(str(quantities.LengthValue))
+                            quantity_width_list.append(float(quantities.LengthValue))
                   
         return quantity_width_list
     
@@ -388,7 +392,7 @@ class WriteToXLSX(bpy.types.Operator):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Height':
-                            quantity_height_list.append(str(quantities.LengthValue))
+                            quantity_height_list.append(float(quantities.LengthValue))
               
         return quantity_height_list
     
