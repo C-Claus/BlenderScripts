@@ -26,6 +26,7 @@ The filtered spreadsheet in Microsoft Excel
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_excel.png)
 
 ### 3. Click the 'Filter IFC elements' button to show what you filtered.
+Leave the saved spreadsheet open to show the IFC elements, with the button 'Open .xlsx file' it's possible to open previously exported IFC files which correspond with that IFC file.
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/03_filtered_openoffice_libre_blender.png)
 
 
@@ -35,6 +36,8 @@ The filtered spreadsheet in Microsoft Excel
 
 ## Installation instructions & dependencies
 ### Dependencies
+
+The BlenderBIM has been developed and tested with the following dependecies on Windows 10.
 
 module/software | version
 ---- | -----
