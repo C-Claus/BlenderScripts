@@ -61,7 +61,9 @@ Open Command Prompt by typing ```cmd``` in the Windows Explorer.
 Type in the following commands in Command Prompt to download and install the dependencies. 
 
 ```pip install pandas```
+
 ```pip install xlsxwriter```
+
 ```pip install openpyxl```
 
 ### Installation on Linux
