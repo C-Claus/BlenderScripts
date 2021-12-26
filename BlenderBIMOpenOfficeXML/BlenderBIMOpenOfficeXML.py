@@ -46,6 +46,7 @@ import xlsxwriter
 
 print (openpyxl.__version__)
 print (pd.__version__)
+print (xlsxwriter.__version__)
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
