@@ -83,11 +83,11 @@ class WriteToXLSX(bpy.types.Operator):
             ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
             
             ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product)[0])
-            ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product))
-            ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product))
+            ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product)[0])
+            ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product)[0])
             ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
             ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product)[0])
-            ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product))
+            ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
             
         ifc_dictionary['GlobalId'] = global_id_list
         
@@ -347,7 +347,7 @@ class WriteToXLSX(bpy.types.Operator):
                             quantity_length_list.append(float(quantities.LengthValue))
                             
         if len(quantity_length_list) == 0:
-            quantity_length_list.append('N/A')
+            quantity_length_list.append(None)
                   
         return quantity_length_list
     
@@ -363,6 +363,9 @@ class WriteToXLSX(bpy.types.Operator):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Width':
                             quantity_width_list.append(float(quantities.LengthValue))
+                            
+        if len(quantity_width_list) == 0:
+            quantity_width_list.append(None)
                   
         return quantity_width_list
     
@@ -376,6 +379,9 @@ class WriteToXLSX(bpy.types.Operator):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
                         if (quantities.Name) == 'Height':
                             quantity_height_list.append(float(quantities.LengthValue))
+                            
+        if len(quantity_height_list) == 0:
+            quantity_height_list.append(None)
               
         return quantity_height_list
     
@@ -422,6 +428,9 @@ class WriteToXLSX(bpy.types.Operator):
                         for quantities in properties.RelatingPropertyDefinition.Quantities:
                              if quantities.Name == 'Perimeter':
                                 quantity_perimeter_list.append(str(quantities.LengthValue))
+                                
+        if len(quantity_perimeter_list) == 0:
+            quantity_perimeter_list.append(None)
                                                                        
         return quantity_perimeter_list   
                 
