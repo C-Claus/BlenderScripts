@@ -486,12 +486,8 @@ class FilterIFCElements(bpy.types.Operator):
     def execute(self, context):
         print("filter IFC elements")
         
-        for i in (dir(context.scene)):
-            print (i)
-            
-        print (context.scene.my_ifcproduct)
+    
         
- 
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 
         
