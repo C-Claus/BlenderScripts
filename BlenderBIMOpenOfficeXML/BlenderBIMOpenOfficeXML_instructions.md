@@ -56,6 +56,7 @@ Navigate to where you have Blender installed, normally this is:
 
 Open Command Prompt by typing ```cmd``` in the Windows Explorer.
 
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/04_command_promt.png)
 
 ### Installation on Linux
 
