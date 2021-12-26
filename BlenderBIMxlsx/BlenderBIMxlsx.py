@@ -29,17 +29,7 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
-"""
-from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
-from bpy.types import PropertyGroup
 
-class ExcelProperties(PropertyGroup):
-    ifc_product: BoolProperty(name="IfcProduct", default=False)
-    ifc_building_story: BoolProperty(name="IfcBuildingStory", default=False)
-    name: BoolProperty(name="Name", default=False)
-    excel_path: StringProperty(name="Excel path", subtype='FILE_PATH')
-
-"""
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
@@ -77,12 +67,6 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
-        print (context.scene.my_ifcproduct)
-        print (context.scene.my_ifcbuildingstorey)
-        print (context.scene.my_ifcproduct_name)
-        
-      
-        
         
         for product in products:
             global_id_list.append(product.GlobalId)
@@ -107,6 +91,9 @@ class WriteToXLSX(bpy.types.Operator):
             
         ifc_dictionary['GlobalId'] = global_id_list
         
+        ##################################################################
+        ########################### General #############################
+        ##################################################################
         if context.scene.my_ifcproduct == True:
             ifc_dictionary['IfcProduct'] = ifc_product_type_list
             
@@ -121,15 +108,13 @@ class WriteToXLSX(bpy.types.Operator):
             
         if context.scene.my_ifcclassification == True:     
             ifc_dictionary['Classification'] = ifc_classification_list
-            
-            
+              
         if context.scene.my_ifcmaterial == True:   
             ifc_dictionary['Materials'] = ifc_materials_list
             
         ##################################################################
         ######################## Pset_*Common ############################
-        ##################################################################
-            
+        ##################################################################    
         if context.scene.my_isexternal == True:   
             ifc_dictionary['IsExternal'] = ifc_isexternal_list
             
@@ -143,7 +128,6 @@ class WriteToXLSX(bpy.types.Operator):
         ##################################################################
         ##################### Base Quantities ############################
         ##################################################################
-          
         if context.scene.my_length == True:  
             ifc_dictionary['Length'] = ifc_quantities_length_list
         
@@ -155,8 +139,7 @@ class WriteToXLSX(bpy.types.Operator):
            
         if context.scene.my_area == True: 
             ifc_dictionary['Area'] = ifc_quantities_area_list
-            #ifc_dictionary["Area" & '=SUBTOTAL(109,N3:N' + str(len(products)) + ')'] = ifc_quantities_area_list
-            
+            #ifc_dictionary["Area" & '=SUBTOTAL(109,N3:N' + str(len(products)) + ')'] = ifc_quantities_area_list  
             
         if context.scene.my_volume == True: 
             ifc_dictionary['Volume'] = ifc_quantities_volume_list
@@ -548,10 +531,10 @@ class UnhideIFCElements(bpy.types.Operator):
 
 
 
-class BlenderBIMExcelPanel(bpy.types.Panel):
+class BlenderBIMXLSXPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "BlenderBIM .xlsx"
-    bl_idname = "OBJECT_PT_blenderbimpanel"  # this is not strictly necessary
+    bl_idname = "OBJECT_PT_blenderbimxlsxpanel"  # this is not strictly necessary
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Tools"
@@ -629,7 +612,7 @@ def register():
     bpy.utils.register_class(OpenXLSXFile)
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
-    bpy.utils.register_class(BlenderBIMExcelPanel)
+    bpy.utils.register_class(BlenderBIMXLSXPanel)
 
 
 def unregister(): 
@@ -637,7 +620,7 @@ def unregister():
     bpy.utils.unregister_class(OpenXLSXFile)
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
-    bpy.utils.unregister_class(BlenderBIMExcelPanel)
+    bpy.utils.unregister_class(BlenderBIMXLSXPanel)
     
     del bpy.types.Scene.my_prop
 
