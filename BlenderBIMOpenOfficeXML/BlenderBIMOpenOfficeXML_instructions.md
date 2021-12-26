@@ -12,15 +12,15 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 - Check an .ifc file if it's modelled conform the [BIM Base IDS](https://www.bimloket.nl//documents/BIM-ILS_infographicA4_2020_UK_021.pdf)
 
 ## Quickstart
-### 1. Open an .ifc file and check what you would like to export and click the button 'Write IFC data to .xlsx'
+### 1. Open an .ifc file and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row. 
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_Blender.png)
 
 ### 2. Filter the file using LibreOffice or Microsoft Excel and save it.
 
-The spreadsheet in [LibreOffice](https://www.libreoffice.org/)
+The filtered spreadsheet in [LibreOffice](https://www.libreoffice.org/)
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_libre.png)
 
-The spreadsheet in Microsoft Excel
+The filtered spreadsheet in Microsoft Excel
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_excel.png)
 
 ### 3. Click the 'Filter IFC elements' button to show what you filtered.
