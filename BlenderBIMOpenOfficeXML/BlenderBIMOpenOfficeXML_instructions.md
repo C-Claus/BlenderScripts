@@ -58,6 +58,12 @@ Open Command Prompt by typing ```cmd``` in the Windows Explorer.
 
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/04_command_promt.png)
 
+Type in the following commands in Command Prompt to download and install the dependencies. 
+
+```pip install pandas```
+```pip install xlsxwriter```
+```pip install openpyxl```
+
 ### Installation on Linux
 
 ## How to use the BlenderBIMOpenOfficeXML add-on in detail
