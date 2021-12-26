@@ -19,18 +19,11 @@ from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper 
 from bpy.types import (Operator, PropertyGroup)
 
-import openpyxl
-from openpyxl import load_workbook
-import pandas as pd
-import xlsxwriter
-
 import blenderbim.bim.import_ifc
 from blenderbim.bim.ifc import IfcStore
 import blenderbim.tool as tool
 
 import ifcopenshell
-
-
 
 py_exec = str(sys.executable)
 # ensure pip is installed
@@ -44,6 +37,10 @@ subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "
 
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
 
+import openpyxl
+from openpyxl import load_workbook
+import pandas as pd
+import xlsxwriter
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
