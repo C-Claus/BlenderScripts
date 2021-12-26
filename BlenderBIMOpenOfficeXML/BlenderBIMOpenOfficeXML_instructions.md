@@ -72,6 +72,10 @@ Download the [BlenderBIMOpenOfficeXML.zip](https://github.com/C-Claus/BlenderScr
 
 Open Blender with Administration rights.
 
+Go to Edit>Preferences>Install and navigate to the zip file. This window should appear now and check it.
+
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/05_Blender_Preferences.png)
+
 
 ### Installation on Linux
 
