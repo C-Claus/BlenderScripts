@@ -1,7 +1,7 @@
 bl_info = {
     "name": "BlenderBIM xlsx",
     "author": "C. Claus",
-    "version": (1, 0, 2),
+    "version": (1, 0, 0),
     "blender": (2, 93, 6),
     "location": "Tools",
     "description": "BlenderBIM xlsx",
@@ -28,6 +28,15 @@ from blenderbim.bim.ifc import IfcStore
 import blenderbim.tool as tool
 
 import ifcopenshell
+
+from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
+from bpy.types import PropertyGroup
+
+class ExcelProperties(PropertyGroup):
+    ifc_product: BoolProperty(name="IfcProduct", default=False)
+    ifc_building_story: BoolProperty(name="IfcBuildingStory", default=False)
+    name: BoolProperty(name="Name", default=False)
+    excel_path: StringProperty(name="Excel path", subtype='FILE_PATH')
 
 
 
@@ -67,10 +76,18 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
+        print (context.scene.my_ifcproduct)
+        print (context.scene.my_ifcbuildingstorey)
+        print (context.scene.my_ifcproduct_name)
+        
+      
+        
         
         for product in products:
             global_id_list.append(product.GlobalId)
             ifc_product_type_list.append(str(product.is_a()))
+            
+         
             ifc_product_name_list.append(str(product.Name))
             ifc_product_type_name_list.append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
@@ -88,21 +105,63 @@ class WriteToXLSX(bpy.types.Operator):
             ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product))
             
         ifc_dictionary['GlobalId'] = global_id_list
-        ifc_dictionary['IfcProduct'] = ifc_product_type_list
-        ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
-        ifc_dictionary['Name'] = ifc_product_name_list
-        ifc_dictionary['Type'] = ifc_product_type_name_list
-        ifc_dictionary['Classification'] = ifc_classification_list
-        ifc_dictionary['Materials'] = ifc_materials_list
-        ifc_dictionary['IsExternal'] = ifc_isexternal_list
-        ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
-        ifc_dictionary['FireRating'] = ifc_firerating_list
-        ifc_dictionary['Length'] = ifc_quantities_length_list
-        ifc_dictionary['Width'] = ifc_quantities_width_list
-        ifc_dictionary['Height'] = ifc_quantities_height_list
-        ifc_dictionary['Area'] = ifc_quantities_area_list
-        ifc_dictionary['Volume'] = ifc_quantities_volume_list
-        ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
+        
+        if context.scene.my_ifcproduct == True:
+            ifc_dictionary['IfcProduct'] = ifc_product_type_list
+            
+        if context.scene.my_ifcbuildingstorey == True:  
+            ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
+            
+        if context.scene.my_ifcproduct_name == True:  
+            ifc_dictionary['Name'] = ifc_product_name_list
+          
+        if context.scene.my_type == True:    
+            ifc_dictionary['Type'] = ifc_product_type_name_list
+            
+        if context.scene.my_ifcclassification == True:     
+            ifc_dictionary['Classification'] = ifc_classification_list
+            
+            
+        if context.scene.my_ifcmaterial == True:   
+            ifc_dictionary['Materials'] = ifc_materials_list
+            
+        ##################################################################
+        ######################## Pset_*Common ############################
+        ##################################################################
+            
+        if context.scene.my_isexternal == True:   
+            ifc_dictionary['IsExternal'] = ifc_isexternal_list
+            
+        if context.scene.my_loadbearing == True:  
+            ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
+            
+        if context.scene.my_firerating == True:   
+            ifc_dictionary['FireRating'] = ifc_firerating_list
+            
+            
+        ##################################################################
+        ##################### Base Quantities ############################
+        ##################################################################
+          
+        if context.scene.my_length == True:  
+            ifc_dictionary['Length'] = ifc_quantities_length_list
+        
+        if context.scene.my_width == True:  
+            ifc_dictionary['Width'] = ifc_quantities_width_list
+            
+        if context.scene.my_height == True:
+            ifc_dictionary['Height'] = ifc_quantities_height_list
+           
+        if context.scene.my_area == True: 
+            ifc_dictionary['Area'] = ifc_quantities_area_list
+            #ifc_dictionary["Area" & '=SUBTOTAL(109,N3:N' + str(len(products)) + ')'] = ifc_quantities_area_list
+            
+            
+        if context.scene.my_volume == True: 
+            ifc_dictionary['Volume'] = ifc_quantities_volume_list
+            
+        if context.scene.my_perimeter == True: 
+            ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
          
         df = pd.DataFrame(ifc_dictionary)
@@ -134,8 +193,8 @@ class WriteToXLSX(bpy.types.Operator):
         
        
     
-        worksheet.write_formula('N1', total_area)
-        worksheet.write_formula('O1', total_volume)
+        #worksheet.write_formula('N1', total_area)
+        #worksheet.write_formula('O1', total_volume)
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
@@ -429,6 +488,11 @@ class FilterIFCElements(bpy.types.Operator):
     def execute(self, context):
         print("filter IFC elements")
         
+        for i in (dir(context.scene)):
+            print (i)
+            
+        print (context.scene.my_ifcproduct)
+        
  
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl['IfcProduct'] 
@@ -491,14 +555,36 @@ class BlenderBIMExcelPanel(bpy.types.Panel):
 
     def draw(self, context):
         
+        
+        
         scene = context.scene
         layout = self.layout
         col = layout.column(align=True)
         row = col.row(align=True)
         
+      
+        
         col.prop(scene, "my_ifcproduct")
         col.prop(scene, "my_ifcbuildingstorey")
         col.prop(scene, "my_ifcproduct_name")
+        col.prop(scene, "my_type")
+        col.prop(scene, "my_ifcclassification")
+        col.prop(scene, "my_ifcmaterial")
+        
+        #layout.row().separator()
+        
+        col.prop(scene, "my_isexternal")
+        col.prop(scene, "my_loadbearing")
+        col.prop(scene, "my_firerating")
+        
+        col.prop(scene, "my_length")
+        col.prop(scene, "my_width")
+        col.prop(scene, "my_height")
+        col.prop(scene, "my_area")
+        col.prop(scene, "my_volume")
+        col.prop(scene, "my_perimeter")
+        
+       
         
      
         
@@ -512,26 +598,28 @@ class BlenderBIMExcelPanel(bpy.types.Panel):
 
 def register():
     
-    
-    bpy.types.Scene.my_ifcproduct = bpy.props.BoolProperty(
-        name="IfcProduct",
-        description="Export IfcProduct",
-        default = True)
-        
    
-        
-    bpy.types.Scene.my_ifcbuildingstorey = bpy.props.BoolProperty(
-        name="IfcBuildingStorey",
-        description="Export IfcBuildingStorey",
-        default = True)  
-        
-    bpy.types.Scene.my_ifcproduct_name = bpy.props.BoolProperty(
-        name="Name",
-        description="Export IfcProduct Name",
-        default = True)      
-        
-        
-           
+    bpy.types.Scene.my_ifcproduct = bpy.props.BoolProperty(name="IfcProduct",description="Export IfcProduct",default = True)
+    bpy.types.Scene.my_ifcbuildingstorey = bpy.props.BoolProperty(name="IfcBuildingStorey",description="Export IfcBuildingStorey",default = True)     
+    bpy.types.Scene.my_ifcproduct_name = bpy.props.BoolProperty(name="Name",description="Export IfcProduct Name",default = True)
+    bpy.types.Scene.my_type = bpy.props.BoolProperty(name="Type",description="Export IfcObjectType Name",default = True)    
+    bpy.types.Scene.my_ifcclassification = bpy.props.BoolProperty(name="IfcClassification",description="Export Classification",default = True)  
+    bpy.types.Scene.my_ifcmaterial = bpy.props.BoolProperty(name="IfcMaterial",description="Export Materials",default = True)  
+    
+    bpy.types.Scene.my_isexternal = bpy.props.BoolProperty(name="IsExternal",description="Export IsExternal",default = True)    
+    bpy.types.Scene.my_loadbearing = bpy.props.BoolProperty(name="LoadBearing",description="Export LoadBearing",default = True)  
+    bpy.types.Scene.my_firerating = bpy.props.BoolProperty(name="FireRating",description="Export FireRating",default = True)
+    
+    bpy.types.Scene.my_length = bpy.props.BoolProperty(name="Length",description="Export Length from BaseQuantities",default = True)  
+    bpy.types.Scene.my_width = bpy.props.BoolProperty(name="Width",description="Export Width from BaseQuantities",default = True)   
+    bpy.types.Scene.my_height = bpy.props.BoolProperty(name="Height",description="Export Height from BaseQuantities",default = True) 
+    bpy.types.Scene.my_area = bpy.props.BoolProperty(name="Area",description="Export Area from BaseQuantities",default = True)  
+    bpy.types.Scene.my_volume = bpy.props.BoolProperty(name="Volume",description="Export Volume from BaseQuantities",default = True) 
+    bpy.types.Scene.my_perimeter = bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
+  
+    
+    
+ 
             
     bpy.utils.register_class(WriteToXLSX)
     bpy.utils.register_class(OpenXLSXFile)
