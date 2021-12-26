@@ -551,44 +551,66 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
 
     def draw(self, context):
         
-        
-        
-        scene = context.scene
         layout = self.layout
-        col = layout.column(align=True)
-        row = col.row(align=True)
+        scene = context.scene
         
-      
         
-        col.prop(scene, "my_ifcproduct")
-        col.prop(scene, "my_ifcbuildingstorey")
-        col.prop(scene, "my_ifcproduct_name")
-        col.prop(scene, "my_type")
-        col.prop(scene, "my_ifcclassification")
-        col.prop(scene, "my_ifcmaterial")
+        layout.label(text="General")
+
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "my_ifcproduct")
+        row = box.row()
+        row.prop(scene, "my_ifcbuildingstorey")
+        row = box.row()
+        row.prop(scene, "my_ifcproduct_name")
+        row = box.row()
+        row.prop(scene, "my_type")
+        row = box.row()
+        row.prop(scene, "my_ifcclassification")
+        row = box.row()
+        row.prop(scene, "my_ifcmaterial")
         
-        #layout.row().separator()
         
-        col.prop(scene, "my_isexternal")
-        col.prop(scene, "my_loadbearing")
-        col.prop(scene, "my_firerating")
         
-        col.prop(scene, "my_length")
-        col.prop(scene, "my_width")
-        col.prop(scene, "my_height")
-        col.prop(scene, "my_area")
-        col.prop(scene, "my_volume")
-        col.prop(scene, "my_perimeter")
+        layout.label(text="Pset_Common")
         
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "my_isexternal")
+        row = box.row()
+        row.prop(scene, "my_loadbearing")
+        row = box.row()
+        row.prop(scene, "my_firerating")
+        
+        
+        
+        layout.label(text="BaseQuantities")
+        
+        box = layout.box()
        
+        row = box.row()
+        row.prop(scene, "my_length")
+        row = box.row()
+        row.prop(scene, "my_width")
+        row = box.row()
+        row.prop(scene, "my_height")
+        row = box.row()
+        row.prop(scene, "my_area")
+        row = box.row()
+        row.prop(scene, "my_volume")
+        row = box.row()
+        row.prop(scene, "my_perimeter")
         
-     
         
         
+ 
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
         self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
+        
+     
 
 
 
