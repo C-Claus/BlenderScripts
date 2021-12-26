@@ -66,6 +66,13 @@ Type in the following commands in Command Prompt to download and install the dep
 
 ```pip install openpyxl```
 
+In Command Prompt it should show the start and completion of the modules. 
+
+Download the [BlenderBIMOpenOfficeXML.zip](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip)
+
+Open Blender with Administration rights.
+
+
 ### Installation on Linux
 
 ## How to use the BlenderBIMOpenOfficeXML add-on in detail
