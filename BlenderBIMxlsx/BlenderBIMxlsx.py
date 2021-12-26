@@ -156,7 +156,12 @@ class WriteToXLSX(bpy.types.Operator):
         df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
         
         workbook  = writer.book
+  
+        cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
+        
+        
         worksheet = writer.sheets[sheet_name_custom]
+        #worksheet.write('A1', str(IfcStore.path), cell_format)
         
         
         (max_row, max_col) = df.shape
@@ -171,6 +176,9 @@ class WriteToXLSX(bpy.types.Operator):
 
         # Make the columns wider for clarity.
         worksheet.set_column(0, max_col - 1, 30)
+        
+        
+        
         
           
         #find out from the pandas dataframe in which column the calculation needs to be positioned.
