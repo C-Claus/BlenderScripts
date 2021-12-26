@@ -5,13 +5,13 @@ BlenderBIM Open Office XML is a Blender add-on which creates [Open Office XML fi
 Open Open Office XML and IFC are both open file formats. Open Office XML can be used for the creation of spreadsheets which can be read by either Microsoft Excel or LibreOffice.
 IFC is an open format widely used for BIM interoperability. 
 
-###1. Open an .ifc file and check what you would like to export and click the button 'Write IFC data to .xlsx'
+### 1. Open an .ifc file and check what you would like to export and click the button 'Write IFC data to .xlsx'
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_Blender.png)
 
-###2. Filter the file using LibreOffice or Microsoft Excel and save it.
+### 2. Filter the file using LibreOffice or Microsoft Excel and save it.
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/01_filtered_openoffice_libre.png)
 
-###3. Click the 'Filter IFC elements' button to show what you filtered.
+### 3. Click the 'Filter IFC elements' button to show what you filtered.
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/03_filtered_openoffice_libre_blender.png)
 
 
