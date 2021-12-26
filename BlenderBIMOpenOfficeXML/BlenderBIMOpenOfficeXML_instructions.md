@@ -34,7 +34,19 @@ The filtered spreadsheet in Microsoft Excel
 
 ## Installation instructions & dependencies
 ### Dependencies
+
+module/software | version
+---- | -----
+Blender |2.93
+blenderbim add-on | 0.211117
+pandas | 
+xlsxwriter |
+openpyxl | 
+ifcopenshell |
+
 ### Installation on Windows
+With the installation of Blender on your system it comes with Python. 
+
 ### Installation on Linux
 
 ## How to use the BlenderBIMOpenOfficeXML add-on in detail
