@@ -41,7 +41,9 @@ class WriteToXLSX(bpy.types.Operator):
         print("Write to .xlsx")
    
         ifc_dictionary = {}
-        sheet_name_custom = 'IfcProduct'
+        
+        global sheet_name_custom
+        sheet_name_custom = 'Overview'
         
         global_id_list = []
         ifc_product_type_list = []
@@ -491,7 +493,7 @@ class FilterIFCElements(bpy.types.Operator):
         
  
         workbook_openpyxl = load_workbook(excel_file)
-        worksheet_openpyxl = workbook_openpyxl['IfcProduct'] 
+        worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 
         
         global_id_filtered_list = []
 
@@ -539,7 +541,6 @@ class UnhideIFCElements(bpy.types.Operator):
     
 
 
-
 class BlenderBIMXLSXPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "BlenderBIM .xlsx"
@@ -556,7 +557,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         
         
         layout.label(text="General")
-
         box = layout.box()
         row = box.row()
         row.prop(scene, "my_ifcproduct")
@@ -572,9 +572,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row.prop(scene, "my_ifcmaterial")
         
         
-        
         layout.label(text="Pset_Common")
-        
         box = layout.box()
         row = box.row()
         row.prop(scene, "my_isexternal")
@@ -584,11 +582,8 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row.prop(scene, "my_firerating")
         
         
-        
         layout.label(text="BaseQuantities")
-        
         box = layout.box()
-       
         row = box.row()
         row.prop(scene, "my_length")
         row = box.row()
@@ -603,8 +598,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row.prop(scene, "my_perimeter")
         
         
-        
- 
+     
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
         self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
