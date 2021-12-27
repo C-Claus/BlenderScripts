@@ -82,7 +82,8 @@ class WriteToXLSX(bpy.types.Operator):
         
         global excel_file
         
-        excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx')   
+        excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
+        ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods')  
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
@@ -210,12 +211,13 @@ class WriteToXLSX(bpy.types.Operator):
         
         print (df)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
+        #writer = pd.ExcelWriter(excel_file, engine='odf')
     
         df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
         
         workbook  = writer.book
   
-        cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
+        #cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
         
         
         worksheet = writer.sheets[sheet_name_custom]
