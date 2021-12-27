@@ -1,6 +1,6 @@
 ## BlenderBIM Open Office XML
 
-BlenderBIM Open Office XML is a Blender add-on which creates [Open Office XML files](https://en.wikipedia.org/wiki/Office_Open_XML) from an IFC file using the BlenderBIM add-on. 
+BlenderBIM Open Office XML is a Blender add-on which creates [Open Office XML files](https://en.wikipedia.org/wiki/Office_Open_XML) from an IFC file using the [BlenderBIM add-on.](https://blenderbim.org/) 
 
 Open Open Office XML and [IFC](https://www.buildingsmart.org/standards/bsi-standards/industry-foundation-classes/) are both open file formats. Open Office XML can be used for the creation of spreadsheets which can be read by either Microsoft Excel or LibreOffice for example.
 IFC is an open format widely used for BIM interoperability in the construction industry. 
@@ -12,7 +12,7 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 - Check an .ifc file if it's modelled conform the [BIM Base IDS](https://www.bimloket.nl//documents/BIM-ILS_infographicA4_2020_UK_021.pdf)
 
 ## Quickstart
-### 1. Open an .ifc file and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
+### 1. Import an .ifc file using the BlenderBIM add-on and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
 In this example I used this freely available sample [model](https://github.com/jakob-beetz/DataSetSchependomlaan).
 
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_Blender.png)
@@ -76,8 +76,11 @@ Go to Edit>Preferences>Install and navigate to the zip file. This window should 
 
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/05_Blender_Preferences.png)
 
+Click N to show the tab, the BlenderBIM .xls panel should appear under the tab 'Tools' 
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/06_tools.PNG)
 
 ### Installation on Linux
 
 ## How to use the BlenderBIMOpenOfficeXML add-on in detail
 
+I still need to figure this out, if anyone can help me, please do.
