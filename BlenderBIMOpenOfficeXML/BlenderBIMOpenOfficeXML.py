@@ -86,32 +86,69 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
-        
+
         for product in products:
             global_id_list.append(product.GlobalId)
-            ifc_product_type_list.append(str(product.is_a()))
             
-         
-            ifc_product_name_list.append(str(product.Name))
-            ifc_product_type_name_list.append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
-            ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
-            ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
-            ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
-            ifc_isexternal_list.append(self.get_isexternal(context, ifcproduct=product)[0])
-            ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
-            ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
+            ##################################################################
+            ########################### General ##############################
+            ##################################################################
+            if context.scene.my_ifcproduct is True:
+                ifc_product_type_list.append(str(product.is_a()))
+                
+            if context.scene.my_ifcbuildingstorey is True:      
+                ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
             
-            ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product)[0])
-            ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product)[0])
-            ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product)[0])
-            ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
-            ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product)[0])
-            ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
+            if context.scene.my_ifcproduct_name is True: 
+                ifc_product_name_list.append(str(product.Name))
+                
+            if context.scene.my_type is True:     
+                ifc_product_type_name_list.append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
+            
+            if context.scene.my_ifcclassification is True: 
+                ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
+              
+            if context.scene.my_ifcmaterial is True:     
+                ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
+                
+                
+            ##################################################################
+            ######################## Pset_*Common ############################
+            #################################################################    
+            if context.scene.my_isexternal is True:    
+                ifc_isexternal_list.append(self.get_isexternal(context, ifcproduct=product)[0])
+                
+            if context.scene.my_loadbearing is True:     
+                ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
+                
+            if context.scene.my_firerating is True:    
+                ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
+            
+            ##################################################################
+            ##################### Base Quantities ############################
+            ##################################################################
+            if context.scene.my_length is True: 
+                ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product)[0])
+                
+            if context.scene.my_width is True:     
+                ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product)[0])
+                
+            if context.scene.my_height is True:    
+                ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product)[0])
+                  
+            if context.scene.my_area is True:     
+                ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
+                
+            if context.scene.my_volume is True:    
+                ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product)[0])
+                
+            if context.scene.my_perimeter is True:    
+                ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
             
         ifc_dictionary['GlobalId'] = global_id_list
         
         ##################################################################
-        ########################### General #############################
+        ########################### General ##############################
         ##################################################################
         if context.scene.my_ifcproduct is True:
             ifc_dictionary['IfcProduct'] = ifc_product_type_list
@@ -166,8 +203,12 @@ class WriteToXLSX(bpy.types.Operator):
         if context.scene.my_perimeter is True: 
             ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
+        
+            
          
         df = pd.DataFrame(ifc_dictionary)
+        
+        print (df)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
     
         df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
