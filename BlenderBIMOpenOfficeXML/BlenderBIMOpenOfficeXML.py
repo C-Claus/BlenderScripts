@@ -113,57 +113,57 @@ class WriteToXLSX(bpy.types.Operator):
         ##################################################################
         ########################### General #############################
         ##################################################################
-        if context.scene.my_ifcproduct == True:
+        if context.scene.my_ifcproduct is True:
             ifc_dictionary['IfcProduct'] = ifc_product_type_list
             
-        if context.scene.my_ifcbuildingstorey == True:  
+        if context.scene.my_ifcbuildingstorey is True:  
             ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
             
-        if context.scene.my_ifcproduct_name == True:  
+        if context.scene.my_ifcproduct_name is True:  
             ifc_dictionary['Name'] = ifc_product_name_list
           
-        if context.scene.my_type == True:    
+        if context.scene.my_type is True:    
             ifc_dictionary['Type'] = ifc_product_type_name_list
             
-        if context.scene.my_ifcclassification == True:     
+        if context.scene.my_ifcclassification is True:     
             ifc_dictionary['Classification'] = ifc_classification_list
               
-        if context.scene.my_ifcmaterial == True:   
+        if context.scene.my_ifcmaterial is True:   
             ifc_dictionary['Materials'] = ifc_materials_list
             
         ##################################################################
         ######################## Pset_*Common ############################
         ##################################################################    
-        if context.scene.my_isexternal == True:   
+        if context.scene.my_isexternal is True:   
             ifc_dictionary['IsExternal'] = ifc_isexternal_list
             
-        if context.scene.my_loadbearing == True:  
+        if context.scene.my_loadbearing is True:  
             ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
             
-        if context.scene.my_firerating == True:   
+        if context.scene.my_firerating is True:   
             ifc_dictionary['FireRating'] = ifc_firerating_list
             
             
         ##################################################################
         ##################### Base Quantities ############################
         ##################################################################
-        if context.scene.my_length == True:  
+        if context.scene.my_length is True:  
             ifc_dictionary['Length'] = ifc_quantities_length_list
         
-        if context.scene.my_width == True:  
+        if context.scene.my_width is True:  
             ifc_dictionary['Width'] = ifc_quantities_width_list
             
-        if context.scene.my_height == True:
+        if context.scene.my_height is True:
             ifc_dictionary['Height'] = ifc_quantities_height_list
            
-        if context.scene.my_area == True: 
+        if context.scene.my_area is True: 
             ifc_dictionary['Area'] = ifc_quantities_area_list
             #ifc_dictionary["Area" & '=SUBTOTAL(109,N3:N' + str(len(products)) + ')'] = ifc_quantities_area_list  
             
-        if context.scene.my_volume == True: 
+        if context.scene.my_volume is True: 
             ifc_dictionary['Volume'] = ifc_quantities_volume_list
             
-        if context.scene.my_perimeter == True: 
+        if context.scene.my_perimeter is True: 
             ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
          
@@ -193,8 +193,6 @@ class WriteToXLSX(bpy.types.Operator):
 
         # Make the columns wider for clarity.
         worksheet.set_column(0, max_col - 1, 30)
-        
-        
         
         
           
@@ -232,11 +230,8 @@ class WriteToXLSX(bpy.types.Operator):
         if ifcproduct:
             type_name_list.append(ifcproduct.ObjectType)
             
-        if len(type_name_list) == 0:
-            type_name_list.append('N/A')
-            
-        if type_name_list[0] == None:
-            type_name_list.append('N/A')
+        if not type_name_list:
+            type_name_list.append(None)
         
         return type_name_list
     
@@ -250,14 +245,13 @@ class WriteToXLSX(bpy.types.Operator):
                         building_storey_list.append(ifcproduct.ContainedInStructure[0].RelatingStructure.Name)
         except:
             pass
-        else:
-            pass
+
 
         #IfcOpeningElement should not be linked directly to the spatial structure of the project,
         #i.e. the inverse relationship ContainedInStructure shall be NIL.
         #It is assigned to the spatial structure through the elements it penetrates.
-        if len(building_storey_list) == 0:
-            building_storey_list.append('N/A')
+        if not building_storey_list:
+            building_storey_list.append(None)
              
         return building_storey_list 
     
@@ -278,11 +272,9 @@ class WriteToXLSX(bpy.types.Operator):
                         assembly_code_list.append(i.RelatingClassification.ItemReference)
                 
                                                
-        if len(assembly_code_list) == 0:
-            assembly_code_list.append('N/A')
-            
-        if assembly_code_list[0] == None:
-            assembly_code_list.append('N/A')
+        if not assembly_code_list:
+            assembly_code_list.append(None)
+     
             
         return assembly_code_list
     
@@ -308,7 +300,7 @@ class WriteToXLSX(bpy.types.Operator):
                     else:
                         pass
                           
-        if len(material_list) == 0:
+        if not material_list:
             material_list.append('N/A')
            
         joined_material_list = ' | '.join(material_list)
@@ -330,8 +322,8 @@ class WriteToXLSX(bpy.types.Operator):
                             else:
                                 pass
                                         
-        if len(externality_list) == 0:
-            externality_list.append('N/A')  
+        if not externality_list:
+            externality_list.append(None)  
 
         return externality_list
     
@@ -348,8 +340,8 @@ class WriteToXLSX(bpy.types.Operator):
                             else:
                                 pass
                                         
-        if len(load_bearing_list) == 0:
-            load_bearing_list.append('N/A')
+        if not load_bearing_list:
+            load_bearing_list.append(None)
                              
         return load_bearing_list
     
@@ -367,8 +359,8 @@ class WriteToXLSX(bpy.types.Operator):
                             else:
                                 pass
                                         
-        if len(fire_rating_list) == 0:
-            fire_rating_list.append('N/A')
+        if not fire_rating_list:
+            fire_rating_list.append(None)
                              
         return [fire_rating_list]
     
@@ -384,7 +376,7 @@ class WriteToXLSX(bpy.types.Operator):
                         if (quantities.Name) == 'Length':
                             quantity_length_list.append(float(quantities.LengthValue))
                             
-        if len(quantity_length_list) == 0:
+        if not quantity_length_list:
             quantity_length_list.append(None)
                   
         return quantity_length_list
@@ -402,7 +394,7 @@ class WriteToXLSX(bpy.types.Operator):
                         if (quantities.Name) == 'Width':
                             quantity_width_list.append(float(quantities.LengthValue))
                             
-        if len(quantity_width_list) == 0:
+        if not quantity_width_list:
             quantity_width_list.append(None)
                   
         return quantity_width_list
@@ -418,7 +410,7 @@ class WriteToXLSX(bpy.types.Operator):
                         if (quantities.Name) == 'Height':
                             quantity_height_list.append(float(quantities.LengthValue))
                             
-        if len(quantity_height_list) == 0:
+        if not quantity_height_list:
             quantity_height_list.append(None)
               
         return quantity_height_list
@@ -434,7 +426,7 @@ class WriteToXLSX(bpy.types.Operator):
                          if quantities.Name == 'NetArea' or (quantities.Name) == 'NetSideArea':
                             quantity_area_list.append(float(quantities.AreaValue))
                             
-        if len(quantity_area_list) == 0:
+        if not quantity_area_list:
             quantity_area_list.append(None)                
                   
         return quantity_area_list
@@ -450,7 +442,7 @@ class WriteToXLSX(bpy.types.Operator):
                         if (quantities.Name) == 'Net Volume':
                             quantity_volume_list.append(float(quantities.VolumeValue))
                             
-        if len(quantity_volume_list) == 0:
+        if not quantity_volume_list:
             quantity_volume_list.append(None) 
           
         return quantity_volume_list
@@ -467,7 +459,7 @@ class WriteToXLSX(bpy.types.Operator):
                              if quantities.Name == 'Perimeter':
                                 quantity_perimeter_list.append(str(quantities.LengthValue))
                                 
-        if len(quantity_perimeter_list) == 0:
+        if not quantity_perimeter_list:
             quantity_perimeter_list.append(None)
                                                                        
         return quantity_perimeter_list   
@@ -477,7 +469,7 @@ class WriteToXLSX(bpy.types.Operator):
 
 
 class OpenXLSXFile(bpy.types.Operator, ImportHelper):
-    """Open an existing Excel file"""
+    """Open an existing XML file"""
     bl_idname = "object.open_excel"
     bl_label = "Open Excel"
     
