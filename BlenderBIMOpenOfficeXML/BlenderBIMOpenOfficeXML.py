@@ -30,29 +30,17 @@ import sys
 import os
  
 """
-# path to python.exe
-python_exe = os.path.join(sys.prefix, 'bin', 'python.exe')
- 
-# upgrade pip
-subprocess.call([python_exe, "-m", "ensurepip"])
-subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
- 
-# install required packages
-subprocess.call([python_exe, "-m", "pip", "install", "PACKAGE_TO_INSTALL"])
-
-print("DONE")
-
-
 py_exec = str(sys.executable)
+
 # ensure pip is installed
 subprocess.call([py_exec, "-m", "ensurepip", "--user" ])
+
 # update pip (not mandatory but highly recommended)
 #subprocess.call([py_exec, "-m", "pip", "install", "--upgrade", "pip" ])
+
 # install packages
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "openpyxl"])
-
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "pandas"])
-
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
 """
 
@@ -100,6 +88,7 @@ class WriteToXLSX(bpy.types.Operator):
         
         ifc_custom_pset_list = []
         
+        
         global excel_file
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods')  
@@ -110,8 +99,6 @@ class WriteToXLSX(bpy.types.Operator):
         (pset_name_user, pset_property_user) = str(context.scene.Pset_Custom).split('.')
        
     
-        
-
         for product in products:
             global_id_list.append(product.GlobalId)
             
@@ -119,7 +106,9 @@ class WriteToXLSX(bpy.types.Operator):
             ##################################################################
             #####################  Custom Pset ###############################
             ##################################################################
-            ifc_custom_pset_list.append(self.get_custom_pset(context,ifcproduct=product,pset_name=pset_name_user, property_name=pset_property_user)[0])
+            ifc_custom_pset_list.append(self.get_custom_pset(   context,ifcproduct=product,
+                                                                pset_name=pset_name_user,
+                                                                property_name=pset_property_user)[0])
             
             ##################################################################
             ########################### General ##############################
@@ -176,8 +165,6 @@ class WriteToXLSX(bpy.types.Operator):
             if context.scene.my_perimeter is True:    
                 ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
                 
-           
-   
             
         ifc_dictionary['GlobalId'] = global_id_list
         
@@ -237,27 +224,21 @@ class WriteToXLSX(bpy.types.Operator):
         if context.scene.my_perimeter is True: 
             ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
+            
+     
         ifc_dictionary[str(context.scene.Pset_Custom)] = ifc_custom_pset_list
-            
-        
-            
-         
+                  
         df = pd.DataFrame(ifc_dictionary)
-        
-        print (df)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
         #writer = pd.ExcelWriter(excel_file, engine='odf')
     
         df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
         
         workbook  = writer.book
-  
         #cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
-        
         
         worksheet = writer.sheets[sheet_name_custom]
         #worksheet.write('A1', str(IfcStore.path), cell_format)
-        
         
         (max_row, max_col) = df.shape
          
@@ -271,8 +252,6 @@ class WriteToXLSX(bpy.types.Operator):
 
         # Make the columns wider for clarity.
         worksheet.set_column(0, max_col - 1, 30)
-        
-        
           
         #find out from the pandas dataframe in which column the calculation needs to be positioned.
         for header_name in df.columns:
@@ -300,6 +279,7 @@ class WriteToXLSX(bpy.types.Operator):
         
     
         return {'FINISHED'}
+    
     
     def get_ifcproducttype_name(self, context, ifcproduct):
         
@@ -563,11 +543,6 @@ class WriteToXLSX(bpy.types.Operator):
                              
         return custom_pset_list
         
-        
-                
-    
-
-
 
 class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     """Open an existing XML file"""
@@ -611,8 +586,6 @@ class FilterIFCElements(bpy.types.Operator):
 
     def execute(self, context):
         print("filter IFC elements")
-        
-    
         
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 
@@ -660,8 +633,6 @@ class UnhideIFCElements(bpy.types.Operator):
     
         return {'FINISHED'}  
     
-    
-
 
 class BlenderBIMXLSXPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -670,6 +641,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Tools"
+    #bl_options = {'DEFAULT_CLOSED'}
     
 
     def draw(self, context):
@@ -680,6 +652,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         
         layout.label(text="General")
         box = layout.box()
+        
         row = box.row()
         row.prop(scene, "my_ifcproduct")
         row = box.row()
@@ -693,7 +666,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(scene, "my_ifcmaterial")
         
-        
         layout.label(text="Pset_Common")
         box = layout.box()
         row = box.row()
@@ -702,7 +674,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row.prop(scene, "my_loadbearing")
         row = box.row()
         row.prop(scene, "my_firerating")
-        
         
         layout.label(text="BaseQuantities")
         box = layout.box()
@@ -726,16 +697,19 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         #row = box.row()
         #row.prop(scene, "Pset_Custom_A")
         
+        """
+        layout.label(text="Location of .xlsx file")
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "xlsxFile")
+        """
         
-     
+        
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
         self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
         
-     
-
-
 
 def register():
     
@@ -760,8 +734,12 @@ def register():
   
      
     bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName")
-    #bpy.types.Scene.Pset_Custom_A = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
-  
+    
+    """
+    excel_file = None
+    if (excel_file) is not None:
+        bpy.types.Scene.xlsxFile = bpy.props.StringProperty(default=str(excel_file), name="")
+    """
     
             
     bpy.utils.register_class(WriteToXLSX)
