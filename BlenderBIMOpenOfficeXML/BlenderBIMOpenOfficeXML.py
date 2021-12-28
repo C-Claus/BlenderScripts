@@ -90,16 +90,17 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
-        #print ('HIERZO', context.scene.my_pset_custom)
-        
-        
-        (pset_name_user, pset_property_user) = str(context.scene.my_pset_custom).split('.')
-        print ('HIER', pset_name_user, pset_property_user)
+        (pset_name_user, pset_property_user) = str(context.scene.Pset_Custom).split('.')
+    
         
 
         for product in products:
             global_id_list.append(product.GlobalId)
             
+            
+            ##################################################################
+            #####################  Custom Pset ###############################
+            ##################################################################
             ifc_custom_pset_list.append(self.get_custom_pset(context, ifcproduct=product, pset_name=pset_name_user, property_name=pset_property_user)[0])
             
             ##################################################################
@@ -158,13 +159,7 @@ class WriteToXLSX(bpy.types.Operator):
                 ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
                 
            
-            
-            
-                
-                
-                
-                
-                
+   
             
         ifc_dictionary['GlobalId'] = global_id_list
         
@@ -531,10 +526,7 @@ class WriteToXLSX(bpy.types.Operator):
 
     def get_custom_pset(self, context, ifcproduct, pset_name, property_name):
         
-    
-        #print ('from method', pset_name)
-        #print ('from method',property_name)
-        
+
         custom_pset_list = []
         
         if ifcproduct.IsDefinedBy:        
@@ -710,7 +702,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         layout.label(text="Pset_Custom")
         box = layout.box()
         row = box.row()
-        row.prop(scene, "my_pset_custom")
+        row.prop(scene, "Pset_Custom")
         
         
      
@@ -744,8 +736,8 @@ def register():
     bpy.types.Scene.my_volume = bpy.props.BoolProperty(name="Volume",description="Export Volume from BaseQuantities",default = True) 
     bpy.types.Scene.my_perimeter = bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
-    #bpy.types.Scene.my_pset_custom = bpy.props.StringProperty(name="Pset_Custom",description="Export Custom Pset",default = True)      
-    bpy.types.Scene.my_pset_custom = bpy.props.StringProperty(default="foo")
+     
+    bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName")
   
     
             
