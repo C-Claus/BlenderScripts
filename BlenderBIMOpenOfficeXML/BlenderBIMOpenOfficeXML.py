@@ -69,6 +69,7 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_building_storey_list = []
         ifc_classification_list = []
         ifc_materials_list = []
+        
         ifc_isexternal_list = []
         ifc_loadbearing_list = []
         ifc_firerating_list = []
@@ -80,16 +81,26 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_quantities_volume_list = []
         ifc_quantities_perimeter_list = []
         
-        global excel_file
+        ifc_custom_pset_list = []
         
+        global excel_file
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods')  
+        
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
+        
+        #print ('HIERZO', context.scene.my_pset_custom)
+        
+        
+        (pset_name_user, pset_property_user) = str(context.scene.my_pset_custom).split('.')
+        print ('HIER', pset_name_user, pset_property_user)
         
 
         for product in products:
             global_id_list.append(product.GlobalId)
+            
+            ifc_custom_pset_list.append(self.get_custom_pset(context, ifcproduct=product, pset_name=pset_name_user, property_name=pset_property_user)[0])
             
             ##################################################################
             ########################### General ##############################
@@ -98,7 +109,7 @@ class WriteToXLSX(bpy.types.Operator):
                 ifc_product_type_list.append(str(product.is_a()))
                 
             if context.scene.my_ifcbuildingstorey is True:      
-                ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product)[0])
+                ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product, )[0])
             
             if context.scene.my_ifcproduct_name is True: 
                 ifc_product_name_list.append(str(product.Name))
@@ -145,6 +156,15 @@ class WriteToXLSX(bpy.types.Operator):
                 
             if context.scene.my_perimeter is True:    
                 ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
+                
+           
+            
+            
+                
+                
+                
+                
+                
             
         ifc_dictionary['GlobalId'] = global_id_list
         
@@ -203,6 +223,8 @@ class WriteToXLSX(bpy.types.Operator):
             
         if context.scene.my_perimeter is True: 
             ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
+            
+        ifc_dictionary[str(context.scene.my_pset_custom)] = ifc_custom_pset_list
             
         
             
@@ -506,6 +528,30 @@ class WriteToXLSX(bpy.types.Operator):
             quantity_perimeter_list.append(None)
                                                                        
         return quantity_perimeter_list   
+
+    def get_custom_pset(self, context, ifcproduct, pset_name, property_name):
+        
+    
+        #print ('from method', pset_name)
+        #print ('from method',property_name)
+        
+        custom_pset_list = []
+        
+        if ifcproduct.IsDefinedBy:        
+            for ifcreldefinesbyproperties in ifcproduct.IsDefinedBy:
+                if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
+                    if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
+                        if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name) == pset_name:
+                            for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
+                                custom_pset_list.append(ifcproperty.NominalValue[0])
+                      
+                                        
+        if not custom_pset_list:
+            custom_pset_list.append(None)
+                             
+        return custom_pset_list
+        
+        
                 
     
 
@@ -661,6 +707,11 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(scene, "my_perimeter")
         
+        layout.label(text="Pset_Custom")
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "my_pset_custom")
+        
         
      
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
@@ -693,9 +744,10 @@ def register():
     bpy.types.Scene.my_volume = bpy.props.BoolProperty(name="Volume",description="Export Volume from BaseQuantities",default = True) 
     bpy.types.Scene.my_perimeter = bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
+    #bpy.types.Scene.my_pset_custom = bpy.props.StringProperty(name="Pset_Custom",description="Export Custom Pset",default = True)      
+    bpy.types.Scene.my_pset_custom = bpy.props.StringProperty(default="foo")
+  
     
-    
- 
             
     bpy.utils.register_class(WriteToXLSX)
     bpy.utils.register_class(OpenXLSXFile)
