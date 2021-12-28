@@ -87,6 +87,7 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_quantities_perimeter_list = []
         
         ifc_custom_pset_list = []
+        ifc_custom_pset_a_list = []
         
         
         global excel_file
@@ -97,6 +98,7 @@ class WriteToXLSX(bpy.types.Operator):
         products = ifc_file.by_type('IfcProduct')
         
         (pset_name_user, pset_property_user) = str(context.scene.Pset_Custom).split('.')
+        (pset_name_user_a, pset_property_user_a) = str(context.scene.Pset_Custom_A).split('.')
        
     
         for product in products:
@@ -109,6 +111,10 @@ class WriteToXLSX(bpy.types.Operator):
             ifc_custom_pset_list.append(self.get_custom_pset(   context,ifcproduct=product,
                                                                 pset_name=pset_name_user,
                                                                 property_name=pset_property_user)[0])
+                                                                
+            ifc_custom_pset_a_list.append(self.get_custom_pset( context,ifcproduct=product,
+                                                                pset_name=pset_name_user_a,
+                                                                property_name=pset_property_user_a)[0])
             
             ##################################################################
             ########################### General ##############################
@@ -227,7 +233,10 @@ class WriteToXLSX(bpy.types.Operator):
             
      
         ifc_dictionary[str(context.scene.Pset_Custom)] = ifc_custom_pset_list
+        ifc_dictionary[str(context.scene.Pset_Custom_A)] = ifc_custom_pset_a_list
+        
                   
+        
         df = pd.DataFrame(ifc_dictionary)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
         #writer = pd.ExcelWriter(excel_file, engine='odf')
@@ -694,8 +703,8 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         row.prop(scene, "Pset_Custom")
-        #row = box.row()
-        #row.prop(scene, "Pset_Custom_A")
+        row = box.row()
+        row.prop(scene, "Pset_Custom_A")
         
         """
         layout.label(text="Location of .xlsx file")
@@ -733,7 +742,9 @@ def register():
     bpy.types.Scene.my_perimeter = bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
      
-    bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName")
+    bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
+    
+    bpy.types.Scene.Pset_Custom_A = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
     
     """
     excel_file = None
