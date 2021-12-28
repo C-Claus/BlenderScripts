@@ -219,7 +219,7 @@ class WriteToXLSX(bpy.types.Operator):
         if context.scene.my_perimeter is True: 
             ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
             
-        ifc_dictionary[str(context.scene.my_pset_custom)] = ifc_custom_pset_list
+        ifc_dictionary[str(context.scene.Pset_Custom)] = ifc_custom_pset_list
             
         
             
