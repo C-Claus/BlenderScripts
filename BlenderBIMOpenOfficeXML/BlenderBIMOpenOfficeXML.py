@@ -91,6 +91,7 @@ class WriteToXLSX(bpy.types.Operator):
         products = ifc_file.by_type('IfcProduct')
         
         (pset_name_user, pset_property_user) = str(context.scene.Pset_Custom).split('.')
+       
     
         
 
@@ -101,7 +102,7 @@ class WriteToXLSX(bpy.types.Operator):
             ##################################################################
             #####################  Custom Pset ###############################
             ##################################################################
-            ifc_custom_pset_list.append(self.get_custom_pset(context, ifcproduct=product, pset_name=pset_name_user, property_name=pset_property_user)[0])
+            ifc_custom_pset_list.append(self.get_custom_pset(context,ifcproduct=product,pset_name=pset_name_user, property_name=pset_property_user)[0])
             
             ##################################################################
             ########################### General ##############################
@@ -703,6 +704,8 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         row.prop(scene, "Pset_Custom")
+        #row = box.row()
+        #row.prop(scene, "Pset_Custom_A")
         
         
      
@@ -738,6 +741,7 @@ def register():
   
      
     bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName")
+    #bpy.types.Scene.Pset_Custom_A = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
   
     
             
