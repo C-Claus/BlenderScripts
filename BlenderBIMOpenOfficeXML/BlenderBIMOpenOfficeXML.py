@@ -25,6 +25,23 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
+import subprocess
+import sys
+import os
+ 
+"""
+# path to python.exe
+python_exe = os.path.join(sys.prefix, 'bin', 'python.exe')
+ 
+# upgrade pip
+subprocess.call([python_exe, "-m", "ensurepip"])
+subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
+ 
+# install required packages
+subprocess.call([python_exe, "-m", "pip", "install", "PACKAGE_TO_INSTALL"])
+
+print("DONE")
+
 
 py_exec = str(sys.executable)
 # ensure pip is installed
@@ -37,7 +54,7 @@ subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "pandas"])
 
 subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
-
+"""
 
 import openpyxl
 from openpyxl import load_workbook
@@ -534,9 +551,11 @@ class WriteToXLSX(bpy.types.Operator):
             for ifcreldefinesbyproperties in ifcproduct.IsDefinedBy:
                 if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
                     if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
-                        if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name) == pset_name:
+                        if pset_name in (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name):
                             for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
-                                custom_pset_list.append(ifcproperty.NominalValue[0])
+                                
+                                if (ifcproperty.Name == property_name):
+                                    custom_pset_list.append(ifcproperty.NominalValue[0])
                       
                                         
         if not custom_pset_list:
