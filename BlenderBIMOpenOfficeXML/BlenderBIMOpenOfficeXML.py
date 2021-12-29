@@ -12,8 +12,9 @@ bl_info = {
 
 import os
 import sys
-
+import time
 import subprocess
+
 import bpy
 from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper 
@@ -25,9 +26,7 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
-import subprocess
-import sys
-import os
+
  
 """
 py_exec = str(sys.executable)
@@ -48,6 +47,9 @@ import openpyxl
 from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
+
+
+start_time = time.perf_counter()
 
 print (openpyxl.__version__)
 print (pd.__version__)
@@ -596,6 +598,8 @@ class FilterIFCElements(bpy.types.Operator):
     def execute(self, context):
         print("filter IFC elements")
         
+        sheet_name_custom = 'Overview'
+        
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 
         
@@ -770,5 +774,9 @@ def unregister():
     del bpy.types.Scene.my_prop
 
 
+
+
 if __name__ == "__main__":
     register()
+    
+print (time.perf_counter() - start_time, "seconds")
