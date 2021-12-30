@@ -29,7 +29,13 @@ from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
 
-
+#backlog
+#1. create subpanels
+#2. remove gloval variables
+#3. add multiple custom propertysets
+#4. refactor for optimization and performance 
+#5. create dev and release pipeline on github
+#6. refactor isexternal, loadbearing and firerating functions
 
 
 print ('openpyxl', openpyxl.__version__)
@@ -73,6 +79,7 @@ class WriteToXLSX(bpy.types.Operator):
         
         ifc_custom_pset_list = []
         ifc_custom_pset_a_list = []
+        ifc_custom_pset_b_list = []
         
         
         global excel_file
@@ -84,6 +91,7 @@ class WriteToXLSX(bpy.types.Operator):
         
         (pset_name_user, pset_property_user) = str(context.scene.Pset_Custom).split('.')
         (pset_name_user_a, pset_property_user_a) = str(context.scene.Pset_Custom_A).split('.')
+        (pset_name_user_b, pset_property_user_b) = str(context.scene.Pset_Custom_B).split('.')
        
     
         for product in products:
@@ -100,6 +108,10 @@ class WriteToXLSX(bpy.types.Operator):
             ifc_custom_pset_a_list.append(self.get_custom_pset( context,ifcproduct=product,
                                                                 pset_name=pset_name_user_a,
                                                                 property_name=pset_property_user_a)[0])
+                                                                
+            ifc_custom_pset_b_list.append(self.get_custom_pset( context,ifcproduct=product,
+                                                                pset_name=pset_name_user_b,
+                                                                property_name=pset_property_user_b)[0])
             
             ##################################################################
             ########################### General ##############################
@@ -219,6 +231,7 @@ class WriteToXLSX(bpy.types.Operator):
      
         ifc_dictionary[str(context.scene.Pset_Custom)] = ifc_custom_pset_list
         ifc_dictionary[str(context.scene.Pset_Custom_A)] = ifc_custom_pset_a_list
+        ifc_dictionary[str(context.scene.Pset_Custom_B)] = ifc_custom_pset_b_list
                    
         
         df = pd.DataFrame(ifc_dictionary)
@@ -696,6 +709,16 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(scene, "Pset_Custom")
         
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "Pset_Custom_A")
+        
+        box = layout.box()
+        row = box.row()
+        row.prop(scene, "Pset_Custom_B")
+        
+        
+        
         
         layout.label(text="Write to .xlsx")
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
@@ -733,6 +756,11 @@ def register():
     bpy.types.Scene.Pset_Custom = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
     
     bpy.types.Scene.Pset_Custom_A = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
+    
+    bpy.types.Scene.Pset_Custom_B = bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
+    
+    
+    
     
     """
     excel_file = None
