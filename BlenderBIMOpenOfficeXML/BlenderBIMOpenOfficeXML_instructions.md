@@ -1,7 +1,7 @@
 # [BlenderBIM Open Office XML (SpreadSheet Writer)](#start)
 <a name="start"/>
 
-- [Quickstart](#quick_start)
+- [Quick Demo](#quick_start)
 - [Dependencies](#dependencies)
 - [Installation on Windows 10](#installation_on_windows_10)
 
@@ -18,7 +18,7 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 
 
 
-## [<](#start) Quickstart
+## [<](#start) Quick Demo
 <a name="quick_start"/>
 <details>
 <p>
