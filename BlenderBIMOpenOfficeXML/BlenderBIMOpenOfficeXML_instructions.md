@@ -41,13 +41,12 @@ Leave the saved spreadsheet open to show the IFC elements, with the button 'Open
 
 
 
-
-
-## Installation instructions & dependencies
-## [<](#start) Dependecies
+## [<](#start) 
 <a name="dependencies"/>
 
-The BlenderBIM has been developed and tested with the following dependecies on Windows 10.
+## Dependencies
+
+The BlenderBIM has been developed and tested with the following dependecies on Windows 10. BlenderBIM needs to be installed first for this add-on works.
 
 module/software | version
 ---- | -----
@@ -59,7 +58,7 @@ openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
 
-## Installation on Windows 10
+
 ## [<](#start) Installation on Windows 10
 <a name="installation_on_windows_10"/>
 
