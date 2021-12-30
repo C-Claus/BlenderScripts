@@ -67,6 +67,9 @@ ifcopenshell | comes with the BlenderBIM add-on
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/04_toggle_the_system_console.png)
 
 
-### 5. Run the script, the script downloads three modules from the internet which the add-on needs, [pandas](https://pandas.pydata.org/), [xlsxwriter](https://xlsxwriter.readthedocs.io/) [and openpyxl](https://openpyxl.readthedocs.io/en/stable/).
+### 6. Run the script, the script downloads three modules from the internet which the add-on needs, [pandas](https://pandas.pydata.org/), [xlsxwriter](https://xlsxwriter.readthedocs.io/) [and openpyxl](https://openpyxl.readthedocs.io/en/stable/).
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/06_run_the_script_by_pressing_the_play_button.png)
 
+
+### 5. Take a look at the System console to see if the downloads succeeded, if you get a ```PermissionError: [WinError5] Acces is denied``` it means Blender has no Administrator rights or you are using Blender from a user account.
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/07_feedback_console.png)
