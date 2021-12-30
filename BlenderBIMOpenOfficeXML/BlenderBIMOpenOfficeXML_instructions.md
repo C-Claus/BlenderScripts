@@ -20,8 +20,10 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 
 ## [<](#start) Quickstart
 <a name="quick_start"/>
-<details><summary>See quickstart</summary>
+<details>
+  <summary>See quickstart</summary>
 <p>
+  
 ### 1. Import an .ifc file using the BlenderBIM add-on and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
 In this example I used this freely available sample [model](https://github.com/jakob-beetz/DataSetSchependomlaan).
 
