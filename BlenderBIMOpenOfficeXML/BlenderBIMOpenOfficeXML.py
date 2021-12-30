@@ -30,20 +30,24 @@ import pandas as pd
 import xlsxwriter
 
 
-start_time = time.perf_counter()
 
-print (openpyxl.__version__)
-print (pd.__version__)
-print (xlsxwriter.__version__)
+
+print ('openpyxl', openpyxl.__version__)
+print ('pandas',pd.__version__)
+print ('xlsxwriter',xlsxwriter.__version__)
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
     bl_idname = "object.write_to_xlsx"
     bl_label = "Simple Object Operator"
+    
+    
 
 
     def execute(self, context):
         print("Write to .xlsx")
+        
+        start_time = time.perf_counter()
    
         ifc_dictionary = {}
         
@@ -268,6 +272,8 @@ class WriteToXLSX(bpy.types.Operator):
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
         os.startfile(excel_file)
+        
+        print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
         
     
         return {'FINISHED'}
@@ -579,6 +585,8 @@ class FilterIFCElements(bpy.types.Operator):
     def execute(self, context):
         print("filter IFC elements")
         
+        start_time = time.perf_counter()
+        
         sheet_name_custom = 'Overview'
         
         workbook_openpyxl = load_workbook(excel_file)
@@ -609,6 +617,8 @@ class FilterIFCElements(bpy.types.Operator):
             obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list[1:]
 
         bpy.ops.object.select_all(action='SELECT') 
+        
+        print (time.perf_counter() - start_time, "seconds to show the IFC elements")
         
         return {'FINISHED'}
     
@@ -760,4 +770,3 @@ def unregister():
 if __name__ == "__main__":
     register()
     
-print (time.perf_counter() - start_time, "seconds")
