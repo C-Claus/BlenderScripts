@@ -11,9 +11,7 @@ bl_info = {
     
 
 import os
-import sys
 import time
-import subprocess
 
 import bpy
 from bpy.props import StringProperty, BoolProperty
@@ -25,23 +23,6 @@ from blenderbim.bim.ifc import IfcStore
 import blenderbim.tool as tool
 
 import ifcopenshell
-
-
- 
-"""
-py_exec = str(sys.executable)
-
-# ensure pip is installed
-subprocess.call([py_exec, "-m", "ensurepip", "--user" ])
-
-# update pip (not mandatory but highly recommended)
-#subprocess.call([py_exec, "-m", "pip", "install", "--upgrade", "pip" ])
-
-# install packages
-subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "openpyxl"])
-subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "pandas"])
-subprocess.call([py_exec,"-m", "pip", "install", f"--target={py_exec[:-14]}" + "lib", "xlsxwriter"])
-"""
 
 import openpyxl
 from openpyxl import load_workbook
