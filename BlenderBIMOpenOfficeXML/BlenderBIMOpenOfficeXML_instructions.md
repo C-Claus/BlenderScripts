@@ -20,6 +20,7 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 
 ## [<](#start) Quickstart
 <a name="quick_start"/>
+
 ### 1. Import an .ifc file using the BlenderBIM add-on and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
 In this example I used this freely available sample [model](https://github.com/jakob-beetz/DataSetSchependomlaan).
 
@@ -43,7 +44,8 @@ Leave the saved spreadsheet open to show the IFC elements, with the button 'Open
 
 
 ## Installation instructions & dependencies
-### Dependencies
+## [<](#start) Dependecies
+<a name="dependencies"/>
 
 The BlenderBIM has been developed and tested with the following dependecies on Windows 10.
 
@@ -56,6 +58,10 @@ xlsxwriter | 3.0.2
 openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
+
+## Installation on Windows 10
+## [<](#start) Installation on Windows 10
+<a name="installation_on_windows_10"/>
 
 ## Installation on Windows 10
 
