@@ -20,7 +20,8 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 
 ## [<](#start) Quickstart
 <a name="quick_start"/>
-
+<details><summary>See quickstart</summary>
+<p>
 ### 1. Import an .ifc file using the BlenderBIM add-on and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
 In this example I used this freely available sample [model](https://github.com/jakob-beetz/DataSetSchependomlaan).
 
@@ -38,7 +39,8 @@ The filtered spreadsheet in Microsoft Excel
 Leave the saved spreadsheet open to show the IFC elements, with the button 'Open .xlsx file' it's possible to open previously exported IFC files which correspond with that IFC file.
 ![alt text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/03_filtered_openoffice_libre_blender.png)
 
-
+</p>
+</details>
 
 
 ## [<](#start) Dependencies
