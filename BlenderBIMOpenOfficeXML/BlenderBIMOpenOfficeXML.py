@@ -2,9 +2,9 @@ bl_info = {
     "name": "BlenderBIM Office Open XML",
     "author": "C. Claus",
     "version": (1, 0, 0),
-    "blender": (2, 93, 6),
+    "blender": (3, 0, 0),
     "location": "Tools",
-    "description": "BlenderBIM xlsx",
+    "description": "BlenderBIM add-on .xlsx",
     "warning": "Requires installation of dependencies pandas, xlsxwriter and openpyxl",
     "support": "COMMUNITY",
     }
@@ -41,8 +41,6 @@ class WriteToXLSX(bpy.types.Operator):
     bl_idname = "object.write_to_xlsx"
     bl_label = "Simple Object Operator"
     
-    
-
 
     def execute(self, context):
         print("Write to .xlsx")
@@ -221,8 +219,7 @@ class WriteToXLSX(bpy.types.Operator):
      
         ifc_dictionary[str(context.scene.Pset_Custom)] = ifc_custom_pset_list
         ifc_dictionary[str(context.scene.Pset_Custom_A)] = ifc_custom_pset_a_list
-        
-                  
+                   
         
         df = pd.DataFrame(ifc_dictionary)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
@@ -639,15 +636,15 @@ class UnhideIFCElements(bpy.types.Operator):
     
 
 class BlenderBIMXLSXPanel(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
+    """Creates a Panel in the Object properties window"""  
+
     bl_label = "BlenderBIM .xlsx"
     bl_idname = "OBJECT_PT_blenderbimxlsxpanel"  # this is not strictly necessary
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Tools"
-    #bl_options = {'DEFAULT_CLOSED'}
+ 
     
-
     def draw(self, context):
         
         layout = self.layout
@@ -656,7 +653,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         
         layout.label(text="General")
         box = layout.box()
-        
+            
         row = box.row()
         row.prop(scene, "my_ifcproduct")
         row = box.row()
@@ -698,22 +695,18 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         row.prop(scene, "Pset_Custom")
-        row = box.row()
-        row.prop(scene, "Pset_Custom_A")
-        
-        """
-        layout.label(text="Location of .xlsx file")
-        box = layout.box()
-        row = box.row()
-        row.prop(scene, "xlsxFile")
-        """
         
         
+        layout.label(text="Write to .xlsx")
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
         self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
+        
+        layout.label(text="Filter")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
-        
+ 
+
+
 
 def register():
     
@@ -753,6 +746,8 @@ def register():
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
     bpy.utils.register_class(BlenderBIMXLSXPanel)
+    
+  
 
 
 def unregister(): 
@@ -761,6 +756,8 @@ def unregister():
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
     bpy.utils.unregister_class(BlenderBIMXLSXPanel)
+    
+  
     
     del bpy.types.Scene.my_prop
 
