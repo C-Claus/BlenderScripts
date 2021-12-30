@@ -90,3 +90,6 @@ ifcopenshell | comes with the BlenderBIM add-on
 ### 12. Search the Add-on and enabled it by checking it.
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/12_add_on_enabled.png)
 
+
+### 13. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/13_under_the_tools_tab.png)
