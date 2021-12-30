@@ -41,46 +41,27 @@ The BlenderBIM has been developed and tested with the following dependecies on W
 
 module/software | version
 ---- | -----
-Blender | 2.93
+Blender | 2.93 & 3.0.0
 blenderbim add-on | 0.211117
 pandas | 1.3.5
 xlsxwriter | 3.0.2
 openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
-### Installation on Windows
-With the installation of Blender on your system it comes with Python installed.
-Navigate to where you have Blender installed, normally this is:
+### Installation on Windows 10
 
-```C:\Program Files\Blender Foundation\Blender 2.93\2.93\python\Scripts```
+### 1.  Open Blender as Administrator
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
 
-Open Command Prompt by typing ```cmd``` in the Windows Explorer.
+### 2.  Open the scripting tab in Blender
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/01_open_Scripting_tab.png)
 
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/04_command_promt.png)
+### 3.  Open the python file which installs the necessary modules, you can this python script [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/Blender_install_modules.py)
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/02_open_file.png)
 
-Type in the following commands in Command Prompt to download and install the dependencies. 
+### 4. Your Blender now should look like this
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/03_scripting_file_opened.png)
 
-```pip install pandas```
+### 5. Now open the System Console to see what the script is doing
 
-```pip install xlsxwriter```
 
-```pip install openpyxl```
-
-In Command Prompt it should show the start and completion of the modules. 
-
-Download the [BlenderBIMOpenOfficeXML.zip](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip)
-
-Open Blender with Administration rights.
-
-Go to Edit>Preferences>Install and navigate to the zip file. This window should appear now and check it.
-
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/05_Blender_Preferences.png)
-
-Click N to show the tab, the BlenderBIM .xls panel should appear under the tab 'Tools' 
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/06_tools.PNG)
-
-### Installation on Linux
-
-## How to use the BlenderBIMOpenOfficeXML add-on in detail
-
-I still need to figure this out, if anyone can help me, please do.
