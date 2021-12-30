@@ -46,7 +46,8 @@ Leave the saved spreadsheet open to show the IFC elements, with the button 'Open
 
 ## [<](#start) Dependencies
 <a name="dependencies"/>
-
+<details>
+<p>
 
 
 The BlenderBIM has been developed and tested with the following dependecies on Windows 10. BlenderBIM needs to be installed first for this add-on works.
@@ -60,11 +61,13 @@ xlsxwriter | 3.0.2
 openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
-
+</p>
+</details>
 
 ## [<](#start) Installation on Windows 10
 <a name="installation_on_windows_10"/>
-
+<details>
+<p>
 
 ### 1.  Open Blender as Administrator
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
@@ -108,3 +111,6 @@ ifcopenshell | comes with the BlenderBIM add-on
 
 ### 13. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/13_under_the_tools_tab.png)
+
+ </p>
+</details>
