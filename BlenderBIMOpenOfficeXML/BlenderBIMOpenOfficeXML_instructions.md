@@ -48,7 +48,8 @@ xlsxwriter | 3.0.2
 openpyxl | 3.0.9
 ifcopenshell | comes with the BlenderBIM add-on
 
-### Installation on Windows 10
+
+## Installation on Windows 10
 
 ### 1.  Open Blender as Administrator
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
@@ -62,6 +63,10 @@ ifcopenshell | comes with the BlenderBIM add-on
 ### 4. Your Blender now should look like this
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/03_scripting_file_opened.png)
 
-### 5. Now open the System Console to see what the script is doing
+### 5. Toggle the System Console to see what the script is doing
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/04_toggle_the_system_console.png)
 
+
+### 5. Run the script, the script downloads three modules from the internet which the add-on needs, [pandas](https://pandas.pydata.org/), [xlsxwriter](https://xlsxwriter.readthedocs.io/) [and openpyxl](https://openpyxl.readthedocs.io/en/stable/).
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/06_run_the_script_by_pressing_the_play_button.png)
 
