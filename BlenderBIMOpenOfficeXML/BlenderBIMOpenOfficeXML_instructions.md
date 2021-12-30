@@ -71,5 +71,11 @@ ifcopenshell | comes with the BlenderBIM add-on
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/06_run_the_script_by_pressing_the_play_button.png)
 
 
-### 5. Take a look at the System console to see if the downloads succeeded, if you get a ```PermissionError: [WinError5] Acces is denied``` it means Blender has no Administrator rights or you are using Blender from a user account.
+### 7. Take a look at the System console to see if the downloads succeeded, if you get a ```PermissionError: [WinError5] Acces is denied``` it means Blender has no Administrator rights or you are using Blender from a user account. In my case I already installed the modules.
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/07_feedback_console.png)
+
+### 8. Click on the Layout tab in Blender
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/08_click_on_the_layout_tab.png)
+
+### 9. Go to Edit -> Preferences
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/09_go_to_edit_preferences.png)
