@@ -68,6 +68,8 @@ ifcopenshell | comes with the BlenderBIM add-on
 <a name="installation_on_windows_10"/>
 <details>
 <p>
+  
+Before you begin, it is important you already have the BlenderBIM add-on installed. You can see [here](https://blenderbim.org/install-blenderbim.html) on how to install it.
 
 ### 1.  Open Blender as Administrator
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
