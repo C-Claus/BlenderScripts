@@ -1,4 +1,9 @@
-## BlenderBIM Open Office XML
+# [BlenderBIM Open Office XML (SpreadSheet Writer)](#start)
+<a name="start"/>
+
+- [Quickstart](#quick_start)
+- [Dependencies](#dependencies)
+- [Installation on Windows 10](#installation_on_windows_10)
 
 BlenderBIM Open Office XML is a Blender add-on which creates [Open Office XML files](https://en.wikipedia.org/wiki/Office_Open_XML) from an IFC file using the [BlenderBIM add-on.](https://blenderbim.org/) 
 
@@ -11,7 +16,10 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 - Makes it possible to visualize IFC elements from a filtered spreadsheet.
 - Check an .ifc file if it's modelled conform the [BIM Base IDS](https://www.bimloket.nl//documents/BIM-ILS_infographicA4_2020_UK_021.pdf)
 
-## Quickstart
+
+
+## [<](#start) Quickstart
+<a name="quick_start"/>
 ### 1. Import an .ifc file using the BlenderBIM add-on and check what you would like to export and click the button 'Write IFC data to .xlsx'. It writes each IFC element to a row.  
 In this example I used this freely available sample [model](https://github.com/jakob-beetz/DataSetSchependomlaan).
 
