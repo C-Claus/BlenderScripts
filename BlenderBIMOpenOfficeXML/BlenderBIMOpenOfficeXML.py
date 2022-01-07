@@ -8,10 +8,14 @@ bl_info = {
     "warning": "Requires installation of dependencies pandas, xlsxwriter and openpyxl",
     "support": "COMMUNITY",
     }
-    
-
+  
 import os
+import sys
 import time
+import site
+
+python_packages_folder = "libs/site/packages"
+site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
 import bpy
 from bpy.props import StringProperty, BoolProperty
@@ -24,23 +28,27 @@ import blenderbim.tool as tool
 
 import ifcopenshell
 
+
 import openpyxl
 from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
+import numpy as np
+
+
 
 #backlog
 #1. create subpanels
-#2. remove gloval variables
+#2. remove global variables
 #3. add multiple custom propertysets
 #4. refactor for optimization and performance 
 #5. create dev and release pipeline on github
 #6. refactor isexternal, loadbearing and firerating functions
 
 
-print ('openpyxl', openpyxl.__version__)
-print ('pandas',pd.__version__)
-print ('xlsxwriter',xlsxwriter.__version__)
+print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
+print ('pandas',pd.__version__, pd.__file__)
+print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
@@ -593,11 +601,12 @@ class FilterIFCElements(bpy.types.Operator):
     
 
     def execute(self, context):
+        
         print("filter IFC elements")
         
         start_time = time.perf_counter()
-        
         sheet_name_custom = 'Overview'
+        
         
         workbook_openpyxl = load_workbook(excel_file)
         worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 

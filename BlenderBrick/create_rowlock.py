@@ -229,7 +229,7 @@ def add_rowlock():
     joint = 0.01
        
     brick_amount = 10
-    taper_factor = 0.0
+    taper_factor = 0.2
     
     #stretcher is either 1 or 1.5 at the moment
     stretcher = 1.5
