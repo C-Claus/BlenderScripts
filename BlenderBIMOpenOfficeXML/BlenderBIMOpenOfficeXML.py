@@ -33,6 +33,7 @@ from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
 import numpy as np
+from collections import defaultdict
 
 
 
@@ -60,37 +61,11 @@ class WriteToXLSX(bpy.types.Operator):
         
         start_time = time.perf_counter()
    
-        ifc_dictionary = {}
+        ifc_dictionary = defaultdict(list)
+        ifc_custom_property_list = []
         
         global sheet_name_custom
         sheet_name_custom = 'Overview'
-        
-        global_id_list = []
-        ifc_product_type_list = []
-        ifc_product_name_list = []
-        ifc_product_type_name_list = []
-        ifc_building_storey_list = []
-        ifc_classification_list = []
-        ifc_materials_list = []
-        
-        ifc_isexternal_list = []
-        ifc_loadbearing_list = []
-        ifc_firerating_list = []
-        
-        ifc_quantities_length_list = []
-        ifc_quantities_width_list = []
-        ifc_quantities_height_list = []
-        ifc_quantities_area_list = []
-        ifc_quantities_volume_list = []
-        ifc_quantities_perimeter_list = []
-        
-      
-        ifc_custom_pset_a_list = []
-        ifc_custom_pset_b_list = []
-        ifc_custom_pset_c_list = []
-        ifc_custom_pset_d_list = []
-        ifc_custom_pset_e_list = []
-        
         
         global excel_file
         excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
@@ -101,175 +76,88 @@ class WriteToXLSX(bpy.types.Operator):
         
    
         blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
+        my_collection = context.scene.my_collection
         
-        (pset_name_user_a, pset_property_user_a) = str(blenderbim_openoffice_xml_properties.custom_property_a).split('.')
-        (pset_name_user_b, pset_property_user_b) = str(blenderbim_openoffice_xml_properties.custom_property_b).split('.')
-        (pset_name_user_c, pset_property_user_c) = str(blenderbim_openoffice_xml_properties.custom_property_c).split('.')
-        (pset_name_user_d, pset_property_user_d) = str(blenderbim_openoffice_xml_properties.custom_property_d).split('.')
-        (pset_name_user_e, pset_property_user_e) = str(blenderbim_openoffice_xml_properties.custom_property_e).split('.')
+      
+    
         
-       
         for product in products:
-            global_id_list.append(product.GlobalId)
-            
             
             ##################################################################
-            ###############  Custom Properties ###############################
+            ##########################  GlobalId #############################
             ##################################################################
-                                                   
-            ifc_custom_pset_a_list.append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=pset_name_user_a,
-                                                                property_name=pset_property_user_a)[0])
-                                                          
-            ifc_custom_pset_b_list.append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=pset_name_user_b,
-                                                                property_name=pset_property_user_b)[0])
-                                                                
-            ifc_custom_pset_c_list.append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=pset_name_user_c,
-                                                                property_name=pset_property_user_c)[0])
-                                                                
-            ifc_custom_pset_d_list.append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=pset_name_user_d,
-                                                                property_name=pset_property_user_d)[0])
-                                                                
-            ifc_custom_pset_e_list.append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=pset_name_user_e,
-                                                                property_name=pset_property_user_e)[0])
-          
+            ifc_dictionary['GlobalId'].append(str(product.GlobalId))
             
+             
             ##################################################################
             ########################### General ##############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_ifcproduct is True:
-                ifc_product_type_list.append(str(product.is_a()))
+            if blenderbim_openoffice_xml_properties.my_ifcproduct:  # 'if condition is True:' is the same as  'if condition:'
+                ifc_dictionary['IfcProduct'].append(str(product.is_a()))
                 
-        
-                
-            if blenderbim_openoffice_xml_properties.my_ifcbuildingstorey is True:      
-                ifc_building_storey_list.append(self.get_ifcbuildingstorey(context, ifcproduct=product, )[0])
-            
+          
+            if blenderbim_openoffice_xml_properties.my_ifcbuildingstorey:  
+                ifc_dictionary['IfcBuildingStorey'].append(self.get_ifcbuildingstorey(context, ifcproduct=product,)[0])    
+    
            
-            if blenderbim_openoffice_xml_properties.my_ifcproduct_name is True: 
-                ifc_product_name_list.append(str(product.Name))
+            if blenderbim_openoffice_xml_properties.my_ifcproduct_name: 
+                ifc_dictionary['Name'].append(str(product.Name))
                 
             
-            if blenderbim_openoffice_xml_properties.my_type is True:     
-                ifc_product_type_name_list.append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_type:     
+                ifc_dictionary['Type'].append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             
-            if blenderbim_openoffice_xml_properties.my_ifcclassification is True: 
-                ifc_classification_list.append(self.get_classification_code(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_ifcclassification: 
+                ifc_dictionary['Classification'].append(self.get_classification_code(context, ifcproduct=product)[0])
               
-            if blenderbim_openoffice_xml_properties.my_ifcmaterial is True:     
-                ifc_materials_list.append(self.get_materials(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_ifcmaterial:     
+                ifc_dictionary['Material(s)'].append(self.get_materials(context, ifcproduct=product)[0])
                 
             
             ##################################################################
-            ######################## Pset_*Common ############################
-            #################################################################    
-            if blenderbim_openoffice_xml_properties.my_isexternal is True:    
-                ifc_isexternal_list.append(self.get_isexternal(context, ifcproduct=product)[0])
+            ################### Common Properties ############################
+            ##################################################################    
+            if blenderbim_openoffice_xml_properties.my_isexternal:    
+                ifc_dictionary['IsExternal'].append(self.get_isexternal(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_loadbearing is True:     
-                ifc_loadbearing_list.append(self.get_loadbearing(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_loadbearing:     
+                ifc_dictionary['LoadBearing'].append(self.get_loadbearing(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_firerating is True:    
-                ifc_firerating_list.append(self.get_firerating(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_firerating:    
+                ifc_dictionary['FireRating'].append(self.get_firerating(context, ifcproduct=product)[0])
             
           
             ##################################################################
             ##################### Base Quantities ############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_length is True: 
-                ifc_quantities_length_list.append(self.get_quantities_length(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_length: 
+                ifc_dictionary['Length'].append(self.get_quantities_length(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_width is True:     
-                ifc_quantities_width_list.append(self.get_quantities_width(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_width:     
+                ifc_dictionary['Width'].append(self.get_quantities_width(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_height is True:    
-                ifc_quantities_height_list.append(self.get_quantities_height(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_height:    
+                ifc_dictionary['Height'].append(self.get_quantities_height(context, ifcproduct=product)[0])
                   
-            if blenderbim_openoffice_xml_properties.my_area is True:     
-                ifc_quantities_area_list.append(self.get_quantities_area(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_area:     
+                ifc_dictionary['Area'].append(self.get_quantities_area(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_volume is True:    
-                ifc_quantities_volume_list.append(self.get_quantities_volume(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_volume:    
+                ifc_dictionary['Volume'].append(self.get_quantities_volume(context, ifcproduct=product)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_perimeter is True:    
-                ifc_quantities_perimeter_list.append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
-                   
-            
-        ifc_dictionary['GlobalId'] = global_id_list
-        
-        ##################################################################
-        ########################### General ##############################
-        ##################################################################
-        
+            if blenderbim_openoffice_xml_properties.my_perimeter:    
+                ifc_dictionary['Perimeter'].append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
+                
+                
+            ##################################################################
+            ################### Custom Properties ############################
+            ##################################################################
+            for item in context.scene.my_collection.items:
+                ifc_dictionary[item.name].append(self.get_custom_pset( context,ifcproduct=product,
+                                                                pset_name=str(item.name).split('.')[0],
+                                                                property_name=str(item.name).split('.')[1])[0])   
       
-        if blenderbim_openoffice_xml_properties.my_ifcproduct is True:
-            ifc_dictionary['IfcProduct'] = ifc_product_type_list
-            
-        
-            
-        if blenderbim_openoffice_xml_properties.my_ifcbuildingstorey is True:  
-            ifc_dictionary['IfcBuildingStorey'] = ifc_building_storey_list
-        
-            
-        if blenderbim_openoffice_xml_properties.my_ifcproduct_name is True:  
-            ifc_dictionary['Name'] = ifc_product_name_list
-          
-        if blenderbim_openoffice_xml_properties.my_type is True:    
-            ifc_dictionary['Type'] = ifc_product_type_name_list
-            
-        if blenderbim_openoffice_xml_properties.my_ifcclassification is True:     
-            ifc_dictionary['Classification'] = ifc_classification_list
-              
-        if blenderbim_openoffice_xml_properties.my_ifcmaterial is True:   
-            ifc_dictionary['Materials'] = ifc_materials_list
-          
-        
-        ##################################################################
-        ######################## Pset_*Common ############################
-        ##################################################################    
-        if blenderbim_openoffice_xml_properties.my_isexternal is True:   
-            ifc_dictionary['IsExternal'] = ifc_isexternal_list
-            
-        if blenderbim_openoffice_xml_properties.my_loadbearing is True:  
-            ifc_dictionary['LoadBearing'] = ifc_loadbearing_list
-            
-        if blenderbim_openoffice_xml_properties.my_firerating is True:   
-            ifc_dictionary['FireRating'] = ifc_firerating_list
-            
-           
-        ##################################################################
-        ##################### Base Quantities ############################
-        ##################################################################
-        if blenderbim_openoffice_xml_properties.my_length is True:  
-            ifc_dictionary['Length'] = ifc_quantities_length_list
-        
-        if blenderbim_openoffice_xml_properties.my_width is True:  
-            ifc_dictionary['Width'] = ifc_quantities_width_list
-            
-        if blenderbim_openoffice_xml_properties.my_height is True:
-            ifc_dictionary['Height'] = ifc_quantities_height_list
-           
-        if blenderbim_openoffice_xml_properties.my_area is True: 
-            ifc_dictionary['Area'] = ifc_quantities_area_list
-            #ifc_dictionary["Area" & '=SUBTOTAL(109,N3:N' + str(len(products)) + ')'] = ifc_quantities_area_list  
-            
-        if blenderbim_openoffice_xml_properties.my_volume is True: 
-            ifc_dictionary['Volume'] = ifc_quantities_volume_list
-            
-        if blenderbim_openoffice_xml_properties.my_perimeter is True: 
-            ifc_dictionary['Perimeter'] = ifc_quantities_perimeter_list
-            
-        
-        ifc_dictionary[str(blenderbim_openoffice_xml_properties.custom_property_a)] = ifc_custom_pset_a_list
-        ifc_dictionary[str(blenderbim_openoffice_xml_properties.custom_property_b)] = ifc_custom_pset_b_list
-        ifc_dictionary[str(blenderbim_openoffice_xml_properties.custom_property_c)] = ifc_custom_pset_c_list
-        ifc_dictionary[str(blenderbim_openoffice_xml_properties.custom_property_d)] = ifc_custom_pset_d_list
-        ifc_dictionary[str(blenderbim_openoffice_xml_properties.custom_property_d)] = ifc_custom_pset_e_list
-              
+
         
         df = pd.DataFrame(ifc_dictionary)
         writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
@@ -634,7 +522,7 @@ class FilterIFCElements(bpy.types.Operator):
         print("filter IFC elements")
         
         start_time = time.perf_counter()
-        sheet_name_custom = 'Overview'
+        #sheet_name_custom = 'Overview'
         
         
         workbook_openpyxl = load_workbook(excel_file)
@@ -708,6 +596,8 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(blenderbim_openoffice_xml_properties, "my_ifcbuildingstorey")
         row = box.row()
+        row.prop(blenderbim_openoffice_xml_properties, "my_ifcproduct_name")
+        row = box.row()
         row.prop(blenderbim_openoffice_xml_properties, "my_type")
         row = box.row()
         row.prop(blenderbim_openoffice_xml_properties, "my_ifcclassification")
@@ -738,18 +628,18 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(blenderbim_openoffice_xml_properties, "my_perimeter")
         
+
+        
+        #layout = self.layout
         layout.label(text="Custom Properties")
-        box = layout.box()
-        row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "custom_property_a")
-        row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "custom_property_b")
-        row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "custom_property_c")
-        row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "custom_property_d")
-        row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "custom_property_e")
+        my_collection = context.scene.my_collection
+       
+        row = layout.row(align=True)
+        row.operator("my.collection_actions", text="Add", icon="ADD").action = "add"
+        row.operator("my.collection_actions", text="Remove Last", icon="REMOVE").action = "remove"
+
+        for item in my_collection.items:
+            layout.prop(item, "name")
         
 
         layout.label(text="Write to .xlsx")
@@ -768,7 +658,7 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     ###############################################
     ################# General #####################
     ############################################### 
-    my_ifcproduct: bpy.props.BoolProperty(name="IfcProduct",description="Export IfcProduct",default=False)
+    my_ifcproduct: bpy.props.BoolProperty(name="IfcProduct",description="Export IfcProduct",default=True)
     my_ifcbuildingstorey: bpy.props.BoolProperty(name="IfcBuildingStorey",description="Export IfcBuildingStorey",default = True)     
     my_ifcproduct_name: bpy.props.BoolProperty(name="Name",description="Export IfcProduct Name",default = True)
     my_type: bpy.props.BoolProperty(name="Type",description="Export IfcObjectType Name",default = True)
@@ -793,15 +683,47 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     my_perimeter: bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
     ###############################################
-    ############ Custom Properties ################
+    ####### Spreadsheet Properties ################
     ###############################################
-    custom_property_a: bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
-    custom_property_b: bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
-    custom_property_c: bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
-    custom_property_d: bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
-    custom_property_e: bpy.props.StringProperty(default="PropertySet.PropertyName", name="")
+    my_workbook: bpy.props.StringProperty(name="Workbook")
+
+    
+    
+    
+class MyItem(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="My Property") 
+
+class MyCollection(bpy.types.PropertyGroup):
+    items: bpy.props.CollectionProperty(type=MyItem)
+
+class MyCollectionActions(bpy.types.Operator):
+    bl_idname = "my.collection_actions"
+    bl_label = "Execute"
+    action: bpy.props.EnumProperty(
+        items=(
+            ("add",) * 3,
+            ("remove",) * 3,
+        ),
+    )
+    def execute(self, context):
+        my_collection = context.scene.my_collection
+        if self.action == "add":           
+            item = my_collection.items.add()  # Here keep a handle on the last added item. You can then change its name or whatever afterwards
+        if self.action == "remove":
+            my_collection.items.remove(len(my_collection.items) - 1)
+        return {"FINISHED"}
+
+
 
 def register():
+    bpy.utils.register_class(MyItem)
+    bpy.utils.register_class(MyCollection)
+    
+    bpy.types.Scene.my_collection = bpy.props.PointerProperty(type=MyCollection)
+    bpy.utils.register_class(MyCollectionActions)
+    
+    
+    
     bpy.utils.register_class(BlenderBIMOpenOfficeXMLProperties)
     bpy.types.Scene.blenderbim_openoffice_xml_properties = bpy.props.PointerProperty(type=BlenderBIMOpenOfficeXMLProperties)       
     bpy.utils.register_class(WriteToXLSX)
@@ -811,6 +733,13 @@ def register():
     bpy.utils.register_class(BlenderBIMXLSXPanel)
     
 def unregister(): 
+    
+    bpy.utils.unregister_class(MyItem)
+    bpy.utils.unregister_class(MyCollection)
+    bpy.utils.unregister_class(MyCollectionActions)
+    
+    
+    
     bpy.utils.unregister_class(BlenderBIMOpenOfficeXMLProperties)
     bpy.utils.unregister_class(WriteToXLSX)
     bpy.utils.unregister_class(OpenXLSXFile)
