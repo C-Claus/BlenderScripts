@@ -74,44 +74,20 @@ Before you begin, it is important you already have the BlenderBIM add-on install
 ### 1.  Open Blender as Administrator
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
 
-### 2.  Open the scripting tab in Blender
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/01_open_Scripting_tab.png)
-
-### 3.  Open the python file which installs the necessary modules, you can this python script [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/Blender_install_modules.py)
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/02_open_file.png)
-
-### 4. Your Blender now should look like this
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/03_scripting_file_opened.png)
-
-### 5. Toggle the System Console to see what the script is doing
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/04_toggle_the_system_console.png)
-
-
-### 6. Run the script, the script downloads three modules from the internet which the add-on needs, [pandas](https://pandas.pydata.org/), [xlsxwriter](https://xlsxwriter.readthedocs.io/) [and openpyxl](https://openpyxl.readthedocs.io/en/stable/).
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/06_run_the_script_by_pressing_the_play_button.png)
-
-
-### 7. Take a look at the System console to see if the downloads succeeded, if you get a ```PermissionError: [WinError5] Acces is denied``` it means Blender has no Administrator rights or you are using Blender from a user account. In my case I already installed the modules.
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/07_feedback_console.png)
-
-### 8. Click on the Layout tab in Blender
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/08_click_on_the_layout_tab.png)
-
-### 9. Go to Edit -> Preferences
+### 2. Go to Edit -> Preferences
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/09_go_to_edit_preferences.png)
 
-### 10. Go to Add-ons -> Install
+### 3. Go to Add-ons -> Install
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/10_click_install.png)
 
-
-### 11. Open the .zip file. You can find this zip file [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip).
+### 4. Open the .zip file. You can find this zip file [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip).
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/11_open_the_zip.png)
 
-### 12. Search the Add-on and enabled it by checking it.
+### 5. Search the Add-on and enabled it by checking it.
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/12_add_on_enabled.png)
 
 
-### 13. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
+### 6. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/13_under_the_tools_tab.png)
 
  </p>
