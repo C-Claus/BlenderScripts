@@ -36,16 +36,6 @@ import numpy as np
 from collections import defaultdict
 
 
-
-#backlog
-#1. create subpanels
-#2. remove global variables
-#3. add multiple custom propertysets
-#4. refactor for optimization and performance 
-#5. create dev and release pipeline on github
-#6. refactor isexternal, loadbearing and firerating functions
-
-
 print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
 print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
@@ -60,27 +50,24 @@ class WriteToXLSX(bpy.types.Operator):
         print("Write to .xlsx")
         
         start_time = time.perf_counter()
-   
+        
+        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
+        my_collection = context.scene.my_collection
+        
+        print('sheet name: ', blenderbim_openoffice_xml_properties.my_workbook)
+        print ('xlsx file: ', blenderbim_openoffice_xml_properties.my_xlsx_file)
+        
         ifc_dictionary = defaultdict(list)
         ifc_custom_property_list = []
         
-        global sheet_name_custom
-        sheet_name_custom = 'Overview'
-        
-        global excel_file
-        excel_file = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
+        blenderbim_openoffice_xml_properties.my_workbook = 'Overview'
+        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods')  
         
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
-   
-        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
-        my_collection = context.scene.my_collection
-        
-      
-    
-        
+
         for product in products:
             
             ##################################################################
@@ -160,15 +147,15 @@ class WriteToXLSX(bpy.types.Operator):
 
         
         df = pd.DataFrame(ifc_dictionary)
-        writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
+        writer = pd.ExcelWriter(blenderbim_openoffice_xml_properties.my_xlsx_file, engine='xlsxwriter')
         #writer = pd.ExcelWriter(excel_file, engine='odf')
     
-        df.to_excel(writer, sheet_name=sheet_name_custom, startrow=1, header=False, index=False)
+        df.to_excel(writer, sheet_name=blenderbim_openoffice_xml_properties.my_workbook, startrow=1, header=False, index=False)
         
         workbook  = writer.book
         #cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
         
-        worksheet = writer.sheets[sheet_name_custom]
+        worksheet = writer.sheets[blenderbim_openoffice_xml_properties.my_workbook]
         #worksheet.write('A1', str(IfcStore.path), cell_format)
         
         (max_row, max_col) = df.shape
@@ -206,7 +193,7 @@ class WriteToXLSX(bpy.types.Operator):
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
-        os.startfile(excel_file)
+        os.startfile(blenderbim_openoffice_xml_properties.my_xlsx_file)
         
         print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
         
@@ -524,9 +511,14 @@ class FilterIFCElements(bpy.types.Operator):
         start_time = time.perf_counter()
         #sheet_name_custom = 'Overview'
         
+        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
         
-        workbook_openpyxl = load_workbook(excel_file)
-        worksheet_openpyxl = workbook_openpyxl[sheet_name_custom] 
+        
+        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
+        blenderbim_openoffice_xml_properties.my_workbook = 'Overview'
+        
+        workbook_openpyxl = load_workbook(blenderbim_openoffice_xml_properties.my_xlsx_file)
+        worksheet_openpyxl = workbook_openpyxl[blenderbim_openoffice_xml_properties.my_workbook] 
         
         global_id_filtered_list = []
 
@@ -685,7 +677,8 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     ###############################################
     ####### Spreadsheet Properties ################
     ###############################################
-    my_workbook: bpy.props.StringProperty(name="Workbook")
+    my_workbook: bpy.props.StringProperty(name="my_workbook")
+    my_xlsx_file: bpy.props.StringProperty(name="my_xlsx_file")
 
     
     
