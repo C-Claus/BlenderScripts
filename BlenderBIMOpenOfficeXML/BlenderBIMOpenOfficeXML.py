@@ -139,10 +139,12 @@ class WriteToXLSX(bpy.types.Operator):
             ##################################################################
             ################### Custom Properties ############################
             ##################################################################
-            for item in context.scene.my_collection.items:
-                ifc_dictionary[item.name].append(self.get_custom_pset( context,ifcproduct=product,
-                                                                pset_name=str(item.name).split('.')[0],
-                                                                property_name=str(item.name).split('.')[1])[0])   
+         
+            if len(context.scene.my_collection.items) > 1:
+                for item in context.scene.my_collection.items:
+                    ifc_dictionary[item.name].append(self.get_custom_pset( context,ifcproduct=product,
+                                                                    pset_name=str(item.name).split('.')[0],
+                                                                    property_name=str(item.name).split('.')[1])[0])   
       
 
         
@@ -487,11 +489,12 @@ class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         
         print("Open .xlsx file")
-        
+        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
+        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         filename, extension = os.path.splitext(self.filepath)
         
-        global excel_file
-        excel_file = self.filepath
+        #global excel_file
+        blenderbim_openoffice_xml_properties.my_xlsx_file = self.filepath
         os.startfile(self.filepath)
         
         return {'FINISHED'}
@@ -509,11 +512,8 @@ class FilterIFCElements(bpy.types.Operator):
         print("filter IFC elements")
         
         start_time = time.perf_counter()
-        #sheet_name_custom = 'Overview'
-        
+   
         blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
-        
-        
         blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         blenderbim_openoffice_xml_properties.my_workbook = 'Overview'
         
@@ -684,7 +684,7 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     
     
 class MyItem(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty(name="My Property") 
+    name: bpy.props.StringProperty(name="Property",description="Use the PropertySet name and Property name divided by a .",default = "[PropertySet.Property]") 
 
 class MyCollection(bpy.types.PropertyGroup):
     items: bpy.props.CollectionProperty(type=MyItem)
