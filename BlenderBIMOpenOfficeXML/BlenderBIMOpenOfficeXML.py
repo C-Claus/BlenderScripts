@@ -67,6 +67,10 @@ class WriteToXLSX(bpy.types.Operator):
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
+        is_external = 'IsExternal'
+        loadbearing = 'LoadBearing'
+        fire_rating = 'FireRating'
+        
 
         for product in products:
             
@@ -103,15 +107,18 @@ class WriteToXLSX(bpy.types.Operator):
             
             ##################################################################
             ################### Common Properties ############################
-            ##################################################################    
+            ##################################################################  
             if blenderbim_openoffice_xml_properties.my_isexternal:    
-                ifc_dictionary['IsExternal'].append(self.get_isexternal(context, ifcproduct=product)[0])
+                ifc_dictionary[is_external].append(self.get_common_properties(context, ifcproduct=product, property_name=is_external)[0])
                 
+  
             if blenderbim_openoffice_xml_properties.my_loadbearing:     
-                ifc_dictionary['LoadBearing'].append(self.get_loadbearing(context, ifcproduct=product)[0])
+                ifc_dictionary[loadbearing].append(self.get_common_properties(context, ifcproduct=product, property_name=loadbearing)[0])
+            
                 
             if blenderbim_openoffice_xml_properties.my_firerating:    
-                ifc_dictionary['FireRating'].append(self.get_firerating(context, ifcproduct=product)[0])
+                ifc_dictionary[fire_rating].append(self.get_common_properties(context, ifcproduct=product, property_name=fire_rating)[0])
+               
             
           
             ##################################################################
@@ -287,11 +294,9 @@ class WriteToXLSX(bpy.types.Operator):
                              
         return [joined_material_list] 
     
-    def get_isexternal(self, context, ifcproduct):
+    def get_common_properties(self, context, ifcproduct, property_name):
         
-        externality_list = []
-        
-        property_name = 'IsExternal'
+        pset_common_list = []
      
         if ifcproduct.IsDefinedBy:        
             for ifcreldefinesbyproperties in ifcproduct.IsDefinedBy:
@@ -301,59 +306,15 @@ class WriteToXLSX(bpy.types.Operator):
                             
                             for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
                                 if (ifcproperty.Name == property_name):
-                                    #externality_list.append(ifcproperty.Name)
-                                    externality_list.append(ifcproperty.NominalValue[0])
+                                    
+                                    pset_common_list.append(ifcproperty.NominalValue[0])
                                         
-        if not externality_list:
-            externality_list.append(None)  
+        if not pset_common_list:
+            pset_common_list.append(None)  
 
-        return externality_list
+        return pset_common_list
     
-    def get_loadbearing(self, context,ifcproduct):
-        load_bearing_list = []
-        
-        property_name = 'LoadBearing'
-        
-        if ifcproduct.IsDefinedBy:        
-            for ifcreldefinesbyproperties in ifcproduct.IsDefinedBy:
-                if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
-                    if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
-                        if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).endswith('Common'):
-                           
-                            for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
-                                if (ifcproperty.Name == property_name):
-                                    load_bearing_list.append(ifcproperty.NominalValue[0])
-                            else:
-                                pass
-                                        
-        if not load_bearing_list:
-            load_bearing_list.append(None)
-                             
-        return load_bearing_list
-    
-    def get_firerating(self, context, ifcproduct):
-        fire_rating_list = []    
-        
-        property_name = 'FireRating'
-        
-        if ifcproduct.IsDefinedBy:        
-            for ifcreldefinesbyproperties in ifcproduct.IsDefinedBy:
-                if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
-                    if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
-                        if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).endswith('Common'):
-                           
-                            for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
-                                if (ifcproperty.Name == property_name):
-
-                                    fire_rating_list.append(ifcproperty.NominalValue[0])
-                            else:
-                                pass
-                                        
-        if not fire_rating_list:
-            fire_rating_list.append(None)
-                             
-        return fire_rating_list
-    
+          
     def get_quantities_length(self, context, ifcproduct):
     
         quantity_length_list = []
