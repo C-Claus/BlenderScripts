@@ -21,12 +21,10 @@ from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty
 from bpy_extras.io_utils import ImportHelper 
 from bpy.types import (Operator, PropertyGroup)
 
-
 import blenderbim.bim.import_ifc
 from blenderbim.bim.ifc import IfcStore
 import blenderbim.tool as tool
 import ifcopenshell
-
 
 import openpyxl
 from openpyxl import load_workbook
@@ -71,30 +69,31 @@ class WriteToXLSX(bpy.types.Operator):
         loadbearing = 'LoadBearing'
         fire_rating = 'FireRating'
         
+        length = 'Length'
+        width = 'Width'
+        height = 'Height'
+        area = 'Area' 
+        volume = 'Volume'
+        perimeter = 'Perimeter'
 
         for product in products:
-            
             ##################################################################
             ##########################  GlobalId #############################
             ##################################################################
             ifc_dictionary['GlobalId'].append(str(product.GlobalId))
-            
              
             ##################################################################
             ########################### General ##############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_ifcproduct:  # 'if condition is True:' is the same as  'if condition:'
+            if blenderbim_openoffice_xml_properties.my_ifcproduct:
                 ifc_dictionary['IfcProduct'].append(str(product.is_a()))
                 
-          
             if blenderbim_openoffice_xml_properties.my_ifcbuildingstorey:  
                 ifc_dictionary['IfcBuildingStorey'].append(self.get_ifcbuildingstorey(context, ifcproduct=product,)[0])    
     
-           
             if blenderbim_openoffice_xml_properties.my_ifcproduct_name: 
                 ifc_dictionary['Name'].append(str(product.Name))
                 
-            
             if blenderbim_openoffice_xml_properties.my_type:     
                 ifc_dictionary['Type'].append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             
@@ -111,42 +110,36 @@ class WriteToXLSX(bpy.types.Operator):
             if blenderbim_openoffice_xml_properties.my_isexternal:    
                 ifc_dictionary[is_external].append(self.get_common_properties(context, ifcproduct=product, property_name=is_external)[0])
                 
-  
             if blenderbim_openoffice_xml_properties.my_loadbearing:     
                 ifc_dictionary[loadbearing].append(self.get_common_properties(context, ifcproduct=product, property_name=loadbearing)[0])
-            
-                
+                 
             if blenderbim_openoffice_xml_properties.my_firerating:    
                 ifc_dictionary[fire_rating].append(self.get_common_properties(context, ifcproduct=product, property_name=fire_rating)[0])
                
-            
-          
             ##################################################################
             ##################### Base Quantities ############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_length: 
-                ifc_dictionary['Length'].append(self.get_quantities_length(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_length:  
+                ifc_dictionary[length].append(self.get_quantities(context, ifcproduct=product, quantity_name=length)[0])
+
+            if blenderbim_openoffice_xml_properties.my_width:  
+                ifc_dictionary[width].append(self.get_quantities(context, ifcproduct=product, quantity_name=width)[0])   
                 
-            if blenderbim_openoffice_xml_properties.my_width:     
-                ifc_dictionary['Width'].append(self.get_quantities_width(context, ifcproduct=product)[0])
-                
-            if blenderbim_openoffice_xml_properties.my_height:    
-                ifc_dictionary['Height'].append(self.get_quantities_height(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_height: 
+                ifc_dictionary[height].append(self.get_quantities(context, ifcproduct=product, quantity_name=height)[0])   
                   
             if blenderbim_openoffice_xml_properties.my_area:     
-                ifc_dictionary['Area'].append(self.get_quantities_area(context, ifcproduct=product)[0])
+                ifc_dictionary[area].append(self.get_quantities(context, ifcproduct=product, quantity_name=area)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_volume:    
-                ifc_dictionary['Volume'].append(self.get_quantities_volume(context, ifcproduct=product)[0])
+            if blenderbim_openoffice_xml_properties.my_volume:   
+                ifc_dictionary[volume].append(self.get_quantities(context, ifcproduct=product, quantity_name=volume)[0]) 
                 
             if blenderbim_openoffice_xml_properties.my_perimeter:    
-                ifc_dictionary['Perimeter'].append(self.get_quantities_perimeter(context, ifcproduct=product)[0])
-                
-                
+                ifc_dictionary[perimeter].append(self.get_quantities(context, ifcproduct=product, quantity_name=perimeter)[0])
+   
             ##################################################################
             ################### Custom Properties ############################
             ##################################################################
-         
             if len(context.scene.my_collection.items) > 1:
                 for item in context.scene.my_collection.items:
                     ifc_dictionary[item.name].append(self.get_custom_pset( context,ifcproduct=product,
@@ -154,7 +147,6 @@ class WriteToXLSX(bpy.types.Operator):
                                                                     property_name=str(item.name).split('.')[1])[0])   
       
 
-        
         df = pd.DataFrame(ifc_dictionary)
         writer = pd.ExcelWriter(blenderbim_openoffice_xml_properties.my_xlsx_file, engine='xlsxwriter')
         #writer = pd.ExcelWriter(excel_file, engine='odf')
@@ -199,7 +191,6 @@ class WriteToXLSX(bpy.types.Operator):
                 total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
                 worksheet.write_formula(str(column_letter)+'1', total_volume)
                 
-
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
         os.startfile(blenderbim_openoffice_xml_properties.my_xlsx_file)
@@ -232,8 +223,6 @@ class WriteToXLSX(bpy.types.Operator):
                         building_storey_list.append(ifcproduct.ContainedInStructure[0].RelatingStructure.Name)
         except:
             pass
-
-
         #IfcOpeningElement should not be linked directly to the spatial structure of the project,
         #i.e. the inverse relationship ContainedInStructure shall be NIL.
         #It is assigned to the spatial structure through the elements it penetrates.
@@ -261,8 +250,7 @@ class WriteToXLSX(bpy.types.Operator):
                                                
         if not assembly_code_list:
             assembly_code_list.append(None)
-     
-            
+       
         return assembly_code_list
     
     def get_materials(self, context, ifcproduct):
@@ -313,111 +301,34 @@ class WriteToXLSX(bpy.types.Operator):
             pset_common_list.append(None)  
 
         return pset_common_list
-    
-          
-    def get_quantities_length(self, context, ifcproduct):
-    
-        quantity_length_list = []
-
+      
+    def get_quantities(self, context, ifcproduct, quantity_name):
+        
+        quantity_list = []
+        length_value_list = ['Length','Width','Height','Perimeter']
         
         for properties in ifcproduct.IsDefinedBy:
             if properties.is_a('IfcRelDefinesByProperties'):
                 if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
                     for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        if (quantities.Name) == 'Length':
-                            quantity_length_list.append(float(quantities.LengthValue))
+                        if (quantities.Name) == quantity_name:
                             
-        if not quantity_length_list:
-            quantity_length_list.append(None)
-                  
-        return quantity_length_list
-    
-    
-    def get_quantities_width(self, context, ifcproduct):
-    
-        quantity_width_list = []
-
-        
-        for properties in ifcproduct.IsDefinedBy:
-            if properties.is_a('IfcRelDefinesByProperties'):
-                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
-                    for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        if (quantities.Name) == 'Width':
-                            quantity_width_list.append(float(quantities.LengthValue))
-                            
-        if not quantity_width_list:
-            quantity_width_list.append(None)
-                  
-        return quantity_width_list
-    
-    def get_quantities_height(self, context, ifcproduct):
-    
-        quantity_height_list = []
-
-        for properties in ifcproduct.IsDefinedBy:
-            if properties.is_a('IfcRelDefinesByProperties'):
-                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
-                    for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        if (quantities.Name) == 'Height':
-                            quantity_height_list.append(float(quantities.LengthValue))
-                            
-        if not quantity_height_list:
-            quantity_height_list.append(None)
-              
-        return quantity_height_list
-    
-    def get_quantities_area(self, context, ifcproduct):
-    
-        quantity_area_list = []
-
-        for properties in ifcproduct.IsDefinedBy:
-            if properties.is_a('IfcRelDefinesByProperties'):
-                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
-                    for quantities in properties.RelatingPropertyDefinition.Quantities:
-                         if quantities.Name == 'NetArea' or (quantities.Name) == 'NetSideArea':
-                            quantity_area_list.append(float(quantities.AreaValue))
-                            
-        if not quantity_area_list:
-            quantity_area_list.append(None)                
-                  
-        return quantity_area_list
-    
-    def get_quantities_volume(self, context,ifcproduct):
-    
-        quantity_volume_list = []
-
-        for properties in ifcproduct.IsDefinedBy:
-            if properties.is_a('IfcRelDefinesByProperties'):
-                if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
-                    for quantities in properties.RelatingPropertyDefinition.Quantities:
-                        if (quantities.Name) == 'Net Volume':
-                            quantity_volume_list.append(float(quantities.VolumeValue))
-                            
-        if not quantity_volume_list:
-            quantity_volume_list.append(None) 
-          
-        return quantity_volume_list
-    
-    def get_quantities_perimeter(self, context, ifcproduct):
-    
-        quantity_perimeter_list = []
-        
-        if ifcproduct.is_a().startswith('IfcSlab'):
-            for properties in ifcproduct.IsDefinedBy:
-                if properties.is_a('IfcRelDefinesByProperties'):
-                    if properties.RelatingPropertyDefinition.is_a('IfcElementQuantity'):
-                        for quantities in properties.RelatingPropertyDefinition.Quantities:
-                             if quantities.Name == 'Perimeter':
-                                quantity_perimeter_list.append(str(quantities.LengthValue))
+                            if quantities.Name in length_value_list:
+                                quantity_list.append(float(quantities.LengthValue))
                                 
-        if not quantity_perimeter_list:
-            quantity_perimeter_list.append(None)
-                                                                       
-        return quantity_perimeter_list   
-
+                            if quantity_name == 'Area':
+                                quantity_list.append(float(quantities.AreaValue))
+                                
+                            if quantity_name == 'Volume':
+                                quantity_list.append(float(quantities.VolumeValue))
+                                                
+        if not quantity_list:
+            quantity_list.append(None)
+                  
+        return quantity_list
+    
     def get_custom_pset(self, context, ifcproduct, pset_name, property_name):
         
-
         custom_pset_list = []
         
         if ifcproduct.IsDefinedBy:        
@@ -436,7 +347,6 @@ class WriteToXLSX(bpy.types.Operator):
                              
         return custom_pset_list
         
-
 class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     """Open an existing XML file"""
     bl_idname = "object.open_excel"
@@ -447,7 +357,6 @@ class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     options={'HIDDEN'}
     )
     
-    
     some_boolean: BoolProperty(
         name="open Excel file",
         description='open the excel file',
@@ -456,22 +365,19 @@ class OpenXLSXFile(bpy.types.Operator, ImportHelper):
     
     filepath:bpy.props.StringProperty(subtype="FILE_PATH")
 
-
     def execute(self, context):
         
         print("Open .xlsx file")
         blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
         blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
         filename, extension = os.path.splitext(self.filepath)
-        
-        #global excel_file
+    
         blenderbim_openoffice_xml_properties.my_xlsx_file = self.filepath
         os.startfile(self.filepath)
         
         return {'FINISHED'}
     
-    
-    
+
 class FilterIFCElements(bpy.types.Operator):
     """Show the IFC elements you filtered in Excel"""
     bl_idname = "object.filter_ifc_elements"
@@ -499,8 +405,6 @@ class FilterIFCElements(bpy.types.Operator):
                     if cell in worksheet_openpyxl['A']:  
                         global_id_filtered_list.append(cell.value)
                         
-         
-        
         outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
         outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
         
@@ -521,7 +425,6 @@ class FilterIFCElements(bpy.types.Operator):
         
         return {'FINISHED'}
     
- 
 class UnhideIFCElements(bpy.types.Operator):
     """Unhide all IFC elements"""
     bl_idname = "object.unhide_all"
@@ -533,10 +436,8 @@ class UnhideIFCElements(bpy.types.Operator):
         for obj in bpy.data.objects:
             obj.hide_viewport = False 
         
-    
         return {'FINISHED'}  
     
-
 class BlenderBIMXLSXPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""  
 
@@ -546,7 +447,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
     bl_region_type = "UI"
     bl_category = "Tools"
  
-   
     def draw(self, context):
         
         layout = self.layout
@@ -591,9 +491,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         row = box.row()
         row.prop(blenderbim_openoffice_xml_properties, "my_perimeter")
         
-
-        
-        #layout = self.layout
         layout.label(text="Custom Properties")
         my_collection = context.scene.my_collection
        
@@ -604,7 +501,6 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         for item in my_collection.items:
             layout.prop(item, "name")
         
-
         layout.label(text="Write to .xlsx")
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
         self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
@@ -614,10 +510,7 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
     
         
-        
-
 class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
-    
     ###############################################
     ################# General #####################
     ############################################### 
@@ -652,8 +545,6 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     my_xlsx_file: bpy.props.StringProperty(name="my_xlsx_file")
 
     
-    
-    
 class MyItem(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="Property",description="Use the PropertySet name and Property name divided by a .",default = "[PropertySet.Property]") 
 
@@ -677,17 +568,13 @@ class MyCollectionActions(bpy.types.Operator):
             my_collection.items.remove(len(my_collection.items) - 1)
         return {"FINISHED"}
 
-
-
 def register():
     bpy.utils.register_class(MyItem)
     bpy.utils.register_class(MyCollection)
     
     bpy.types.Scene.my_collection = bpy.props.PointerProperty(type=MyCollection)
     bpy.utils.register_class(MyCollectionActions)
-    
-    
-    
+     
     bpy.utils.register_class(BlenderBIMOpenOfficeXMLProperties)
     bpy.types.Scene.blenderbim_openoffice_xml_properties = bpy.props.PointerProperty(type=BlenderBIMOpenOfficeXMLProperties)       
     bpy.utils.register_class(WriteToXLSX)
@@ -700,10 +587,7 @@ def unregister():
     
     bpy.utils.unregister_class(MyItem)
     bpy.utils.unregister_class(MyCollection)
-    bpy.utils.unregister_class(MyCollectionActions)
-    
-    
-    
+    bpy.utils.unregister_class(MyCollectionActions) 
     bpy.utils.unregister_class(BlenderBIMOpenOfficeXMLProperties)
     bpy.utils.unregister_class(WriteToXLSX)
     bpy.utils.unregister_class(OpenXLSXFile)
@@ -711,6 +595,5 @@ def unregister():
     bpy.utils.unregister_class(UnhideIFCElements)
     bpy.utils.unregister_class(BlenderBIMXLSXPanel)
     
-
 if __name__ == "__main__":
     register()
