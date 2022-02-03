@@ -52,7 +52,7 @@ The BlenderBIM has been developed and tested with the following dependecies on W
 
 module/software | version
 ---- | -----
-Blender | 2.93 & 3.0.0
+Blender | 2.93 & 3.0.0 & 3.0.1
 blenderbim add-on | 0.211117
 pandas | 1.3.5
 xlsxwriter | 3.0.2
@@ -69,20 +69,18 @@ ifcopenshell | comes with the BlenderBIM add-on
   
 Before you begin, it is important you already have the BlenderBIM add-on installed. You can see [here](https://blenderbim.org/install-blenderbim.html) on how to install it.
 
-### 1.  Open Blender as Administrator
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/00_run_blender_as_administrator.png)
 
-### 2. Go to Edit -> Preferences
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/09_go_to_edit_preferences.png)
+### 1. Go to Edit -> Preferences
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_edit_preferences.png)
 
 ### 3. Go to Add-ons -> Install
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/10_click_install.png)
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_click_install.png)
 
 ### 4. Open the .zip file. You can find this zip file [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip).
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/11_open_the_zip.png)
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_install_zip.png)
 
 ### 5. Search the Add-on and enabled it by checking it.
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/12_add_on_enabled.png)
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/01_enable_addon.png)
 
 
 ### 6. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
