@@ -42,6 +42,7 @@ ifcopenshell | comes with the BlenderBIM add-on
   
 Before you begin, it is important you already have the BlenderBIM add-on installed. You can see [here](https://blenderbim.org/install-blenderbim.html) on how to install it.
 
+On Windows, run Blender as Administrator
 
 ### 1. Go to Edit -> Preferences
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_edit_preferences.png)
