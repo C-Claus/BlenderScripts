@@ -1,12 +1,10 @@
 # [BlenderBIM Spreadsheet](#start)
 <a name="start"/>
 
-- [Quick Demo](#quick_start)
 - [Dependencies](#dependencies)
 - [Installation on Windows 10](#installation_on_windows_10)
 
 BlenderBIM Spreadsheet is a Blender add-on which creates .xlsx and .ods files from an IFC file using the [BlenderBIM add-on.](https://blenderbim.org/) 
-
 
 
 ### What's the added value of this Blender add-on?
@@ -14,6 +12,8 @@ The add-on enables architects, contractors and other stakeholders to do the foll
 - Easily quantify an .ifc file. 
 - Makes it possible to visualize IFC elements from a filtered spreadsheet.
 - Check an .ifc file if it's modelled conform the [BIM Base IDS](https://www.bimloket.nl//documents/BIM-ILS_infographicA4_2020_UK_021.pdf)
+- Export IFC data to .xlsx and .ods 
+- Use a spreadsheet program to filter from .xlsx back in the 3D View of Blender
 
 
 
