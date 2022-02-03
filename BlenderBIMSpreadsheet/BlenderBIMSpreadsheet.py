@@ -14,7 +14,6 @@ import time
 import site
 import collections
 
-
 site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
 import bpy
@@ -32,13 +31,8 @@ from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
 
-#import uno
-#import unotools
-#from ui.base import BasePage
-
 from collections import defaultdict
 from collections import OrderedDict
-#from pyexcel_ods import save_data
 
 
 print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
@@ -73,7 +67,10 @@ class ConstructDataFrame:
         width = 'Width'
         height = 'Height'
         area = 'Area' 
+        netarea = 'NetArea'
+        netsidearea = 'NetSideArea'
         volume = 'Volume'
+        netvolume = 'NetVolume'
         perimeter = 'Perimeter'
 
         for product in products:
@@ -131,8 +128,17 @@ class ConstructDataFrame:
             if blenderbim_spreadsheet_properties.my_area:     
                 ifc_dictionary[area].append(self.get_quantities(context, ifcproduct=product, quantity_name=area)[0])
                 
+            if blenderbim_spreadsheet_properties.my_netarea:     
+                ifc_dictionary[netarea].append(self.get_quantities(context, ifcproduct=product, quantity_name=netarea)[0])
+                
+            if blenderbim_spreadsheet_properties.my_netsidearea:     
+                ifc_dictionary[netsidearea].append(self.get_quantities(context, ifcproduct=product, quantity_name=netsidearea)[0])
+                
             if blenderbim_spreadsheet_properties.my_volume:   
                 ifc_dictionary[volume].append(self.get_quantities(context, ifcproduct=product, quantity_name=volume)[0]) 
+                
+            if blenderbim_spreadsheet_properties.my_netvolume:   
+                ifc_dictionary[netvolume].append(self.get_quantities(context, ifcproduct=product, quantity_name=netvolume)[0])
                 
             if blenderbim_spreadsheet_properties.my_perimeter:    
                 ifc_dictionary[perimeter].append(self.get_quantities(context, ifcproduct=product, quantity_name=perimeter)[0])
@@ -268,7 +274,16 @@ class ConstructDataFrame:
                             if quantity_name == 'Area':
                                 quantity_list.append(float(quantities.AreaValue))
                                 
+                            if quantity_name == 'NetArea':
+                                quantity_list.append(float(quantities.AreaValue))
+                            
+                            if quantity_name == 'NetSideArea':
+                                quantity_list.append(float(quantities.AreaValue))
+                                
                             if quantity_name == 'Volume':
+                                quantity_list.append(float(quantities.VolumeValue))
+                                
+                            if quantity_name == 'NetVolume':
                                 quantity_list.append(float(quantities.VolumeValue))
                                                 
         if not quantity_list:
@@ -297,7 +312,6 @@ class ConstructDataFrame:
         return custom_pset_list
     
     
-
     
 class WriteToXLSX(bpy.types.Operator):
     """Write IFC data to .xlsx"""
@@ -305,7 +319,6 @@ class WriteToXLSX(bpy.types.Operator):
     bl_label = "Simple Object Operator"
     
 
-    
     def execute(self, context):
         print("Write to .xlsx")
         start_time = time.perf_counter()
@@ -340,7 +353,7 @@ class WriteToXLSX(bpy.types.Operator):
           
         #find out from the pandas dataframe in which column the calculation needs to be positioned.
         for header_name in construct_data_frame.df.columns:
-            if header_name == 'Area':
+            if (header_name == 'Area'):
                 col_no = construct_data_frame.df.columns.get_loc("Area")
                 column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
                 
@@ -350,8 +363,27 @@ class WriteToXLSX(bpy.types.Operator):
                 total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
                 worksheet.write_formula(str(column_letter)+'1', total_area)
                 
+            if header_name == 'NetArea':
+                col_no = construct_data_frame.df.columns.get_loc("NetArea")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_area)    
+                
+            if header_name == 'NetSideArea':
+                col_no = construct_data_frame.df.columns.get_loc("NetSideArea")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_area)
+                  
             if header_name == 'Volume':
                 col_no = construct_data_frame.df.columns.get_loc("Volume")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                
+                total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_volume)
+                
+            if header_name == 'NetVolume':
+                col_no = construct_data_frame.df.columns.get_loc("NetVolume")
                 column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
                 
                 total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
@@ -405,7 +437,6 @@ class WriteToODS(bpy.types.Operator):
         return {'FINISHED'}
 
        
-
 class FilterIFCElements(bpy.types.Operator):
     """Show the IFC elements you filtered in Excel"""
     bl_idname = "object.filter_ifc_elements"
@@ -443,13 +474,10 @@ class FilterIFCElements(bpy.types.Operator):
                             if cell in worksheet_openpyxl['A']:  
                                 global_id_filtered_list.append(cell.value)
                                 
-            
 
-                
                 ###################################
                 ####### Filter IFC elements #######
-                ###################################
-                                
+                ###################################                
                 outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
                 outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
                 
@@ -470,34 +498,14 @@ class FilterIFCElements(bpy.types.Operator):
                 
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".ods"):
             
-            
+                print ("Sorry, this feature is not finished yet to filter elements from an .ods file")
                 ###################################
                 ### Get filtered data from .ods ###
                 ###################################
-                dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, engine="odf")
+                #dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, engine="odf")
                 
-                print (dataframe['GlobalId'])
-                #for i in dir(dataframe['GlobalId']):
-                #    print (i)
-                #print (dir(dataframe['GlobalId']))
-                
-                #filtered = dataframe[(dataframe['GlobalId'])]
-                
-                #print (filtered)
-                #print (dir(dataframe['GlobalId']))
-                
-                #print (dataframe['GlobalId'].values)
-                
-                #iter_csv = pd.read_csv('file.csv', iterator=True, chunksize=1000)
-                #df = pd.concat([chunk[chunk['field'] > constant] for chunk in iter_csv])
-                
-                
-                #iter_ods = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook)
-                #df = pd.concat([chunk[chunk[0] > constant] for chunk in iter_ods])
-                #print (df)
-                #for i in dir(dataframe):
-                #    print (i)
-            
+                #print (dataframe['GlobalId'])
+
         
         return {'FINISHED'}
     
@@ -563,7 +571,13 @@ class BlenderBIMSpreadSheetPanel(bpy.types.Panel):
         row = box.row()
         row.prop(blenderbim_spreadsheet_properties, "my_area")
         row = box.row()
+        row.prop(blenderbim_spreadsheet_properties, "my_netarea")
+        row = box.row()
+        row.prop(blenderbim_spreadsheet_properties, "my_netsidearea")
+        row = box.row()
         row.prop(blenderbim_spreadsheet_properties, "my_volume")
+        row = box.row()
+        row.prop(blenderbim_spreadsheet_properties, "my_netvolume")
         row = box.row()
         row.prop(blenderbim_spreadsheet_properties, "my_perimeter")
         
@@ -589,8 +603,6 @@ class BlenderBIMSpreadSheetPanel(bpy.types.Panel):
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
         
-    
-    
         
 class BlenderBIMSpreadSheetProperties(bpy.types.PropertyGroup):
     ###############################################
@@ -616,8 +628,14 @@ class BlenderBIMSpreadSheetProperties(bpy.types.PropertyGroup):
     my_length: bpy.props.BoolProperty(name="Length",description="Export Length from BaseQuantities",default = True)  
     my_width: bpy.props.BoolProperty(name="Width",description="Export Width from BaseQuantities",default = True)   
     my_height: bpy.props.BoolProperty(name="Height",description="Export Height from BaseQuantities",default = True) 
-    my_area: bpy.props.BoolProperty(name="Area",description="Export Area from BaseQuantities",default = True)  
+   
+    my_area: bpy.props.BoolProperty(name="Area",description="Gets each possible defintion of Area",default = True)  
+    my_netarea: bpy.props.BoolProperty(name="NetArea",description="Export NetArea from BaseQuantities",default = True)
+    my_netsidearea: bpy.props.BoolProperty(name="NetSideArea",description="Export NetSideArea from BaseQuantities",default = True)
+    
     my_volume: bpy.props.BoolProperty(name="Volume",description="Export Volume from BaseQuantities",default = True) 
+    my_netvolume: bpy.props.BoolProperty(name="NetVolume",description="Export Volume from BaseQuantities",default = True)
+    
     my_perimeter: bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
     ###############################################
@@ -660,17 +678,12 @@ class MyCollectionActions(bpy.types.Operator):
 def register():
     bpy.utils.register_class(MyItem)
     bpy.utils.register_class(MyCollection)
-    
     bpy.types.Scene.my_collection = bpy.props.PointerProperty(type=MyCollection)
-    bpy.utils.register_class(MyCollectionActions)
-     
+    bpy.utils.register_class(MyCollectionActions) 
     bpy.utils.register_class(BlenderBIMSpreadSheetProperties)
-    bpy.types.Scene.blenderbim_spreadsheet_properties = bpy.props.PointerProperty(type=BlenderBIMSpreadSheetProperties) 
-       
-      
+    bpy.types.Scene.blenderbim_spreadsheet_properties = bpy.props.PointerProperty(type=BlenderBIMSpreadSheetProperties)     
     bpy.utils.register_class(WriteToXLSX)
-    bpy.utils.register_class(WriteToODS)
-     
+    bpy.utils.register_class(WriteToODS) 
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
     bpy.utils.register_class(BlenderBIMSpreadSheetPanel)
@@ -681,11 +694,8 @@ def unregister():
     bpy.utils.unregister_class(MyCollection)
     bpy.utils.unregister_class(MyCollectionActions) 
     bpy.utils.unregister_class(BlenderBIMSpreadSheetProperties)
-    
-  
     bpy.utils.unregister_class(WriteToXLSX)
     bpy.utils.unregister_class(WriteToODS)
-    
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
     bpy.utils.unregister_class(BlenderBIMSpreadSheetPanel)
