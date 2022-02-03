@@ -477,8 +477,8 @@ class FilterIFCElements(bpy.types.Operator):
                 dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, engine="odf")
                 
                 print (dataframe['GlobalId'])
-                for i in dir(dataframe['GlobalId']):
-                    print (i)
+                #for i in dir(dataframe['GlobalId']):
+                #    print (i)
                 #print (dir(dataframe['GlobalId']))
                 
                 #filtered = dataframe[(dataframe['GlobalId'])]
