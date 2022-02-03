@@ -1,10 +1,10 @@
 bl_info = {
-    "name": "BlenderBIM OpenOffice XML",
+    "name": "BlenderBIM spreadsheet",
     "author": "C. Claus",
     "version": (1, 0, 0),
-    "blender": (3, 0, 0),
+    "blender": (3, 0, 1),
     "location": "Tools",
-    "description": "BlenderBIM spreadsheet",
+    "description": "BlenderBIM spreadsheet for .xlsx and .ods",
     "support": "COMMUNITY",
     }
   
@@ -12,8 +12,9 @@ import os
 import sys
 import time
 import site
+import collections
 
-python_packages_folder = "libs/site/packages"
+
 site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
 import bpy
@@ -30,37 +31,36 @@ import openpyxl
 from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
-import numpy as np
+
+#import uno
+#import unotools
+#from ui.base import BasePage
+
 from collections import defaultdict
+from collections import OrderedDict
+#from pyexcel_ods import save_data
 
 
 print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
 print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
-class WriteToXLSX(bpy.types.Operator):
-    """Write IFC data to .xlsx"""
-    bl_idname = "object.write_to_xlsx"
-    bl_label = "Simple Object Operator"
-    
 
-    def execute(self, context):
-        print("Write to .xlsx")
+
+class ConstructDataFrame:
+
+    def __init__(self, context):
         
-        start_time = time.perf_counter()
-        
-        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
+        blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties
         my_collection = context.scene.my_collection
-        
-        print('sheet name: ', blenderbim_openoffice_xml_properties.my_workbook)
-        print ('xlsx file: ', blenderbim_openoffice_xml_properties.my_xlsx_file)
         
         ifc_dictionary = defaultdict(list)
         ifc_custom_property_list = []
         
-        blenderbim_openoffice_xml_properties.my_workbook = 'Overview'
-        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
-        ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods')  
+        blenderbim_spreadsheet_properties.my_workbook = 'Overview'
+        blenderbim_spreadsheet_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
+        blenderbim_spreadsheet_properties.my_ods_file = IfcStore.path.replace('.ifc','_blenderbim.ods') 
+
         
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
@@ -85,56 +85,56 @@ class WriteToXLSX(bpy.types.Operator):
             ##################################################################
             ########################### General ##############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_ifcproduct:
+            if blenderbim_spreadsheet_properties.my_ifcproduct:
                 ifc_dictionary['IfcProduct'].append(str(product.is_a()))
                 
-            if blenderbim_openoffice_xml_properties.my_ifcbuildingstorey:  
+            if blenderbim_spreadsheet_properties.my_ifcbuildingstorey:  
                 ifc_dictionary['IfcBuildingStorey'].append(self.get_ifcbuildingstorey(context, ifcproduct=product,)[0])    
     
-            if blenderbim_openoffice_xml_properties.my_ifcproduct_name: 
+            if blenderbim_spreadsheet_properties.my_ifcproduct_name: 
                 ifc_dictionary['Name'].append(str(product.Name))
                 
-            if blenderbim_openoffice_xml_properties.my_type:     
+            if blenderbim_spreadsheet_properties.my_type:     
                 ifc_dictionary['Type'].append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             
-            if blenderbim_openoffice_xml_properties.my_ifcclassification: 
+            if blenderbim_spreadsheet_properties.my_ifcclassification: 
                 ifc_dictionary['Classification'].append(self.get_classification_code(context, ifcproduct=product)[0])
               
-            if blenderbim_openoffice_xml_properties.my_ifcmaterial:     
+            if blenderbim_spreadsheet_properties.my_ifcmaterial:     
                 ifc_dictionary['Material(s)'].append(self.get_materials(context, ifcproduct=product)[0])
                 
             
             ##################################################################
             ################### Common Properties ############################
             ##################################################################  
-            if blenderbim_openoffice_xml_properties.my_isexternal:    
+            if blenderbim_spreadsheet_properties.my_isexternal:    
                 ifc_dictionary[is_external].append(self.get_common_properties(context, ifcproduct=product, property_name=is_external)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_loadbearing:     
+            if blenderbim_spreadsheet_properties.my_loadbearing:     
                 ifc_dictionary[loadbearing].append(self.get_common_properties(context, ifcproduct=product, property_name=loadbearing)[0])
                  
-            if blenderbim_openoffice_xml_properties.my_firerating:    
+            if blenderbim_spreadsheet_properties.my_firerating:    
                 ifc_dictionary[fire_rating].append(self.get_common_properties(context, ifcproduct=product, property_name=fire_rating)[0])
                
             ##################################################################
             ##################### Base Quantities ############################
             ##################################################################
-            if blenderbim_openoffice_xml_properties.my_length:  
+            if blenderbim_spreadsheet_properties.my_length:  
                 ifc_dictionary[length].append(self.get_quantities(context, ifcproduct=product, quantity_name=length)[0])
 
-            if blenderbim_openoffice_xml_properties.my_width:  
+            if blenderbim_spreadsheet_properties.my_width:  
                 ifc_dictionary[width].append(self.get_quantities(context, ifcproduct=product, quantity_name=width)[0])   
                 
-            if blenderbim_openoffice_xml_properties.my_height: 
+            if blenderbim_spreadsheet_properties.my_height: 
                 ifc_dictionary[height].append(self.get_quantities(context, ifcproduct=product, quantity_name=height)[0])   
                   
-            if blenderbim_openoffice_xml_properties.my_area:     
+            if blenderbim_spreadsheet_properties.my_area:     
                 ifc_dictionary[area].append(self.get_quantities(context, ifcproduct=product, quantity_name=area)[0])
                 
-            if blenderbim_openoffice_xml_properties.my_volume:   
+            if blenderbim_spreadsheet_properties.my_volume:   
                 ifc_dictionary[volume].append(self.get_quantities(context, ifcproduct=product, quantity_name=volume)[0]) 
                 
-            if blenderbim_openoffice_xml_properties.my_perimeter:    
+            if blenderbim_spreadsheet_properties.my_perimeter:    
                 ifc_dictionary[perimeter].append(self.get_quantities(context, ifcproduct=product, quantity_name=perimeter)[0])
    
             ##################################################################
@@ -146,61 +146,10 @@ class WriteToXLSX(bpy.types.Operator):
                                                                     pset_name=str(item.name).split('.')[0],
                                                                     property_name=str(item.name).split('.')[1])[0])   
       
-
         df = pd.DataFrame(ifc_dictionary)
-        writer = pd.ExcelWriter(blenderbim_openoffice_xml_properties.my_xlsx_file, engine='xlsxwriter')
-        #writer = pd.ExcelWriter(excel_file, engine='odf')
-    
-        df.to_excel(writer, sheet_name=blenderbim_openoffice_xml_properties.my_workbook, startrow=1, header=False, index=False)
+        self.df = df
         
-        workbook  = writer.book
-        #cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
         
-        worksheet = writer.sheets[blenderbim_openoffice_xml_properties.my_workbook]
-        #worksheet.write('A1', str(IfcStore.path), cell_format)
-        
-        (max_row, max_col) = df.shape
-         
-        # Create a list of column headers, to use in add_table().
-        column_settings = []
-        for header in df.columns:
-            column_settings.append({'header': header})
-
-        # Add the table.
-        worksheet.add_table(1, 0, max_row, max_col - 1, {'columns': column_settings})
-
-        # Make the columns wider for clarity.
-        worksheet.set_column(0, max_col - 1, 30)
-          
-        #find out from the pandas dataframe in which column the calculation needs to be positioned.
-        for header_name in df.columns:
-            if header_name == 'Area':
-                col_no = df.columns.get_loc("Area")
-                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
-                
-                #Works in MS Excel, but not in LibreOffice
-                #="Area: " &SUBTOTAL(109;F2:F3821)
-               
-                total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
-                worksheet.write_formula(str(column_letter)+'1', total_area)
-                
-            if header_name == 'Volume':
-                col_no = df.columns.get_loc("Volume")
-                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
-                
-                total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(len(products)) + ')'
-                worksheet.write_formula(str(column_letter)+'1', total_volume)
-                
-        # Close the Pandas Excel writer and output the Excel file.
-        writer.save()
-        os.startfile(blenderbim_openoffice_xml_properties.my_xlsx_file)
-        
-        print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
-        
-    
-        return {'FINISHED'}
-    
-    
     def get_ifcproducttype_name(self, context, ifcproduct):
         
         type_name_list = []
@@ -346,37 +295,116 @@ class WriteToXLSX(bpy.types.Operator):
             custom_pset_list.append(None)
                              
         return custom_pset_list
-        
-class OpenXLSXFile(bpy.types.Operator, ImportHelper):
-    """Open an existing XML file"""
-    bl_idname = "object.open_excel"
-    bl_label = "Open Excel"
     
-    filter_glob: StringProperty(
-    default='*.xlsx;*',
-    options={'HIDDEN'}
-    )
     
-    some_boolean: BoolProperty(
-        name="open Excel file",
-        description='open the excel file',
-        default=True,
-    )
-    
-    filepath:bpy.props.StringProperty(subtype="FILE_PATH")
 
-    def execute(self, context):
-        
-        print("Open .xlsx file")
-        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
-        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
-        filename, extension = os.path.splitext(self.filepath)
     
-        blenderbim_openoffice_xml_properties.my_xlsx_file = self.filepath
-        os.startfile(self.filepath)
+class WriteToXLSX(bpy.types.Operator):
+    """Write IFC data to .xlsx"""
+    bl_idname = "object.write_to_xlsx"
+    bl_label = "Simple Object Operator"
+    
+
+    
+    def execute(self, context):
+        print("Write to .xlsx")
+        start_time = time.perf_counter()
         
+        construct_data_frame = ConstructDataFrame(context)
+  
+        blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties
+        blenderbim_spreadsheet_properties.my_workbook
+        print ('xlsx file: ', blenderbim_spreadsheet_properties.my_xlsx_file)
+        
+        writer = pd.ExcelWriter(blenderbim_spreadsheet_properties.my_xlsx_file, engine='xlsxwriter')
+        construct_data_frame.df.to_excel(writer, sheet_name=blenderbim_spreadsheet_properties.my_workbook, startrow=1, header=False, index=False)
+        
+        workbook  = writer.book
+        #cell_format = workbook.add_format({'bold': True,'border': 1,'bg_color': '#4F81BD','font_color': 'white','font_size':14})
+        
+        worksheet = writer.sheets[blenderbim_spreadsheet_properties.my_workbook]
+        #worksheet.write('A1', str(IfcStore.path), cell_format)
+        
+        (max_row, max_col) = construct_data_frame.df.shape
+         
+        # Create a list of column headers, to use in add_table().
+        column_settings = []
+        for header in construct_data_frame.df.columns:
+            column_settings.append({'header': header})
+
+        # Add the table.
+        worksheet.add_table(1, 0, max_row, max_col - 1, {'columns': column_settings})
+
+        # Make the columns wider for clarity.
+        worksheet.set_column(0, max_col - 1, 30)
+          
+        #find out from the pandas dataframe in which column the calculation needs to be positioned.
+        for header_name in construct_data_frame.df.columns:
+            if header_name == 'Area':
+                col_no = construct_data_frame.df.columns.get_loc("Area")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                
+                #Works in MS Excel, but not in LibreOffice
+                #="Area: " &SUBTOTAL(109;F2:F3821)
+               
+                total_area='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_area)
+                
+            if header_name == 'Volume':
+                col_no = construct_data_frame.df.columns.get_loc("Volume")
+                column_letter = (xlsxwriter.utility.xl_col_to_name(col_no))
+                
+                total_volume='=SUBTOTAL(109,' + str(column_letter) + '3:' + str(column_letter) + str(construct_data_frame.df[construct_data_frame.df.columns[0]].count()) + ')'
+                worksheet.write_formula(str(column_letter)+'1', total_volume)
+                
+        # Close the Pandas Excel writer and output the Excel file.
+        writer.save()
+        os.startfile(blenderbim_spreadsheet_properties.my_xlsx_file)
+        
+        print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
+        
+        blenderbim_spreadsheet_properties.my_file_path = IfcStore.path.replace('.ifc','_blenderbim.xlsx')
+   
         return {'FINISHED'}
     
+    
+
+    
+class WriteToODS(bpy.types.Operator):
+    """Write IFC data to .ods"""
+    bl_idname = "object.write_to_ods"
+    bl_label = "Simple ODS Object Operator"
+    
+    
+    def execute(self, context):
+        
+        print("Write to .ods")
+        
+        start_time = time.perf_counter()
+        
+        construct_data_frame = ConstructDataFrame(context)
+  
+        blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties
+        blenderbim_spreadsheet_properties.my_workbook
+        print ('ods file: ', blenderbim_spreadsheet_properties.my_ods_file)
+        
+
+        writer_ods = pd.ExcelWriter(blenderbim_spreadsheet_properties.my_ods_file, engine='odf')
+        construct_data_frame.df.to_excel(writer_ods, sheet_name=blenderbim_spreadsheet_properties.my_workbook, startrow=0, header=True, index=False)
+        
+        worksheet_ods = writer_ods.sheets[blenderbim_spreadsheet_properties.my_workbook]
+        writer_ods.save()
+   
+        os.startfile(blenderbim_spreadsheet_properties.my_ods_file)
+        
+        print (time.perf_counter() - start_time, "seconds for the .ods to be written")
+        
+        blenderbim_spreadsheet_properties.my_file_path = IfcStore.path.replace('.ifc','_blenderbim.ods')
+
+        
+        return {'FINISHED'}
+
+       
 
 class FilterIFCElements(bpy.types.Operator):
     """Show the IFC elements you filtered in Excel"""
@@ -390,38 +418,86 @@ class FilterIFCElements(bpy.types.Operator):
         
         start_time = time.perf_counter()
    
-        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
-        blenderbim_openoffice_xml_properties.my_xlsx_file  = IfcStore.path.replace('.ifc','_blenderbim.xlsx') 
-        blenderbim_openoffice_xml_properties.my_workbook = 'Overview'
+        blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties 
         
-        workbook_openpyxl = load_workbook(blenderbim_openoffice_xml_properties.my_xlsx_file)
-        worksheet_openpyxl = workbook_openpyxl[blenderbim_openoffice_xml_properties.my_workbook] 
+        if blenderbim_spreadsheet_properties.my_file_path == "":
+            print ("Use the 'Write IFC data to .xlsx' or 'Write IFC data to .ods' buttons first.")
         
-        global_id_filtered_list = []
+        if blenderbim_spreadsheet_properties.my_file_path:
+            if blenderbim_spreadsheet_properties.my_file_path.endswith(".xlsx"):
+            
+                print (blenderbim_spreadsheet_properties.my_file_path)
+                #####################################
+                ### Get filtered data from .xlsx ####
+                #####################################
+                
+                blenderbim_spreadsheet_properties.my_workbook = 'Overview'
+                workbook_openpyxl = load_workbook(blenderbim_spreadsheet_properties.my_file_path)
+                worksheet_openpyxl = workbook_openpyxl[blenderbim_spreadsheet_properties.my_workbook] 
+                
+                global_id_filtered_list = []
 
-        for row in worksheet_openpyxl:     
-            if worksheet_openpyxl.row_dimensions[row[0].row].hidden == False:
-                for cell in row:  
-                    if cell in worksheet_openpyxl['A']:  
-                        global_id_filtered_list.append(cell.value)
-                        
-        outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
-        outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
-        
-        bpy.ops.object.select_all(action='DESELECT')
-      
-        for obj in bpy.context.view_layer.objects:
-            element = tool.Ifc.get_entity(obj)
-            if element is None:        
-                obj.hide_viewport = True
-                continue
-            data = element.get_info()
-          
-            obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list[1:]
+                for row in worksheet_openpyxl:     
+                    if worksheet_openpyxl.row_dimensions[row[0].row].hidden == False:
+                        for cell in row:  
+                            if cell in worksheet_openpyxl['A']:  
+                                global_id_filtered_list.append(cell.value)
+                                
+            
 
-        bpy.ops.object.select_all(action='SELECT') 
-        
-        print (time.perf_counter() - start_time, "seconds to show the IFC elements")
+                
+                ###################################
+                ####### Filter IFC elements #######
+                ###################################
+                                
+                outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
+                outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
+                
+                bpy.ops.object.select_all(action='DESELECT')
+              
+                for obj in bpy.context.view_layer.objects:
+                    element = tool.Ifc.get_entity(obj)
+                    if element is None:        
+                        obj.hide_viewport = True
+                        continue
+                    data = element.get_info()
+                  
+                    obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list[1:]
+
+                bpy.ops.object.select_all(action='SELECT') 
+                
+                print (time.perf_counter() - start_time, "seconds to show the IFC elements")
+                
+            if blenderbim_spreadsheet_properties.my_file_path.endswith(".ods"):
+            
+            
+                ###################################
+                ### Get filtered data from .ods ###
+                ###################################
+                dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, engine="odf")
+                
+                print (dataframe['GlobalId'])
+                for i in dir(dataframe['GlobalId']):
+                    print (i)
+                #print (dir(dataframe['GlobalId']))
+                
+                #filtered = dataframe[(dataframe['GlobalId'])]
+                
+                #print (filtered)
+                #print (dir(dataframe['GlobalId']))
+                
+                #print (dataframe['GlobalId'].values)
+                
+                #iter_csv = pd.read_csv('file.csv', iterator=True, chunksize=1000)
+                #df = pd.concat([chunk[chunk['field'] > constant] for chunk in iter_csv])
+                
+                
+                #iter_ods = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook)
+                #df = pd.concat([chunk[chunk[0] > constant] for chunk in iter_ods])
+                #print (df)
+                #for i in dir(dataframe):
+                #    print (i)
+            
         
         return {'FINISHED'}
     
@@ -438,7 +514,7 @@ class UnhideIFCElements(bpy.types.Operator):
         
         return {'FINISHED'}  
     
-class BlenderBIMXLSXPanel(bpy.types.Panel):
+class BlenderBIMSpreadSheetPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""  
 
     bl_label = "BlenderBIM spreadsheet"
@@ -450,46 +526,46 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
     def draw(self, context):
         
         layout = self.layout
-        blenderbim_openoffice_xml_properties = context.scene.blenderbim_openoffice_xml_properties
+        blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties
         
         layout.label(text="General")
         box = layout.box()
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_ifcproduct")
+        row.prop(blenderbim_spreadsheet_properties, "my_ifcproduct")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_ifcbuildingstorey")
+        row.prop(blenderbim_spreadsheet_properties, "my_ifcbuildingstorey")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_ifcproduct_name")
+        row.prop(blenderbim_spreadsheet_properties, "my_ifcproduct_name")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_type")
+        row.prop(blenderbim_spreadsheet_properties, "my_type")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_ifcclassification")
+        row.prop(blenderbim_spreadsheet_properties, "my_ifcclassification")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_ifcmaterial")
+        row.prop(blenderbim_spreadsheet_properties, "my_ifcmaterial")
         
         layout.label(text="Common Properties")
         box = layout.box()
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_isexternal")
+        row.prop(blenderbim_spreadsheet_properties, "my_isexternal")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_loadbearing")
+        row.prop(blenderbim_spreadsheet_properties, "my_loadbearing")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_firerating")
+        row.prop(blenderbim_spreadsheet_properties, "my_firerating")
         
         layout.label(text="BaseQuantities")
         box = layout.box()
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_length")
+        row.prop(blenderbim_spreadsheet_properties, "my_length")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_width")
+        row.prop(blenderbim_spreadsheet_properties, "my_width")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_height")
+        row.prop(blenderbim_spreadsheet_properties, "my_height")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_area")
+        row.prop(blenderbim_spreadsheet_properties, "my_area")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_volume")
+        row.prop(blenderbim_spreadsheet_properties, "my_volume")
         row = box.row()
-        row.prop(blenderbim_openoffice_xml_properties, "my_perimeter")
+        row.prop(blenderbim_spreadsheet_properties, "my_perimeter")
         
         layout.label(text="Custom Properties")
         my_collection = context.scene.my_collection
@@ -501,16 +577,22 @@ class BlenderBIMXLSXPanel(bpy.types.Panel):
         for item in my_collection.items:
             layout.prop(item, "name")
         
-        layout.label(text="Write to .xlsx")
+        layout.label(text="Write to spreadsheet")
         self.layout.operator(WriteToXLSX.bl_idname, text="Write IFC data to .xlsx", icon="FILE")
-        self.layout.operator(OpenXLSXFile.bl_idname, text="Open .xlsx file", icon="FILE_FOLDER")
+        self.layout.operator(WriteToODS.bl_idname, text="Write IFC data to .ods", icon="FILE")
         
-        layout.label(text="Filter")
+        layout.label(text="Filter IFC elements")
+  
+        box = layout.box()
+        row = box.row()
+        row.prop(blenderbim_spreadsheet_properties, "my_file_path")
         self.layout.operator(FilterIFCElements.bl_idname, text="Filter IFC elements", icon="FILTER")
         self.layout.operator(UnhideIFCElements.bl_idname, text="Unhide IFC elements", icon="LIGHT")
+        
+    
     
         
-class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
+class BlenderBIMSpreadSheetProperties(bpy.types.PropertyGroup):
     ###############################################
     ################# General #####################
     ############################################### 
@@ -543,6 +625,13 @@ class BlenderBIMOpenOfficeXMLProperties(bpy.types.PropertyGroup):
     ###############################################
     my_workbook: bpy.props.StringProperty(name="my_workbook")
     my_xlsx_file: bpy.props.StringProperty(name="my_xlsx_file")
+    my_ods_file: bpy.props.StringProperty(name="my_ods_file")
+    
+    my_file_path: bpy.props.StringProperty(name="Spreadsheet",
+                                        description="your .ods or .xlsx file",
+                                        default="",
+                                        maxlen=1024,
+                                        subtype="FILE_PATH")
 
     
 class MyItem(bpy.types.PropertyGroup):
@@ -563,7 +652,7 @@ class MyCollectionActions(bpy.types.Operator):
     def execute(self, context):
         my_collection = context.scene.my_collection
         if self.action == "add":           
-            item = my_collection.items.add()  # Here keep a handle on the last added item. You can then change its name or whatever afterwards
+            item = my_collection.items.add()  
         if self.action == "remove":
             my_collection.items.remove(len(my_collection.items) - 1)
         return {"FINISHED"}
@@ -575,25 +664,31 @@ def register():
     bpy.types.Scene.my_collection = bpy.props.PointerProperty(type=MyCollection)
     bpy.utils.register_class(MyCollectionActions)
      
-    bpy.utils.register_class(BlenderBIMOpenOfficeXMLProperties)
-    bpy.types.Scene.blenderbim_openoffice_xml_properties = bpy.props.PointerProperty(type=BlenderBIMOpenOfficeXMLProperties)       
+    bpy.utils.register_class(BlenderBIMSpreadSheetProperties)
+    bpy.types.Scene.blenderbim_spreadsheet_properties = bpy.props.PointerProperty(type=BlenderBIMSpreadSheetProperties) 
+       
+      
     bpy.utils.register_class(WriteToXLSX)
-    bpy.utils.register_class(OpenXLSXFile)
+    bpy.utils.register_class(WriteToODS)
+     
     bpy.utils.register_class(FilterIFCElements)
     bpy.utils.register_class(UnhideIFCElements)
-    bpy.utils.register_class(BlenderBIMXLSXPanel)
+    bpy.utils.register_class(BlenderBIMSpreadSheetPanel)
     
 def unregister(): 
     
     bpy.utils.unregister_class(MyItem)
     bpy.utils.unregister_class(MyCollection)
     bpy.utils.unregister_class(MyCollectionActions) 
-    bpy.utils.unregister_class(BlenderBIMOpenOfficeXMLProperties)
+    bpy.utils.unregister_class(BlenderBIMSpreadSheetProperties)
+    
+  
     bpy.utils.unregister_class(WriteToXLSX)
-    bpy.utils.unregister_class(OpenXLSXFile)
+    bpy.utils.unregister_class(WriteToODS)
+    
     bpy.utils.unregister_class(FilterIFCElements)
     bpy.utils.unregister_class(UnhideIFCElements)
-    bpy.utils.unregister_class(BlenderBIMXLSXPanel)
+    bpy.utils.unregister_class(BlenderBIMSpreadSheetPanel)
     
 if __name__ == "__main__":
     register()
