@@ -38,9 +38,7 @@ ifcopenshell | comes with the BlenderBIM add-on
 </details>
 
 ## [<](#start) Installation on Windows 10
-<a name="installation_on_windows_10"/>
-<details>
-<p>
+
   
 Before you begin, it is important you already have the BlenderBIM add-on installed. You can see [here](https://blenderbim.org/install-blenderbim.html) on how to install it.
 
@@ -61,5 +59,4 @@ Before you begin, it is important you already have the BlenderBIM add-on install
 ### 6. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/13_under_the_tools_tab.png)
 
- </p>
-</details>
+
