@@ -6,7 +6,7 @@
 
 BlenderBIM Spreadsheet is a Blender add-on which creates .xlsx and .ods files from an IFC file using the [BlenderBIM add-on.](https://blenderbim.org/) 
 
-https://youtu.be/_ZXUZQkcjlI
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_ZXUZQkcjlI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### What's the added value of this Blender add-on?
 The add-on enables architects, contractors and other stakeholders to do the following
