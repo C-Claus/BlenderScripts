@@ -49,7 +49,7 @@ Before you begin, it is important you already have the BlenderBIM add-on install
 ### 3. Go to Add-ons -> Install
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_click_install.png)
 
-### 4. Open the .zip file. You can find this zip file [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/BlenderBIMOpenOfficeXML.zip).
+### 4. Open the .zip file. You can find this zip file [here](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/BlenderBIMSpreadsheet.zip).
 ![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/00_install_zip.png)
 
 ### 5. Search the Add-on and enabled it by checking it.
@@ -57,6 +57,6 @@ Before you begin, it is important you already have the BlenderBIM add-on install
 
 
 ### 6. Click ```N```, you should see the add-on under the ```Tools``` tab in Blender
-![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMOpenOfficeXML/images/00_install/13_under_the_tools_tab.png)
+![alt_text](https://github.com/C-Claus/BlenderScripts/blob/master/BlenderBIMSpreadsheet/images/00_install/02a_location_addon.PNG)
 
 
