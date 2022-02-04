@@ -467,13 +467,14 @@ class FilterIFCElements(bpy.types.Operator):
                 worksheet_openpyxl = workbook_openpyxl[blenderbim_spreadsheet_properties.my_workbook] 
                 
                 global_id_filtered_list = []
+                
+                
+                
+                for row_idx in range(3, worksheet_openpyxl.max_row + 1):
+                    if not worksheet_openpyxl.row_dimensions[row_idx].hidden:
+                        cell = worksheet_openpyxl[f"A{row_idx}"]
+                        global_id_filtered_list.append(str(cell.value))
 
-                for row in worksheet_openpyxl:     
-                    if worksheet_openpyxl.row_dimensions[row[0].row].hidden == False:
-                        for cell in row:  
-                            if cell in worksheet_openpyxl['A']:  
-                                global_id_filtered_list.append(cell.value)
-                                
 
                 ###################################
                 ####### Filter IFC elements #######
@@ -489,8 +490,9 @@ class FilterIFCElements(bpy.types.Operator):
                         obj.hide_viewport = True
                         continue
                     data = element.get_info()
-                  
-                    obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list[1:]
+               
+                    
+                    obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list
 
                 bpy.ops.object.select_all(action='SELECT') 
                 
