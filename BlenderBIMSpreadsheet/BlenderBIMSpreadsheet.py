@@ -13,7 +13,7 @@ import sys
 import time
 import site
 import collections
-
+import subprocess
 site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
 import bpy
@@ -39,7 +39,12 @@ print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
 print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
-
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
 
 class ConstructDataFrame:
 
@@ -391,7 +396,7 @@ class WriteToXLSX(bpy.types.Operator):
                 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
-        os.startfile(blenderbim_spreadsheet_properties.my_xlsx_file)
+        open_file(blenderbim_spreadsheet_properties.my_xlsx_file)
         
         print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
         
@@ -427,7 +432,7 @@ class WriteToODS(bpy.types.Operator):
         worksheet_ods = writer_ods.sheets[blenderbim_spreadsheet_properties.my_workbook]
         writer_ods.save()
    
-        os.startfile(blenderbim_spreadsheet_properties.my_ods_file)
+        open_file(blenderbim_spreadsheet_properties.my_ods_file)
         
         print (time.perf_counter() - start_time, "seconds for the .ods to be written")
         
