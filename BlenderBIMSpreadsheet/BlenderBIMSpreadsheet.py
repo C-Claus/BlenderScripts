@@ -495,10 +495,6 @@ class FilterIFCElements(bpy.types.Operator):
     
 
     def execute(self, context):
-        
-        print("filter IFC elements")
-        
-        start_time = time.perf_counter()
    
         blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties 
         
@@ -507,7 +503,7 @@ class FilterIFCElements(bpy.types.Operator):
         
         if blenderbim_spreadsheet_properties.my_file_path:
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".xlsx"):
-                print ("retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
+                print ("Retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
             
                 blenderbim_spreadsheet_properties.my_workbook = 'Overview'
                 workbook_openpyxl = load_workbook(blenderbim_spreadsheet_properties.my_file_path)
@@ -520,11 +516,11 @@ class FilterIFCElements(bpy.types.Operator):
                         cell = worksheet_openpyxl[f"A{row_idx}"]
                         global_id_filtered_list.append(str(cell.value))
 
-                self.filter_IFC_elements(context, guid_list = global_id_filtered_list)
+                self.filter_IFC_elements(context, guid_list=global_id_filtered_list)
 
                 
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".ods"):
-                print ("retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
+                print ("Retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
             
                 # Get content xml data from OpenDocument file
                 ziparchive = zipfile.ZipFile(blenderbim_spreadsheet_properties.my_file_path, "r")
@@ -545,16 +541,14 @@ class FilterIFCElements(bpy.types.Operator):
                 hidden_rows = get_hidden_rows(treebuilder.root)  # This returns a generator object
         
                 dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, skiprows=hidden_rows, engine="odf")
-                
-   
-                self.filter_IFC_elements(context, guid_list = dataframe['GlobalId'].values.tolist())
+                self.filter_IFC_elements(context, guid_list=dataframe['GlobalId'].values.tolist())
                 
                 
     def filter_IFC_elements(self, context, guid_list):
         
-        print ("filter elements")
+        print ("Filtering IFC elements")
         
-        global_id_filtered_list = guid_list
+        start_time = time.perf_counter()
         
         outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
         outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
@@ -569,7 +563,7 @@ class FilterIFCElements(bpy.types.Operator):
             data = element.get_info()
        
             
-            obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list
+            obj.hide_viewport = data.get("GlobalId", False) not in guid_list
 
         bpy.ops.object.select_all(action='SELECT') 
         
