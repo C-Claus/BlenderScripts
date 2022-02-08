@@ -486,7 +486,7 @@ class WriteToODS(bpy.types.Operator):
 
        
 class FilterIFCElements(bpy.types.Operator):
-    """Show the IFC elements you filtered in Excel"""
+    """Show the IFC elements you filtered in the spreadsheet"""
     bl_idname = "object.filter_ifc_elements"
     bl_label = "select the IFC elements"
     
