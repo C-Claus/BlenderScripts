@@ -13,6 +13,7 @@ import sys
 import time
 import site
 import collections
+import subprocess
 
 site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
@@ -30,6 +31,8 @@ import openpyxl
 from openpyxl import load_workbook
 import pandas as pd
 import xlsxwriter
+import zipfile
+import xml.parsers.expat
 
 from collections import defaultdict
 from collections import OrderedDict
@@ -40,6 +43,54 @@ print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
 
+#function to open file on windows, mac an linux
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
+ 
+ 
+        
+class Element(list):
+    def __init__(self, name, attrs):
+        self.name = name
+        self.attrs = attrs
+
+
+class TreeBuilder:
+    def __init__(self):
+        self.root = Element("root", None)
+        self.path = [self.root]
+    def start_element(self, name, attrs):
+        element = Element(name, attrs)
+        self.path[-1].append(element)
+        self.path.append(element)
+    def end_element(self, name):
+        assert name == self.path[-1].name
+        self.path.pop()
+    def char_data(self, data):
+        self.path[-1].append(data)
+
+
+def get_hidden_rows(node):
+    row = 0
+    for e in node:
+        if not isinstance(e, Element):
+            continue
+        yield from get_hidden_rows(e)
+        if e.name != "table:table-row":
+            continue
+        attrs = e.attrs
+        rows = int(attrs.get("table:number-rows-repeated", 1))
+        if "table:visibility" in attrs.keys():  # If the key is here, we can assume it's hidden (or can we ?)
+            for row_idx in range(rows):
+                yield row + row_idx
+        row += rows
+
+        
+        
 
 class ConstructDataFrame:
 
@@ -391,7 +442,7 @@ class WriteToXLSX(bpy.types.Operator):
                 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
-        os.startfile(blenderbim_spreadsheet_properties.my_xlsx_file)
+        open_file(blenderbim_spreadsheet_properties.my_xlsx_file)
         
         print (time.perf_counter() - start_time, "seconds for the .xlsx to be written")
         
@@ -427,7 +478,7 @@ class WriteToODS(bpy.types.Operator):
         worksheet_ods = writer_ods.sheets[blenderbim_spreadsheet_properties.my_workbook]
         writer_ods.save()
    
-        os.startfile(blenderbim_spreadsheet_properties.my_ods_file)
+        open_file(blenderbim_spreadsheet_properties.my_ods_file)
         
         print (time.perf_counter() - start_time, "seconds for the .ods to be written")
         
@@ -456,57 +507,74 @@ class FilterIFCElements(bpy.types.Operator):
         
         if blenderbim_spreadsheet_properties.my_file_path:
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".xlsx"):
+                print ("retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
             
-                print (blenderbim_spreadsheet_properties.my_file_path)
-                #####################################
-                ### Get filtered data from .xlsx ####
-                #####################################
-                
                 blenderbim_spreadsheet_properties.my_workbook = 'Overview'
                 workbook_openpyxl = load_workbook(blenderbim_spreadsheet_properties.my_file_path)
                 worksheet_openpyxl = workbook_openpyxl[blenderbim_spreadsheet_properties.my_workbook] 
                 
                 global_id_filtered_list = []
-                
-                
-                
+                       
                 for row_idx in range(3, worksheet_openpyxl.max_row + 1):
                     if not worksheet_openpyxl.row_dimensions[row_idx].hidden:
                         cell = worksheet_openpyxl[f"A{row_idx}"]
                         global_id_filtered_list.append(str(cell.value))
 
+                self.filter_IFC_elements(context, guid_list = global_id_filtered_list)
 
-                ###################################
-                ####### Filter IFC elements #######
-                ###################################                
-                outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
-                outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
-                
-                bpy.ops.object.select_all(action='DESELECT')
-              
-                for obj in bpy.context.view_layer.objects:
-                    element = tool.Ifc.get_entity(obj)
-                    if element is None:        
-                        obj.hide_viewport = True
-                        continue
-                    data = element.get_info()
-               
-                    
-                    obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list
-
-                bpy.ops.object.select_all(action='SELECT') 
-                
-                print (time.perf_counter() - start_time, "seconds to show the IFC elements")
                 
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".ods"):
+                print ("retrieving data from: " , blenderbim_spreadsheet_properties.my_file_path)
             
-                print ("Sorry, this feature is not finished yet to filter elements from an .ods file")
-                ###################################
-                ### Get filtered data from .ods ###
-                ###################################
-                #dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, engine="odf")
+                # Get content xml data from OpenDocument file
+                ziparchive = zipfile.ZipFile(blenderbim_spreadsheet_properties.my_file_path, "r")
+                xmldata = ziparchive.read("content.xml")
+                ziparchive.close()
                 
-                #print (dataframe['GlobalId'])
+                # Create parser and parsehandler
+                parser = xml.parsers.expat.ParserCreate()
+                treebuilder = TreeBuilder()
+                # Assign the handler functions
+                parser.StartElementHandler  = treebuilder.start_element
+                parser.EndElementHandler    = treebuilder.end_element
+                parser.CharacterDataHandler = treebuilder.char_data
+
+                # Parse the data
+                parser.Parse(xmldata, True)
+
+                hidden_rows = get_hidden_rows(treebuilder.root)  # This returns a generator object
+        
+                dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, skiprows=hidden_rows, engine="odf")
+                
+   
+                self.filter_IFC_elements(context, guid_list = dataframe['GlobalId'].values.tolist())
+                
+                
+    def filter_IFC_elements(self, context, guid_list):
+        
+        print ("filter elements")
+        
+        global_id_filtered_list = guid_list
+        
+        outliner = next(a for a in bpy.context.screen.areas if a.type == "OUTLINER") 
+        outliner.spaces[0].show_restrict_column_viewport = not outliner.spaces[0].show_restrict_column_viewport
+        
+        bpy.ops.object.select_all(action='DESELECT')
+      
+        for obj in bpy.context.view_layer.objects:
+            element = tool.Ifc.get_entity(obj)
+            if element is None:        
+                obj.hide_viewport = True
+                continue
+            data = element.get_info()
+       
+            
+            obj.hide_viewport = data.get("GlobalId", False) not in global_id_filtered_list
+
+        bpy.ops.object.select_all(action='SELECT') 
+        
+        print (time.perf_counter() - start_time, "seconds to show the IFC elements")
+            
 
         
         return {'FINISHED'}
