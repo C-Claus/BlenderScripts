@@ -464,14 +464,12 @@ class WriteToODS(bpy.types.Operator):
         print("Write to .ods")
         
         start_time = time.perf_counter()
-        
         construct_data_frame = ConstructDataFrame(context)
   
         blenderbim_spreadsheet_properties = context.scene.blenderbim_spreadsheet_properties
         blenderbim_spreadsheet_properties.my_workbook
         print ('ods file: ', blenderbim_spreadsheet_properties.my_ods_file)
         
-
         writer_ods = pd.ExcelWriter(blenderbim_spreadsheet_properties.my_ods_file, engine='odf')
         construct_data_frame.df.to_excel(writer_ods, sheet_name=blenderbim_spreadsheet_properties.my_workbook, startrow=0, header=True, index=False)
         
@@ -479,10 +477,9 @@ class WriteToODS(bpy.types.Operator):
         writer_ods.save()
    
         open_file(blenderbim_spreadsheet_properties.my_ods_file)
+        blenderbim_spreadsheet_properties.my_file_path = IfcStore.path.replace('.ifc','_blenderbim.ods')
         
         print (time.perf_counter() - start_time, "seconds for the .ods to be written")
-        
-        blenderbim_spreadsheet_properties.my_file_path = IfcStore.path.replace('.ifc','_blenderbim.ods')
 
         
         return {'FINISHED'}
@@ -517,6 +514,8 @@ class FilterIFCElements(bpy.types.Operator):
                         global_id_filtered_list.append(str(cell.value))
 
                 self.filter_IFC_elements(context, guid_list=global_id_filtered_list)
+                
+                return {'FINISHED'}
 
                 
             if blenderbim_spreadsheet_properties.my_file_path.endswith(".ods"):
@@ -542,6 +541,8 @@ class FilterIFCElements(bpy.types.Operator):
         
                 dataframe = pd.read_excel(blenderbim_spreadsheet_properties.my_file_path, sheet_name=blenderbim_spreadsheet_properties.my_workbook, skiprows=hidden_rows, engine="odf")
                 self.filter_IFC_elements(context, guid_list=dataframe['GlobalId'].values.tolist())
+                
+                return {'FINISHED'}
                 
                 
     def filter_IFC_elements(self, context, guid_list):
@@ -571,7 +572,7 @@ class FilterIFCElements(bpy.types.Operator):
             
 
         
-        return {'FINISHED'}
+        
     
 class UnhideIFCElements(bpy.types.Operator):
     """Unhide all IFC elements"""
@@ -698,7 +699,7 @@ class BlenderBIMSpreadSheetProperties(bpy.types.PropertyGroup):
     my_netsidearea: bpy.props.BoolProperty(name="NetSideArea",description="Export NetSideArea from BaseQuantities",default = True)
     
     my_volume: bpy.props.BoolProperty(name="Volume",description="Export Volume from BaseQuantities",default = True) 
-    my_netvolume: bpy.props.BoolProperty(name="NetVolume",description="Export Volume from BaseQuantities",default = True)
+    my_netvolume: bpy.props.BoolProperty(name="NetVolume",description="Export NetVolume from BaseQuantities",default = True)
     
     my_perimeter: bpy.props.BoolProperty(name="Perimeter",description="Export Perimeter from BaseQuantities",default = True)      
   
