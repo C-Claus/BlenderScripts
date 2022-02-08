@@ -14,10 +14,7 @@ import time
 import site
 import collections
 import subprocess
-<<<<<<< HEAD
 
-=======
->>>>>>> fbb7a68fdf21ab09327d0c0550abb6ff936c6dd2
 site.addsitedir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "libs", "site", "packages"))
 
 import bpy
@@ -45,18 +42,14 @@ print ('openpyxl', openpyxl.__version__, openpyxl.__file__)
 print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
-<<<<<<< HEAD
 
 #function to open file on windows, mac an linux
-=======
->>>>>>> fbb7a68fdf21ab09327d0c0550abb6ff936c6dd2
 def open_file(filename):
     if sys.platform == "win32":
         os.startfile(filename)
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
-<<<<<<< HEAD
  
  
         
@@ -98,8 +91,6 @@ def get_hidden_rows(node):
 
         
         
-=======
->>>>>>> fbb7a68fdf21ab09327d0c0550abb6ff936c6dd2
 
 class ConstructDataFrame:
 
