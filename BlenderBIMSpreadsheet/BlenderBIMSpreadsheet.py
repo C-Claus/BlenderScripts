@@ -1,7 +1,7 @@
 bl_info = {
     "name": "BlenderBIM spreadsheet",
     "author": "C. Claus",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (3, 0, 1),
     "location": "Tools",
     "description": "BlenderBIM spreadsheet for .xlsx and .ods",
@@ -43,7 +43,7 @@ print ('pandas',pd.__version__, pd.__file__)
 print ('xlsxwriter',xlsxwriter.__version__, xlsxwriter.__file__)
 
 
-#function to open file on windows, mac an linux
+#function to open file on windows, mac and linux
 def open_file(filename):
     if sys.platform == "win32":
         os.startfile(filename)
@@ -110,6 +110,9 @@ class ConstructDataFrame:
         ifc_file = ifcopenshell.open(IfcStore.path)
         products = ifc_file.by_type('IfcProduct')
         
+        ifc_version = (ifc_file.schema)
+        print ("IFC version found: ", ifc_version)
+        
         is_external = 'IsExternal'
         loadbearing = 'LoadBearing'
         fire_rating = 'FireRating'
@@ -146,7 +149,7 @@ class ConstructDataFrame:
                 ifc_dictionary['Type'].append(self.get_ifcproducttype_name(context, ifcproduct=product)[0])
             
             if blenderbim_spreadsheet_properties.my_ifcclassification: 
-                ifc_dictionary['Classification'].append(self.get_classification_code(context, ifcproduct=product)[0])
+                ifc_dictionary['Classification'].append(self.get_classification_code(context, ifcproduct=product, ifc_version=ifc_version)[0])
               
             if blenderbim_spreadsheet_properties.my_ifcmaterial:     
                 ifc_dictionary['Material(s)'].append(self.get_materials(context, ifcproduct=product)[0])
@@ -237,21 +240,44 @@ class ConstructDataFrame:
              
         return building_storey_list 
     
-    def get_classification_code(self, context, ifcproduct):
+    def get_classification_code(self, context, ifcproduct, ifc_version):
     
         #Classifications of an object may be referenced from an external source rather than being
         #contained within the IFC model. This is done through the IfcClassificationReference class.
+        #ClassificationRefForObjects', 
         
         assembly_code_list = []
 
         if ifcproduct.HasAssociations:
+     
             if ifcproduct.HasAssociations[0].is_a() == 'IfcRelAssociatesClassification':
-                assembly_code_list.append(ifcproduct.HasAssociations[0].RelatingClassification.ItemReference)
-                
+              
+                if ifcproduct.HasAssociations[0].RelatingClassification:
+                    
+                    #for IFC2x3
+                    if ifc_version == 'IFC2X3':
+                        if ifcproduct.HasAssociations[0].RelatingClassification.ItemReference:
+                            assembly_code_list.append(ifcproduct.HasAssociations[0].RelatingClassification.ItemReference)
+                       
+                    #for IFC4 
+                    if ifc_version == 'IFC4':
+                        if ifcproduct.HasAssociations[0].RelatingClassification.Identification:
+                            assembly_code_list.append(ifcproduct.HasAssociations[0].RelatingClassification.Identification)
+                            
             if ifcproduct.HasAssociations[0].is_a() == 'IfcRelAssociatesMaterial':
+            
                 for i in ifcproduct.HasAssociations:
-                    if i.is_a() == 'IfcRelAssociatesClassification' :
-                        assembly_code_list.append(i.RelatingClassification.ItemReference)
+                    if i.is_a() == 'IfcRelAssociatesClassification':
+                        
+                        #for IFC2x3
+                        if ifc_version == 'IFC2X3':
+                            if i.RelatingClassification.ItemReference:
+                                print (i.RelatingClassification.ItemReference)
+                            
+                        #for IFC4     
+                        if ifc_version == 'IFC4':
+                            if i.RelatingClassification:
+                                assembly_code_list.append(i.RelatingClassification.Identification)
                 
                                                
         if not assembly_code_list:
@@ -269,7 +295,8 @@ class ConstructDataFrame:
                     
                     if i.RelatingMaterial.is_a('IfcMaterial'):
                         material_list.append(i.RelatingMaterial.Name)
-                       
+                      
+                    #IfcMaterialList deprecated since IFC 4? 
                     if i.RelatingMaterial.is_a('IfcMaterialList'):
                         for materials in i.RelatingMaterial.Materials:
                             material_list.append(materials.Name)
@@ -300,8 +327,10 @@ class ConstructDataFrame:
                             
                             for ifcproperty in (ifcreldefinesbyproperties.RelatingPropertyDefinition.HasProperties):
                                 if (ifcproperty.Name == property_name):
+                                    if ifcproperty.NominalValue:
                                     
-                                    pset_common_list.append(ifcproperty.NominalValue[0])
+                                        pset_common_list.append(ifcproperty.NominalValue[0])
+                               
                                         
         if not pset_common_list:
             pset_common_list.append(None)  
