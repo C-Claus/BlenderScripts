@@ -228,8 +228,7 @@ class ConstructDataFrame:
          
         try:
             if ifcproduct:
-                if ifcproduct.ContainedInStructure:     
-                    print (ifcproduct.ContainedInstructure)       
+                if ifcproduct.ContainedInStructure:           
                     if ifcproduct.ContainedInStructure[0].RelatingStructure.is_a() == 'IfcBuildingStorey':
                         building_storey_list.append(ifcproduct.ContainedInStructure[0].RelatingStructure.Name)
         except:
