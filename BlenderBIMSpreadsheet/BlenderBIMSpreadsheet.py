@@ -85,8 +85,9 @@ def get_hidden_rows(node):
         attrs = e.attrs
         rows = int(attrs.get("table:number-rows-repeated", 1))
         if "table:visibility" in attrs.keys():  # If the key is here, we can assume it's hidden (or can we ?)
-            for row_idx in range(rows):
-                yield row + row_idx
+            #for row_idx in range(rows):
+            #    yield row + row_idx
+            yield from range(row, row + rows)
         row += rows
 
         
@@ -227,7 +228,8 @@ class ConstructDataFrame:
          
         try:
             if ifcproduct:
-                if ifcproduct.ContainedInStructure:            
+                if ifcproduct.ContainedInStructure:     
+                    print (ifcproduct.ContainedInstructure)       
                     if ifcproduct.ContainedInStructure[0].RelatingStructure.is_a() == 'IfcBuildingStorey':
                         building_storey_list.append(ifcproduct.ContainedInStructure[0].RelatingStructure.Name)
         except:
@@ -272,7 +274,7 @@ class ConstructDataFrame:
                         #for IFC2x3
                         if ifc_version == 'IFC2X3':
                             if i.RelatingClassification.ItemReference:
-                                print (i.RelatingClassification.ItemReference)
+                                assembly_code_list.append(i.RelatingClassification.ItemReference)
                             
                         #for IFC4     
                         if ifc_version == 'IFC4':
@@ -309,7 +311,7 @@ class ConstructDataFrame:
                         pass
                           
         if not material_list:
-            material_list.append('N/A')
+            material_list.append('None')
            
         joined_material_list = ' | '.join(material_list)
                              
