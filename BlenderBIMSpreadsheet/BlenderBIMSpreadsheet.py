@@ -2,7 +2,7 @@ bl_info = {
     "name": "BlenderBIM spreadsheet",
     "author": "C. Claus",
     "version": (1, 0, 1),
-    "blender": (3, 0, 1),
+    "blender": (3, 0, 0),
     "location": "Tools",
     "description": "BlenderBIM spreadsheet for .xlsx and .ods",
     "support": "COMMUNITY",
