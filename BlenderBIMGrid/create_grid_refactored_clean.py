@@ -20,31 +20,15 @@ def create_ifcaxis2placement(ifcfile, point=O, dir1=Z, dir2=X):
     axis2placement = ifcfile.createIfcAxis2Placement3D(point, dir1, dir2)
     return axis2placement
 
+
 # Creates an IfcLocalPlacement from Location, Axis and RefDirection, specified as Python tuples, and relative placement
 def create_ifclocalplacement(ifcfile, point=O, dir1=Z, dir2=X, relative_to=None):
     axis2placement = create_ifcaxis2placement(ifcfile,point,dir1,dir2)
     ifclocalplacement2 = ifcfile.createIfcLocalPlacement(relative_to,axis2placement)
     return ifclocalplacement2
 
-# Creates an IfcPolyLine from a list of points, specified as Python tuples
-def create_ifcpolyline(ifcfile, point_list):
-    ifcpts = []
-    for point in point_list:
-        point = ifcfile.createIfcCartesianPoint(point)
-        ifcpts.append(point)
-    polyline = ifcfile.createIfcPolyLine(ifcpts)
-    return polyline
-    
-# Creates an IfcExtrudedAreaSolid from a list of points, specified as Python tuples
-def create_ifcextrudedareasolid(ifcfile, point_list, ifcaxis2placement, extrude_dir, extrusion):
-    polyline = create_ifcpolyline(ifcfile, point_list)
-    ifcclosedprofile = ifcfile.createIfcArbitraryClosedProfileDef("AREA", None, polyline)
-    ifcdir = ifcfile.createIfcDirection(extrude_dir)
-    ifcextrudedareasolid = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile, ifcaxis2placement, ifcdir, extrusion)
-    return ifcextrudedareasolid
-  
-create_guid = lambda: ifcopenshell.guid.compress(uuid.uuid1().hex)
 
+create_guid = lambda: ifcopenshell.guid.compress(uuid.uuid1().hex)
 
 filename = "demo.ifc"
 ifcfile = ifcopenshell.file()
@@ -159,8 +143,6 @@ container_project = ifcfile.createIfcRelAggregates(create_guid(), owner_history,
 
 def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_direction_amount, grids_y_direction_amount, overlap):
     
-    grids_x_direction_amount
-    grids_y_direction_amount
     
     grids_x_dictionary = OrderedDict()
     grids_y_dictionary = OrderedDict()
@@ -168,16 +150,18 @@ def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_dire
     x = -grids_x_distance_between
     y = -grids_y_distance_between
 
-    for x_grids in range(1, int(grids_x_direction_amount), 1):
+    for x_grids in range(0, int(grids_x_direction_amount), 1):
         x += grids_x_distance_between 
         grids_x_dictionary[x_grids] = x
+
         
-    for y_grids in range(1, int(grids_y_direction_amount), 1):
+    for y_grids in range(0, int(grids_y_direction_amount), 1):
         y += grids_y_distance_between 
         grids_y_dictionary[y_grids] = y
              
     x_min = list(grids_x_dictionary.items())[0][1]
     x_max = list(grids_x_dictionary.items())[-1][1]
+
     
     y_min = list(grids_y_dictionary.items())[0][1]
     y_max = list(grids_y_dictionary.items())[-1][1]
@@ -193,9 +177,11 @@ def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_dire
     gridY = []
     
     for i_grid in grids_x_dictionary.items():
+
         
         point_1 = ifcfile.createIfcCartesianPoint((i_grid[1],y_min_overlap))
         point_2 = ifcfile.createIfcCartesianPoint((i_grid[1],y_max_overlap))
+
         
         Line = ifcfile.createIfcPolyline( [point_1 , point_2] )
         polylineSet.append(Line)
@@ -220,7 +206,7 @@ def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_dire
         grid.SameSense = True
         gridY.append(grid)
         
-      
+
     # Defining the grid 
     PntGrid = ifcfile.createIfcCartesianPoint( O )
 
@@ -233,20 +219,9 @@ def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_dire
     grid_placement.PlacementRelTo = storey_placement
     grid_placement.RelativePlacement = myGridCoordinateSystem
 
-    grid_curvedSet =  ifcfile.createIfcGeometricCurveSet(polylineSet)
-
-    gridShape_Reppresentation = ifcfile.createIfcShapeRepresentation()
-    gridShape_Reppresentation.ContextOfItems = footprint_context
-    gridShape_Reppresentation.RepresentationIdentifier = 'FootPrint'
-    gridShape_Reppresentation.RepresentationType = 'GeometricCurveSet'
-    gridShape_Reppresentation.Items = [grid_curvedSet]
-
-    grid_Representation = ifcfile.createIfcProductDefinitionShape()
-    grid_Representation.Representations  = [gridShape_Reppresentation]
 
     myGrid = ifcfile.createIfcGrid(create_guid() , owner_history)
     myGrid.ObjectPlacement = grid_placement
-    myGrid.Representation = grid_Representation
     myGrid.UAxes=gridX
     myGrid.VAxes=gridY
 
@@ -256,6 +231,8 @@ def create_grid(grids_x_distance_between, grids_y_distance_between, grids_x_dire
     container_SpatialStructure.Description = 'BuildingStoreyContainer for Elements'
     container_SpatialStructure.RelatingStructure = site
     container_SpatialStructure.RelatedElements = [myGrid]
+
+
 
  
 grids_x_direction_amount = 5.0
