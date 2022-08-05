@@ -5,11 +5,9 @@ A collection of various project using Blender and IfcOpenShell using the Blender
 An add-on for Blender which creates .xlsx and .ods files from IFC files using the BlenderBIM add-on.
 With the possiblity to filter the elements in the 3D view from Blender using spreadsheet software.
 
-Demo here:
+Demo: https://youtu.be/_ZXUZQkcjlI
 
-https://youtu.be/_ZXUZQkcjlI
-
-https://github.com/C-Claus/BlenderScripts/tree/master/BlenderBIMSpreadsheet
+Project: https://github.com/C-Claus/BlenderScripts/tree/master/BlenderBIMSpreadsheet
 
 ## BlenderBIMGrid
 
