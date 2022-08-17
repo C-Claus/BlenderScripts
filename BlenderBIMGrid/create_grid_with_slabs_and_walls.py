@@ -340,20 +340,21 @@ def create_wall_exterior(length_x, length_y, wall_interior_thickness, wall_cover
     
     x1 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
     y1 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
-    x2 = -wall_covering_thickness-cavity_thickness#-wall_exterior_thickness
-    y2 = -wall_covering_thickness-cavity_thickness#-wall_exterior_thickness
+    x2 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    y2 = -cavity_thickness-wall_exterior_thickness
     x3 = length_x
-    y3 = -wall_covering_thickness-cavity_thickness#-wall_exterior_thickness
+    y3 = -cavity_thickness-wall_exterior_thickness
     x4 = length_x
     y4 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    
     
     x5 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
     y5 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
     x6 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
     y6 = length_y
-    x7 = -wall_covering_thickness-cavity_thickness
+    x7 = -cavity_thickness-wall_exterior_thickness
     y7 = length_y
-    x8 = -wall_covering_thickness-cavity_thickness
+    x8 = -cavity_thickness-wall_exterior_thickness
     y8 = -wall_covering_thickness-cavity_thickness-wall_exterior_thickness
     
     extrusion=(building_storey_height-slab_thickness)
@@ -442,7 +443,7 @@ def create_covering(length_x, length_y, wall_interior_thickness, slab_thickness,
     
 
 def create_wall_insulation(length_x, length_y, wall_interior_thickness, wall_covering_thickness, slab_thickness, building_storey_height):
-    print ("create wall")  
+    print ("create wall insulation")  
     
     x1 = -wall_covering_thickness
     y1 = -wall_covering_thickness
@@ -453,7 +454,7 @@ def create_wall_insulation(length_x, length_y, wall_interior_thickness, wall_cov
     x4 = length_x
     y4 = -wall_covering_thickness
     x5 = -wall_covering_thickness
-    y5 = -wall_covering_thickness
+    y5 = 0.0
     x6 = -wall_covering_thickness
     y6 = length_y
     x7 = 0.0
@@ -493,10 +494,6 @@ def create_wall_insulation(length_x, length_y, wall_interior_thickness, wall_cov
         dir2 = ifcfile.createIfcDirection((1., 0., 0.))
         
         axis2placement = ifcfile.createIfcAxis2Placement3D(point, dir1, dir2)
-        #axis_representation = ifcfile.createIfcShapeRepresentation(context, "Axis", "Curve2D", [wall_curve])
-        #body_representation = ifcfile.createIfcShapeRepresentation(context, "Body", "SweptSolid", [solid])
-
-
         wall_solid_x = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile_x,  axis2placement, ifc_direction, extrusion+slab_thickness)
         wall_solid_y = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile_y,  axis2placement, ifc_direction, extrusion+slab_thickness)
         
@@ -527,10 +524,10 @@ grids_y_distance_between    = 2400.0    # is the distance between the y grids, a
 grid_extends                = 2000.0    # is the distance on how much the grid extends
 
 slab_thickness              = 200.0  
-wall_interior_thickness     = 300.0
-wall_exterior_thickness     = 1000.0
-wall_covering_thickness     = 200.0
-cavity_thickness            = 0.0
+wall_interior_thickness     = 200.0
+wall_exterior_thickness     = 200.0
+wall_covering_thickness     = 300.0
+cavity_thickness            = 150.0
 slab_covering_thickness     = 50.0
 
 length_x = float(grids_x_direction_amount)*grids_x_distance_between - grids_x_distance_between  # calculates the total length in x direction
