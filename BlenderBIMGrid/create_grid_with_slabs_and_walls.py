@@ -403,6 +403,45 @@ def create_wall_exterior(length_x, length_y, wall_interior_thickness, wall_cover
         
         ifcopenshell.api.run("geometry.assign_representation", ifcfile, product=ifc_walltype, representation=shape_representation)
         ifcopenshell.api.run("spatial.assign_container", ifcfile, product=ifc_wall, relating_structure=building_storey) 
+           
+        
+        
+        mymaterial = ifcfile.createIfcMaterial("brick")
+        material_layer = ifcfile.createIfcMaterialLayer(mymaterial, 0.2, None)
+        material_layer_set = ifcfile.createIfcMaterialLayerSet([material_layer], None)
+        material_layer_set_usage = ifcfile.createIfcMaterialLayerSetUsage(material_layer_set, "AXIS2", "POSITIVE", -0.1)
+        
+        style = ifcopenshell.api.run("style.add_style", ifcfile, name="brick")
+        ifcopenshell.api.run(
+            "style.add_surface_style",
+            ifcfile,
+            style=style,
+            attributes={
+                "SurfaceColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 0.8,
+                    "Blue": 0.5,
+                },
+                "DiffuseColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 0.8,
+                    "Blue": 0.5,
+                },
+                "Transparency": 0.0,
+                "ReflectanceMethod": "PLASTIC",
+            },
+        )
+        ifcopenshell.api.run(
+            "style.assign_material_style",
+            ifcfile,
+            material=mymaterial,
+            style=style,
+            context=context,
+        )
+        
+        ifcfile.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[ifc_wall], RelatingMaterial=material_layer_set_usage)
         
         
 def create_covering(length_x, length_y, wall_interior_thickness, slab_thickness, slab_covering_thickness, building_storey_height):
@@ -441,6 +480,42 @@ def create_covering(length_x, length_y, wall_interior_thickness, slab_thickness,
         ifcopenshell.api.run("geometry.assign_representation", ifcfile, product=ifc_coveringtype, representation=shape_representation)
         ifcopenshell.api.run("spatial.assign_container", ifcfile, product=ifc_covering, relating_structure=building_storey)
     
+        
+        material_concrete = ifcopenshell.api.run("material.add_material", ifcfile, name="concrete")
+        
+        style = ifcopenshell.api.run("style.add_style", ifcfile, name="concrete")
+        ifcopenshell.api.run(
+            "style.add_surface_style",
+            ifcfile,
+            style=style,
+            attributes={
+                "SurfaceColour": {
+                    "Name": None,
+                    "Red": 1.8,
+                    "Green": 1.8,
+                    "Blue": 1.5,
+                },
+                "DiffuseColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 0.8,
+                    "Blue": 0.5,
+                },
+                "Transparency": 0.0,
+                "ReflectanceMethod": "PLASTIC",
+            },
+        )
+        ifcopenshell.api.run(
+            "style.assign_material_style",
+            ifcfile,
+            material=material_concrete,
+            style=style,
+            context=context,
+        )
+        
+        ifcfile.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[ifc_covering], RelatingMaterial=material_concrete)
+        
+        
 
 def create_wall_insulation(length_x, length_y, wall_interior_thickness, wall_covering_thickness, slab_thickness, building_storey_height):
     print ("create wall insulation")  
@@ -505,30 +580,135 @@ def create_wall_insulation(length_x, length_y, wall_interior_thickness, wall_cov
         
         
         ifcopenshell.api.run("geometry.assign_representation", ifcfile, product=ifc_walltype_insulation, representation=shape_representation)
-        ifcopenshell.api.run("spatial.assign_container", ifcfile, product=ifc_wall_insulation, relating_structure=building_storey)    
+        ifcopenshell.api.run("spatial.assign_container", ifcfile, product=ifc_wall_insulation, relating_structure=building_storey)   
+        
     
+        
+        material_insulation = ifcopenshell.api.run("material.add_material", ifcfile, name="insulation")
+        
+        style = ifcopenshell.api.run("style.add_style", ifcfile, name="insulation")
+        ifcopenshell.api.run(
+            "style.add_surface_style",
+            ifcfile,
+            style=style,
+            attributes={
+                "SurfaceColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 2.5,
+                    "Blue": 0.1,
+                },
+                "DiffuseColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 2.5,
+                    "Blue": 0.1,
+                },
+                "Transparency": 0.0,
+                "ReflectanceMethod": "PLASTIC",
+            },
+        )
+        ifcopenshell.api.run(
+            "style.assign_material_style",
+            ifcfile,
+            material=material_insulation,
+            style=style,
+            context=context,
+        )
+        
+        ifcfile.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[ifc_wall_insulation], RelatingMaterial=material_insulation) 
+   
+   
+def create_foundation(wall_interior_thickness, wall_covering_thickness, cavity_thickness, wall_exterior_thickness,foundation_beam_height):
+    print ('create foundation')
+    
+    x1 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    y1 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    x2 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    y2 = wall_interior_thickness
+    x3 = length_x
+    y3 = wall_interior_thickness
+    x4 = length_x
+    y4 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+
+    x5 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    y5 = wall_interior_thickness
+    x6 = 0.0
+    x6 = 0.0-wall_covering_thickness-cavity_thickness-wall_exterior_thickness
+    y6 = length_y
+    x7 = wall_interior_thickness
+    y7 = length_y
+    x8 = wall_interior_thickness
+    y8 = wall_interior_thickness
+    
+
+
+        
+    
+    z = (building_storey_list[0].Elevation)-foundation_beam_height
+        
+    ifc_foundation 	= ifcopenshell.api.run("root.create_entity", ifcfile, ifc_class="IfcBeam", name="foundation_insulation_which_follows_grid" )
+    ifc_foundationtype = ifcopenshell.api.run("root.create_entity", ifcfile, ifc_class="IfcBeamType")
+    ifcopenshell.api.run("type.assign_type", ifcfile, related_object=ifc_foundation, relating_type=ifc_foundationtype) 
+    
+    pnt1 = ifcfile.createIfcCartesianPoint( (x1,y1,z) )
+    pnt2 = ifcfile.createIfcCartesianPoint( (x2,y2,z) )
+    pnt3 = ifcfile.createIfcCartesianPoint( (x3,y3,z) )
+    pnt4 = ifcfile.createIfcCartesianPoint( (x4,y4,z) )
+    pnt5 = ifcfile.createIfcCartesianPoint( (x5,y5,z) ) 
+    pnt6 = ifcfile.createIfcCartesianPoint( (x6,y6,z) ) 
+    pnt7 = ifcfile.createIfcCartesianPoint( (x7,y7,z) ) 
+    pnt8 = ifcfile.createIfcCartesianPoint( (x8,y8,z) ) 
+   
+    wall_line_x 	 = ifcfile.createIfcPolyline([pnt1,pnt2,pnt3,pnt4])
+    wall_line_y      = ifcfile.createIfcPolyline([pnt5,pnt6,pnt7,pnt8])
+    
+    ifcclosedprofile_x = ifcfile.createIfcArbitraryClosedProfileDef("AREA", None, wall_line_x) 
+    ifcclosedprofile_y = ifcfile.createIfcArbitraryClosedProfileDef("AREA", None, wall_line_y) 
+    ifc_direction    = ifcfile.createIfcDirection(Z)
+    
+    point = ifcfile.createIfcCartesianPoint((0.0,0.0,0.0))
+    dir1 = ifcfile.createIfcDirection((0., 0., 1.))
+    dir2 = ifcfile.createIfcDirection((1., 0., 0.))
+    
+    axis2placement = ifcfile.createIfcAxis2Placement3D(point, dir1, dir2)
+    wall_solid_x = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile_x,  axis2placement, ifc_direction, foundation_beam_height)
+    wall_solid_y = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile_y,  axis2placement, ifc_direction, foundation_beam_height)
+    
+  
+    shape_representation 	= ifcfile.createIfcShapeRepresentation( ContextOfItems=context,
+                                                                    RepresentationIdentifier='Body', 
+                                                                    RepresentationType='SweptSolid',
+                                                                    Items=[wall_solid_x, wall_solid_y])
+    
+    
+    ifcopenshell.api.run("geometry.assign_representation", ifcfile, product=ifc_foundationtype, representation=shape_representation)
+    ifcopenshell.api.run("spatial.assign_container", ifcfile, product=ifc_foundation, relating_structure=building_storey_list[0])
+    
+     
 #######################################################################################################
 ###################################   Config parameters   #############################################
 #######################################################################################################
 filename                    = "demo.ifc"
 folder_path                 = "C:\\Algemeen\\07_prive\\08_ifc_bestanden\\"
 
-building_storeys_amount     = 2         # is the n number of building storeys
+building_storeys_amount     = 2         # is the n number of building storeys, can't be 0 or less than 0
 elevation                   = 0.0       # is where the first of the building storeys start
 building_storey_height      = 3000      # is the equal distance between the building storeys
    
-grids_x_direction_amount    = 3         # is the n number of grids in x direction
+grids_x_direction_amount    = 10        # is the n number of grids in x direction
 grids_y_direction_amount    = 5         # is the n number of grids in y direction
-grids_x_distance_between    = 2400.0    # is the distance between the x grids, always should be a float
-grids_y_distance_between    = 2400.0    # is the distance between the y grids, always should be a float
+grids_x_distance_between    = 600.0     # is the distance between the x grids, always should be a float
+grids_y_distance_between    = 1200.0    # is the distance between the y grids, always should be a float
 grid_extends                = 2000.0    # is the distance on how much the grid extends
 
 slab_thickness              = 200.0  
 wall_interior_thickness     = 200.0
-wall_exterior_thickness     = 200.0
-wall_covering_thickness     = 300.0
-cavity_thickness            = 150.0
-slab_covering_thickness     = 50.0
+wall_exterior_thickness     = 100.0
+wall_covering_thickness     = 150.0
+cavity_thickness            = 100.0
+slab_covering_thickness     = 150.0
+foundation_beam_height      = 1000.0
 
 length_x = float(grids_x_direction_amount)*grids_x_distance_between - grids_x_distance_between  # calculates the total length in x direction
 length_y = float(grids_y_direction_amount)*grids_y_distance_between - grids_y_distance_between  # calculates the total length in y direction
@@ -550,6 +730,11 @@ create_grid(grids_x_distance_between,
             grids_y_direction_amount,
             grid_extends)
 
+create_foundation(  wall_interior_thickness,
+                    wall_covering_thickness,
+                    cavity_thickness,
+                    wall_exterior_thickness,
+                    foundation_beam_height,)
   
 create_slab(length_x,
             length_y,
