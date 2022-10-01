@@ -1,7 +1,7 @@
 bl_info = {
     "name": "BlenderBIM spreadsheet",
     "author": "C. Claus",
-    "version": (1, 0, 2),
+    "version": (1, 0, 3),
     "blender": (3, 3, 3),
     "location": "Tools",
     "description": "BlenderBIM spreadsheet for .xlsx and .ods",
@@ -216,11 +216,24 @@ class ConstructDataFrame:
         
         type_name_list = []
         
+        # NOTE: The product representations are defined as representation maps
+        # (at the level of the supertype IfcTypeProduct, which gets assigned by an element occurrence
+        # instance through the IfcShapeRepresentation.Item[1] being an IfcMappedItem.
+        
         if ifcproduct:
-            type_name_list.append(ifcproduct.ObjectType)
+            
+            ifcproduct_type = ifcopenshell.util.element.get_type(ifcproduct)
+            
+            if ifcproduct_type:
+                #ifcproduct_type.Name
+                type_name_list.append(ifcproduct_type.Name)
+            
+                #only applies to labels
+                #type_name_list.append(ifcproduct.ObjectType)
             
         if not type_name_list:
             type_name_list.append(None)
+    
         
         return type_name_list
     
