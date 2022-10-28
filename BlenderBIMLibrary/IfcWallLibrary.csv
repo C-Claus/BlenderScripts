@@ -1,0 +1,4 @@
+﻿IfcElement;IfcElementType;Name;IfcMaterialLayerSet;Material;Pset_Common;IsExternal;LoadBearing;FireRating;Phase;Width;Length;Height
+IfcWall;IfcWallType;wall name;IfcMaterialLayerSet;concrete;Pset_WallCommon;TRUE;FALSE;90;NEW;100;3000;3000
+IfcWall;IfcWallType;wall name 1;IfcMaterialLayerSet;concrete;Pset_WallCommon;FALSE;TRUE;60;NEW;200;3000;3000
+IfcWall;IfcWallType;wall name 2;IfcMaterialLayerSet;concrete;Pset_WallCommon;FALSE;TRUE;30;NEW;300;3000;3000
