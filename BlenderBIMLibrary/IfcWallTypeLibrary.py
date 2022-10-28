@@ -19,7 +19,7 @@ def create_ifcwalltype_library(ifc_element, ifc_element_type, element_name, ifc_
     library = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcProjectLibrary", name="BlenderBIM Demo Library")
 
     ifcopenshell.api.run( "project.assign_declaration", ifc_file, definition=library, relating_context=project)
-    ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
+    ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "MILIMETERS"})
 
     material = ifcopenshell.api.run("material.add_material", ifc_file, name=material_name)
 
@@ -28,7 +28,7 @@ def create_ifcwalltype_library(ifc_element, ifc_element_type, element_name, ifc_
 
     layer_set = rel.RelatingMaterial
     layer = ifcopenshell.api.run("material.add_layer", ifc_file, layer_set=layer_set, material=material)
-    layer.LayerThickness = 0.1
+    layer.LayerThickness = width
 
 
     pset = ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name="Pset_Name")
