@@ -28,7 +28,7 @@ def create_ifcwalltype_library(ifc_element, ifc_element_type, element_name, ifc_
 
     layer_set = rel.RelatingMaterial
     layer = ifcopenshell.api.run("material.add_layer", ifc_file, layer_set=layer_set, material=material)
-    layer.LayerThickness = width
+    layer.LayerThickness = width/1000
 
 
     pset = ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name=pset_common)
@@ -39,7 +39,7 @@ def create_ifcwalltype_library(ifc_element, ifc_element_type, element_name, ifc_
     ifcopenshell.api.run("project.assign_declaration", ifc_file, definition=element, relating_context=library)
 
 
-    ifc_file.write("C:\\Users\\cclaus\\OneDrive - 4PS Group BV\\Bureaublad\\demo" + str(element_name) + ".ifc")
+    ifc_file.write("C:\\Algemeen\\00_prive\\08_ifc_bestanden\\ifc_library\\" + str(element_name) + ".ifc")
 
 #csv_wall_library = 'https://raw.githubusercontent.com/C-Claus/BlenderScripts/master/BlenderBIMLibrary/IfcWallLibrary.csv?raw=true'
 
