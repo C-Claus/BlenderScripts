@@ -31,16 +31,17 @@ def create_ifcwalltype_library(ifc_element, ifc_element_type, element_name, ifc_
     layer.LayerThickness = width
 
 
-    pset = ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name="Pset_Name")
+    pset = ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name=pset_common)
 
-    ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name="Your Property Set Name")
-    ifcopenshell.api.run("pset.edit_pset", ifc_file, pset=pset, properties={"foo": "foobar", "foo2": "foobaz"})
+    ifcopenshell.api.run("pset.add_pset", ifc_file, product=element, name=pset_common)
+    ifcopenshell.api.run("pset.edit_pset", ifc_file, pset=pset, properties={"IsExternal": is_external, "LoadBearing": load_bearing, "FireRating":fire_rating})
 
     ifcopenshell.api.run("project.assign_declaration", ifc_file, definition=element, relating_context=library)
 
 
     ifc_file.write("C:\\Users\\cclaus\\OneDrive - 4PS Group BV\\Bureaublad\\demo" + str(element_name) + ".ifc")
 
+#csv_wall_library = 'https://raw.githubusercontent.com/C-Claus/BlenderScripts/master/BlenderBIMLibrary/IfcWallLibrary.csv?raw=true'
 
 csv_wall_library = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIMLibrary\\IfcWallLibrary.csv"
 get_wall_library(csv_library=csv_wall_library)
