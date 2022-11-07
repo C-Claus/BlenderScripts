@@ -1,7 +1,7 @@
-import ifcopenshell.api
 import bpy
+import ifcopenshell.api
 
-element_name='my_beam'
+
 ifc_file = ifcopenshell.api.run("project.create_file")
 project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcProject", name="BlenderBIM Demo")
 
@@ -9,6 +9,7 @@ project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcPro
 ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
 
 model = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Model")
+#model = ifcopenshell.file()
 plan = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Plan")
 
 
@@ -34,7 +35,15 @@ representations = {
     ),
 }
 
+site = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcSite", name="My Site")
+building = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBuilding", name="Building A")
+storey = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBuildingStorey", name="Ground Floor")
 
+ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=project, product=site)
+ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
+ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
+
+element_name='my_beam'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
 profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.5, YDim=0.6)
 
@@ -55,6 +64,8 @@ ifcopenshell.api.run("type.assign_type", ifc_file, related_object=occurrence, re
 
 representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=3)
 
+
+ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
 
 
@@ -63,7 +74,7 @@ ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurre
 ######################################################################################
 #########################  Write file and load into BlenderBIM #######################
 ######################################################################################
-folder_path = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIMGrid\\ifc_library\\" 
+folder_path = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_objects\\ifc_library" 
 filename = str(element_name) + ".ifc"
 file_path = (folder_path + filename)
 ifc_file.write(file_path)
