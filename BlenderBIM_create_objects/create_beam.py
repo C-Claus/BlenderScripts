@@ -4,18 +4,13 @@ import ifcopenshell.api
 
 ifc_file = ifcopenshell.api.run("project.create_file")
 project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcProject", name="BlenderBIM Demo")
-
-#ifcopenshell.api.run( "project.assign_declaration", ifc_file, definition=project, relating_context=project)
 ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
 
 model = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Model")
 #model = ifcopenshell.file()
 plan = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Plan")
 
-
-
-
-    
+  
 representations = {
     "body": ifcopenshell.api.run(
         "context.add_context",
@@ -54,9 +49,7 @@ material_profile = ifcopenshell.api.run( "material.add_profile", ifc_file, profi
 ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=material_profile, profile=profile)
 
 #or use:
-
 #material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
-
 
 
 occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name)
@@ -67,8 +60,6 @@ representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc
 
 ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
-
-
 
 
 ######################################################################################
