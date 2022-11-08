@@ -42,7 +42,7 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=buildi
 
 element_name='my_beam1'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
-profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=1.0, YDim=1.0)
+profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.5, YDim=0.5)
 
 element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcBeamType', name=element_name)
 rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
@@ -54,21 +54,56 @@ ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=mater
 #material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
 
 
-occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name)
+occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name, )
 ifcopenshell.api.run("type.assign_type", ifc_file, related_object=occurrence, relating_type=element)
 
-representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=3)
+representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=5)
 
+
+# A 4x4 matrix representing the location and rotation of the element, in the form:
+# [ [ x_x, y_x, z_x, x   ]
+#   [ x_y, y_y, z_y, y   ]
+#   [ x_z, y_z, z_z, z   ]
+#   [ 0.0, 0.0, 0.0, 1.0 ] ]
+# The position is given by the last column: (x, y, z)
+# The rotation is described by the first three columns, by explicitly specifying the local X, Y, Z axes.
+# The first column is a normalised vector of the local X axis: (x_x, x_y, x_z)
+# The second column is a normalised vector of the local Y axis: (y_x, y_y, y_z)
+# The third column is a normalised vector of the local Z axis: (z_x, z_y, z_z)
+# The axes follow a right-handed coordinate system.
+# Objects are never scaled, so the scale factor of the matrix is always 1.
+"""       
 matrix = numpy.array(
             (
-                (1.0, 0.0, 0.0, 2.0),
-                (0.0, 1.0, 0.0, 1.0),
-                (0.0, 0.0, 1.0, 1.0),
+                (0.0, 0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0, 0.0),
+            )
+        )
+"""
+        
+matrix_1 = numpy.array(
+            (
+                (0.0, 0.0, 1.0, 0.0),
+                (0.0, 1.0, 0.0, 0.0),
+                (1.0, 0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0, 1.0),
             )
         )
         
-ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix) 
+matrix_2 = numpy.array(
+            (
+                (0.0, 0.0, 0.0, 1.0), 
+                (1.0, 1.0, 0.0, 1.0), 
+                (0.0, 0.0, 0.0, 1.0), 
+                (0.0, 0.0, 0.0, 1.0), 
+            )
+        )
+        
+
+        
+ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_1) 
 
 ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
