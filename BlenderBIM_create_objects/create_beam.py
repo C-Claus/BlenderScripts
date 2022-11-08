@@ -7,10 +7,9 @@ project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcPro
 ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
 
 model = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Model")
-#model = ifcopenshell.file()
 plan = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Plan")
 
-  
+print (model) 
 representations = {
     "body": ifcopenshell.api.run(
         "context.add_context",
@@ -30,6 +29,8 @@ representations = {
     ),
 }
 
+
+
 site = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcSite", name="My Site")
 building = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBuilding", name="Building A")
 storey = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBuildingStorey", name="Ground Floor")
@@ -38,9 +39,9 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=projec
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
 
-element_name='my_beam'
+element_name='my_beam1'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
-profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.5, YDim=0.6)
+profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=1.5, YDim=0.6)
 
 element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcBeamType', name=element_name)
 rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
@@ -65,7 +66,7 @@ ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurre
 ######################################################################################
 #########################  Write file and load into BlenderBIM #######################
 ######################################################################################
-folder_path = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_objects\\ifc_library" 
+folder_path = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_objects\\ifc_library\\" 
 filename = str(element_name) + ".ifc"
 file_path = (folder_path + filename)
 ifc_file.write(file_path)
