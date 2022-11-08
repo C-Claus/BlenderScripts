@@ -80,9 +80,51 @@ matrix_1 = numpy.array(
                 (0.0, 0.0, 0.0, 1.0),
             )
         )
+        
+        
+        
                
 ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_1) 
 ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
+
+
+
+
+
+context = ifc_file.createIfcGeometricRepresentationContext()
+style = ifcopenshell.api.run("style.add_style", ifc_file, name="brick")
+ifcopenshell.api.run(
+            "style.add_surface_style",
+            ifc_file,
+            style=style,
+            attributes={
+                "SurfaceColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 0.8,
+                    "Blue": 0.5,
+                },
+                "DiffuseColour": {
+                    "Name": None,
+                    "Red": 2.2,
+                    "Green": 0.8,
+                    "Blue": 0.5,
+                },
+                "Transparency": 0.0,
+                "ReflectanceMethod": "PLASTIC",
+            },
+        )
+ifcopenshell.api.run(
+    "style.assign_material_style",
+    ifc_file,
+    material=material,
+    style=style,
+    context=context,
+)
+        
+ 
+ 
+        
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
 
 
