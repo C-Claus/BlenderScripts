@@ -10,7 +10,7 @@ ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "r
 model = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Model")
 plan = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Plan")
 
-print (model) 
+ 
 representations = {
     "body": ifcopenshell.api.run(
         "context.add_context",
@@ -40,7 +40,7 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=projec
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
 
-element_name='my_beam1'
+element_name='simple_beam'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
 profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.5, YDim=0.5)
 
@@ -71,18 +71,7 @@ representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc
 # The second column is a normalised vector of the local Y axis: (y_x, y_y, y_z)
 # The third column is a normalised vector of the local Z axis: (z_x, z_y, z_z)
 # The axes follow a right-handed coordinate system.
-# Objects are never scaled, so the scale factor of the matrix is always 1.
-"""       
-matrix = numpy.array(
-            (
-                (0.0, 0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0, 0.0),
-            )
-        )
-"""
-        
+# Objects are never scaled, so the scale factor of the matrix is always 1.      
 matrix_1 = numpy.array(
             (
                 (0.0, 0.0, 1.0, 0.0),
@@ -91,20 +80,8 @@ matrix_1 = numpy.array(
                 (0.0, 0.0, 0.0, 1.0),
             )
         )
-        
-matrix_2 = numpy.array(
-            (
-                (0.0, 0.0, 0.0, 1.0), 
-                (1.0, 1.0, 0.0, 1.0), 
-                (0.0, 0.0, 0.0, 1.0), 
-                (0.0, 0.0, 0.0, 1.0), 
-            )
-        )
-        
-
-        
+               
 ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_1) 
-
 ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
 
