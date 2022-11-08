@@ -3,12 +3,11 @@ import numpy
 import ifcopenshell.api
 
 
-beam_length_x = 5
-beam_length_y = 2
-beam_profile_y = 0.2
-beam_profile_x = 0.2
+beam_length_x = 1
+beam_profile_y = 0.4
+beam_profile_x = 0.5
 beam_total_length_n_y = 10
-beam_inbetween_distance = 1
+beam_inbetween_distance = 3 #=beam_length_y = 3
 
 
 
@@ -87,10 +86,12 @@ ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=mater
             
 
 for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
+    
+  
     matrix_2 = numpy.array(
                     (
-                        (0.0, 1.0, 0.0, 0.1),
-                        (1.0, 1.0, 1.0, i+0.1),
+                        (0.0, 1.0, 0.0, beam_profile_y/2),
+                        (1.0, 1.0, 1.0, i+(beam_profile_y/2)),
                         (1.0, 0.0, 0.0, 0.0),
                         (0.0, 0.0, 0.0, 1.0),
                     )
@@ -107,8 +108,8 @@ for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
 for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
     matrix_3 = numpy.array(
                     (
-                        (0.0, 1.0, 0.0, 5-0.1),
-                        (1.0, 1.0, 1.0, i+0.1),
+                        (0.0, 1.0, 0.0, beam_length_x-beam_profile_y/2),
+                        (1.0, 1.0, 1.0, i+(beam_profile_y/2)),
                         (1.0, 0.0, 0.0, 0.0),
                         (0.0, 0.0, 0.0, 1.0),
                     )
@@ -136,7 +137,7 @@ for i in range(0, beam_total_length_n_y, beam_inbetween_distance ):
     matrix_1 = numpy.array(matrix_1)
     
     occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name )
-    representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=5)
+    representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=beam_length_x)
                
     ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_1) 
     ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
