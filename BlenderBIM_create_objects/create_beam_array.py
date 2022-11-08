@@ -3,11 +3,11 @@ import numpy
 import ifcopenshell.api
 
 
-beam_length_x = 1
-beam_profile_y = 0.4
-beam_profile_x = 0.5
+beam_length_x = 5
+beam_profile_y = 0.2
+beam_profile_x = 0.2
 beam_total_length_n_y = 10
-beam_inbetween_distance = 3 #=beam_length_y = 3
+beam_inbetween_distance = 2#=beam_length_y = 3
 
 
 
@@ -48,7 +48,7 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=projec
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
 ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
 
-element_name='simple_beam'
+element_name='beam_system_array'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
 profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=beam_profile_x,YDim=beam_profile_y)
 
