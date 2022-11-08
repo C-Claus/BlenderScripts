@@ -1,4 +1,5 @@
 import bpy
+import numpy
 import ifcopenshell.api
 
 
@@ -41,7 +42,7 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=buildi
 
 element_name='my_beam1'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
-profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=1.5, YDim=0.6)
+profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=1.0, YDim=1.0)
 
 element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcBeamType', name=element_name)
 rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
@@ -58,6 +59,16 @@ ifcopenshell.api.run("type.assign_type", ifc_file, related_object=occurrence, re
 
 representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=3)
 
+matrix = numpy.array(
+            (
+                (1.0, 0.0, 0.0, 2.0),
+                (0.0, 1.0, 0.0, 1.0),
+                (0.0, 0.0, 1.0, 1.0),
+                (0.0, 0.0, 0.0, 1.0),
+            )
+        )
+        
+ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix) 
 
 ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
 ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
