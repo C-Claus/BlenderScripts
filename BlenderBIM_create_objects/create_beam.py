@@ -92,7 +92,7 @@ ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=st
 
 
 context = ifc_file.createIfcGeometricRepresentationContext()
-style = ifcopenshell.api.run("style.add_style", ifc_file, name="brick")
+style = ifcopenshell.api.run("style.add_style", ifc_file, name="concrete")
 ifcopenshell.api.run(
             "style.add_surface_style",
             ifc_file,
