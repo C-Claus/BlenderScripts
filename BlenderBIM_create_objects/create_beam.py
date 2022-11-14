@@ -52,7 +52,7 @@ ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=mater
 
 #or use:
 #material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
-
+profile.ProfileName = "square_profile"
 
 occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name, )
 ifcopenshell.api.run("type.assign_type", ifc_file, related_object=occurrence, relating_type=element)

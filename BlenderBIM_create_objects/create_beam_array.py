@@ -58,6 +58,7 @@ profile_set = rel.RelatingMaterial
 material_profile = ifcopenshell.api.run( "material.add_profile", ifc_file, profile_set=profile_set, material=material)
 ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=material_profile, profile=profile)
 
+profile.ProfileName = "square_profile"
 #or use:
 #material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
 
