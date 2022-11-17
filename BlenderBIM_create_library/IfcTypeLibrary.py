@@ -2,6 +2,8 @@ import ifcopenshell.api
 import pandas as pd
 import bpy
 
+create_seperate_files = True 
+
 
 def get_type_library(csv_library):
        
@@ -55,7 +57,7 @@ def create_ifctype_library(ifc_element, ifc_element_type, element_name, ifc_mate
     green = float(rgb.split(',')[1])
     blue = float(rgb.split(',')[2])
     
-    """
+   
     ifcopenshell.api.run(
         "style.add_surface_style",
         ifc_file,
@@ -84,7 +86,7 @@ def create_ifctype_library(ifc_element, ifc_element_type, element_name, ifc_mate
         style=style,
         context=context,
     )
-    """
+   
         
         
     result = ifcopenshell.api.run("classification.add_classification", ifc_file, classification='NLSfb')   

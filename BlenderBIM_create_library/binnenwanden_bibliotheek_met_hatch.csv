@@ -1,0 +1,13 @@
+IfcElement;IfcElementType;Name;IfcMaterialLayerSet;Material;Classification;ItemReference;Pset_Common;IsExternal;LoadBearing;FireRating;Phase;Width;Length;Height;RGB;LayerSetName
+IfcWall;IfcWallType;brick_interior_wall_50mm;IfcMaterialLayerSet;brick;"binnenwanden; niet constructief, massieve wanden";22.11;Pset_WallCommon;FALSE;FALSE;60;NEW;50;2000;3000;2.2,2.0,0.5;brick
+IfcWall;IfcWallType;brick_interior_wall_85mm;IfcMaterialLayerSet;brick;"binnenwanden; niet constructief, massieve wanden";22.11;Pset_WallCommon;FALSE;FALSE;60;NEW;85;2000;3000;2.2,2.0,0.5;brick
+IfcWall;IfcWallType;brick_interior_wall_100mm;IfcMaterialLayerSet;brick;"binnenwanden; niet constructief, massieve wanden";22.11;Pset_WallCommon;FALSE;FALSE;60;NEW;75;2000;3000;2.2,2.0,0.6;brick
+IfcWall;IfcWallType;brick_interior_wall_110mm;IfcMaterialLayerSet;brick;"binnenwanden; niet constructief, massieve wanden";22.11;Pset_WallCommon;FALSE;FALSE;60;NEW;90;2000;3000;2.2,2.0,0.7;brick
+IfcWall;IfcWallType;concrete_exterior_wall_50mm;IfcMaterialLayerSet;concrete;"buitenwanden; constructief, massieve wanden";21.21;Pset_WallCommon;TRUE;TRUE;60;NEW;50;2000;3000;2.0,2.0,2.0;concrete
+IfcWall;IfcWallType;concrete_exterior_wall_100mm;IfcMaterialLayerSet;concrete;"buitenwanden; constructief, massieve wanden";21.21;Pset_WallCommon;TRUE;TRUE;60;NEW;10;2000;3000;2.0,2.0,2.0;concrete
+IfcWall;IfcWallType;concrete_exterior_wall_150mm;IfcMaterialLayerSet;concrete;"buitenwanden; constructief, massieve wanden";21.21;Pset_WallCommon;TRUE;TRUE;60;NEW;150;2000;3000;2.0,2.0,2.0;concrete
+IfcWall;IfcWallType;concrete_exterior_wall_200mm;IfcMaterialLayerSet;concrete;"buitenwanden; constructief, massieve wanden";21.21;Pset_WallCommon;TRUE;TRUE;60;NEW;200;2000;3000;2.0,2.0,2.0;concrete
+IfcCovering;IfcCoveringType;insulation_100mm;IfcMaterialLayerSet;insulation;"buitenwandafwerkingen; bekledingen";41.12;Pset_WallCommon;TRUE;FALSE;60;NEW;100;2000;3000;2.2,2.0,0.12;honeycomb
+IfcCovering;IfcCoveringType;insulation_150mm;IfcMaterialLayerSet;insulation;"buitenwandafwerkingen; bekledingen";41.12;Pset_WallCommon;TRUE;FALSE;60;NEW;150;2000;3000;2.2,2.0,0.13;honeycomb
+IfcCovering;IfcCoveringType;insulation_200mm;IfcMaterialLayerSet;insulation;"buitenwandafwerkingen; bekledingen";41.12;Pset_WallCommon;TRUE;FALSE;60;NEW;200;2000;3000;2.2,2.0,0.14;honeycomb
+IfcCovering;IfcCoveringType;insulation_250mm;IfcMaterialLayerSet;insulation;"buitenwandafwerkingen; bekledingen";41.12;Pset_WallCommon;TRUE;FALSE;60;NEW;250;2000;3000;2.2,2.0,0.15;honeycomb

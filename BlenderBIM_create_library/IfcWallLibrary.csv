@@ -1,2 +1,0 @@
-IfcElement;IfcElementType;Name;IfcMaterialLayerSet;Material;Classification;ItemReference;Pset_Common;IsExternal;LoadBearing;FireRating;Phase;Width;Length;Height;RGB
-IfcWall;IfcWallType;concrete_wall_100mm;IfcMaterialLayerSet;concrete;muur;51.21;Pset_WallCommon;TRUE;TRUE;60;NEW;100;100;3000;2.2,2.0,0.5

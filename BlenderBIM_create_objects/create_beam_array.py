@@ -1,7 +1,12 @@
+import os
 import bpy
 import numpy
 import ifcopenshell.api
 
+
+ 
+#filename = os.path.join("_PATH_", "_FILE_NAME_.py")
+#exec(compile(open(filename).read(), filename, 'exec'))
 
 beam_length_x = 5
 beam_profile_y = 0.2
