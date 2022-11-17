@@ -2,7 +2,10 @@ import ifcopenshell.api
 import pandas as pd
 import bpy
 
-create_seperate_files = True 
+#create_seperate_files = True 
+
+#if create_seperate_files is True:
+    
 
 
 def get_type_library(csv_library):
@@ -110,7 +113,7 @@ def create_ifctype_library(ifc_element, ifc_element_type, element_name, ifc_mate
 ########################################################
 ### Call the methods which loop through the CSV file ###
 ########################################################
-csv_type_library = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_library\\binnenwanden_bibliotheek_met_hatch.csv"
+csv_type_library = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_library\\type_library.csv"
 get_type_library(csv_library=csv_type_library)
 
 for index, row in get_type_library(csv_library=csv_type_library).iterrows():
