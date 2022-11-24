@@ -1,11 +1,6 @@
+#import bpy
 import ifcopenshell.api
 import pandas as pd
-import bpy
-
-#create_seperate_files = True 
-
-#if create_seperate_files is True:
-    
 
 
 def get_type_library(csv_library):
