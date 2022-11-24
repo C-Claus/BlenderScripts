@@ -181,16 +181,16 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
 
 beam_name = 'beam_200x200mm'
 beam_length_x = 5
-beam_profile_y = 0.5
-beam_profile_x = 0.2
+beam_profile_y = 0.2
+beam_profile_x = 0.1
 beam_total_length_n_y = 10
-beam_inbetween_distance = 3#=beam_length_y = 3
+beam_inbetween_distance = 1#=beam_length_y = 3
 
 
 column_name = 'column_200x200mm'
 column_length_x = 3
-column_profile_y = 0.2
-column_profile_x = 0.2
+column_profile_y = 0.1
+column_profile_x = 0.1
 #column_total_length_n_y = 5
 #column_inbetween_distance = 2 
 
