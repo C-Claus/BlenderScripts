@@ -180,17 +180,17 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
         """
 
 beam_name = 'beam_200x200mm'
-beam_length_x = 5
+beam_length_x = 3
 beam_profile_y = 0.2
-beam_profile_x = 0.1
-beam_total_length_n_y = 10
+beam_profile_x = 0.2
+beam_total_length_n_y = 5
 beam_inbetween_distance = 1#=beam_length_y = 3
 
 
 column_name = 'column_200x200mm'
 column_length_x = 3
-column_profile_y = 0.1
-column_profile_x = 0.1
+column_profile_y = 0.2
+column_profile_x = 0.2
 #column_total_length_n_y = 5
 #column_inbetween_distance = 2 
 
@@ -199,9 +199,35 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
 
     #beam_name, beam_profile_x, beam_profile_y, beam_length_x, beam_total_length_n_y, beam_inbetween_distance)
 
- 
+    #IfcRoundedRectangleProfileDef
     material = ifcopenshell.api.run("material.add_material", ifc_file, name='column_material')
-    profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=column_profile_x,YDim=column_profile_y)
+    #profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=column_profile_x,YDim=column_profile_y)
+    
+    #profile = ifc_file.create_entity("IfcRoundedRectangleProfileDef", ProfileType="AREA", XDim=column_profile_x,YDim=column_profile_y. RoundingRadius=0.02)
+    
+    """
+    profile = ifc_file.create_entity("IfcRectangleHollowProfileDef",
+                                    ProfileType="AREA",
+                                    XDim=column_profile_x,
+                                    YDim=column_profile_y,
+                                    WallThickness=0.01,
+                                    InnerFilletRadius=0.02,
+                                    OuterFilletRadius=0.02)
+    """                                
+                                    
+    profile = ifc_file.create_entity("IfcIShapeProfileDef",
+                                    #ProfileType="AREA",
+                                    OverallWidth=0.2,
+                                    OverallDepth=0.2,
+                                    WebThickness=0.01,
+                                    FlangeThickness=0.01,
+                                    FilletRadius=0.02,
+                                    )                            
+                                    
+                                    
+                                    
+    
+    
 
     element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcColumnType', name=column_name)
     rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
