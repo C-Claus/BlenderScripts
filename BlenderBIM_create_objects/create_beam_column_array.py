@@ -56,17 +56,29 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=buildi
 def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, beam_total_length_n_y, beam_inbetween_distance):
     element_name=beam_name
     material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
-    profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=beam_profile_x,YDim=beam_profile_y)
+    #profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=beam_profile_x,YDim=beam_profile_y)
+    
+  
+    profile = ifc_file.create_entity("IfcIShapeProfileDef",
+                                #ProfileType="AREA",
+                                OverallWidth=beam_profile_x,#0.3,
+                                OverallDepth=beam_profile_y,
+                                WebThickness=0.01,
+                                FlangeThickness=0.01,
+                                FilletRadius=0.02,
+                                ) 
+   
 
     element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcBeamType', name=element_name)
+    
     rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
     profile_set = rel.RelatingMaterial
-    material_profile = ifcopenshell.api.run( "material.add_profile", ifc_file, profile_set=profile_set, material=material)
-    ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=material_profile, profile=profile)
+    #material_profile = ifcopenshell.api.run( "material.add_profile", ifc_file, profile_set=profile_set, material=material)
+    #ifcopenshell.api.run("material.assign_profile", ifc_file, material_profile=material_profile, profile=profile)
 
     profile.ProfileName = "square_profile"
     #or use:
-    #material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
+    material_profile = ifcopenshell.api.run("material.add_profile", ifc_file, profile_set=profile_set, material=material, profile=profile)
 
 
     #occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name, )
@@ -87,14 +99,14 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
     # The axes follow a right-handed coordinate system.
     # Objects are never scaled, so the scale factor of the matrix is always 1. 
 
-          
-
+        
+    #beam on the y0 axis
     for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
         matrix_2 = numpy.array(
                         (
-                            (0.0, 1.0, 0.0, beam_profile_y/2),
-                            (1.0, 1.0, 1.0, i+(beam_profile_y/2)),
-                            (1.0, 0.0, 0.0, 0.0),
+                            (1.0, 0.0, 0.0, beam_profile_x/2),
+                            (1.0, 1.0, 1.0, i+(beam_profile_x/2)),
+                            (0.0, 0.0, 0.0, 0.0),
                             (0.0, 0.0, 0.0, 1.0),
                         )
                     )
@@ -102,17 +114,18 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
         matrix_2 = numpy.array(matrix_2)
         
         occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name )
-        representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=beam_inbetween_distance-beam_profile_y)        
+        representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=beam_inbetween_distance-beam_profile_x)        
         ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_2) 
         ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
         ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
-        
+     
+    #beam on the y axis with beamx offset
     for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
         matrix_3 = numpy.array(
                         (
-                            (0.0, 1.0, 0.0, beam_length_x-beam_profile_y/2),
-                            (1.0, 1.0, 1.0, i+(beam_profile_y/2)),
-                            (1.0, 0.0, 0.0, 0.0),
+                            (1.0, 1.0, 0.0, beam_length_x-beam_profile_x/2),
+                            (1.0, 1.0, 1.0, i+(beam_profile_x/2)),
+                            (0.0, 0.0, 0.0, 0.0),
                             (0.0, 0.0, 0.0, 1.0),
                         )
                     )
@@ -120,18 +133,19 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
         matrix_3 = numpy.array(matrix_3)
         
         occurrence = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcBeam", name=element_name )
-        representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=beam_inbetween_distance-beam_profile_y)        
+        representation = ifcopenshell.api.run("geometry.add_profile_representation", ifc_file, context=representations["body"], profile=profile, depth=beam_inbetween_distance-beam_profile_x)        
         ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_3) 
         ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
         ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)     
-
+  
+    #beam on the x axis
     for i in range(0, beam_total_length_n_y, beam_inbetween_distance ): 
         
         matrix_1 = numpy.array(
                     (
                         (0.0, 0.0, 1.0, 0.0),
-                        (0.0, 1.0, 0.0, i),
-                        (1.0, 0.0, 0.0, 0.0),
+                        (1.0, 1.0, 0.0, i),
+                        (0.0, 0.0, 0.0, 0.0),
                         (0.0, 0.0, 0.0, 1.0),
                     )
                 )
@@ -145,8 +159,7 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
         ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
         
         ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
-
-        """
+        
         context = ifc_file.createIfcGeometricRepresentationContext()
         style = ifcopenshell.api.run("style.add_style", ifc_file, name="concrete")
         ifcopenshell.api.run(
@@ -177,13 +190,25 @@ def create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, 
             style=style,
             context=context,
         )  
-        """
+
+length_x = 10.0 #float(grids_x_direction_amount)*grids_x_distance_between - grids_x_distance_between
+#total_y = 10.0
+#total_x = 5.0      
+
+
+#beam_name = 'beam_200x200mm'
+#beam_length_x = 2.5
+#beam_profile_y = 0.2
+#beam_profile_x = 0.2
+#beam_total_length_n_y = 5
+#beam_inbetween_distance = 1#=beam_length_y = 3
+
 
 beam_name = 'beam_200x200mm'
-beam_length_x = 3
+beam_length_x = 5
 beam_profile_y = 0.2
 beam_profile_x = 0.2
-beam_total_length_n_y = 5
+beam_total_length_n_y = 3
 beam_inbetween_distance = 1#=beam_length_y = 3
 
 
@@ -205,7 +230,7 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
     
     #profile = ifc_file.create_entity("IfcRoundedRectangleProfileDef", ProfileType="AREA", XDim=column_profile_x,YDim=column_profile_y. RoundingRadius=0.02)
     
-    """
+   
     profile = ifc_file.create_entity("IfcRectangleHollowProfileDef",
                                     ProfileType="AREA",
                                     XDim=column_profile_x,
@@ -213,7 +238,7 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
                                     WallThickness=0.01,
                                     InnerFilletRadius=0.02,
                                     OuterFilletRadius=0.02)
-    """                                
+                                   
                                     
     profile = ifc_file.create_entity("IfcIShapeProfileDef",
                                     #ProfileType="AREA",
@@ -304,7 +329,7 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
             
     
 create_beam_array(beam_name, beam_profile_x, beam_profile_y, beam_length_x, beam_total_length_n_y, beam_inbetween_distance)
-create_column_array(column_name, column_profile_x, column_profile_y, column_length_x, beam_total_length_n_y, beam_inbetween_distance, beam_profile_y, beam_profile_x, beam_length_x)
+#create_column_array(column_name, column_profile_x, column_profile_y, column_length_x, beam_total_length_n_y, beam_inbetween_distance, beam_profile_y, beam_profile_x, beam_length_x)
 
 ######################################################################################
 #########################  Write file and load into BlenderBIM #######################
