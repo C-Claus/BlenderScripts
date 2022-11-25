@@ -244,8 +244,8 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
         
         matrix_y = numpy.array(
                         (
-                            (1.0, 0.0, 0.0, column_profile_x/2),
-                            (0.0, 1.0, 0.0, i),
+                            (0.0, 0.0, 0.0, column_profile_x/2),
+                            (1.0, 1.0, 0.0, i),
                             (0.0, 0.0, 1.0, beam_profile_x/2),
                             (0.0, 0.0, 0.0, 0.0),
                         )
@@ -274,8 +274,8 @@ def create_column_array(column_name, column_profile_x, column_profile_y, column_
         
         matrix_y = numpy.array(
                         (
-                            (1.0, 0.0, 0.0, beam_length_x-(column_profile_x/2)),
-                            (0.0, 1.0, 0.0, i),
+                            (0.0, 0.0, 0.0, beam_length_x-(column_profile_x/2)),
+                            (1.0, 1.0, 0.0, i),
                             (0.0, 0.0, 1.0, beam_profile_x/2),
                             (0.0, 0.0, 0.0, 0.0),
                         )
