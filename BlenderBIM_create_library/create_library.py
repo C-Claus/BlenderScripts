@@ -53,41 +53,20 @@ def create_wall():
     run("spatial.assign_container", ifc_file, relating_structure=storey, product=ifc_walltype_instance)
     run("geometry.assign_representation", ifc_file, product=ifc_walltype, representation=representation)
     
+    
+   
+    style = ifcopenshell.api.run("style.add_style", ifc_file, name="My style")
+   
+    run("style.add_surface_style", ifc_file, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
+                "SurfaceColour": { "Name": None, "Red": 1., "Green": 0., "Blue": 0. }
+            })
+    run("style.assign_representation_styles", ifc_file, shape_representation=representation, styles=[style])
+            
+   
+   
    
     
-    style = ifcopenshell.api.run("style.add_style", ifc_file, name=ifc_material.Name)
-    
-    
-    run(
-    "style.add_surface_style",
-    ifc_file,
-    style=style,
-    attributes={
-        "SurfaceColour": {
-            "Name": None,
-            "Red": 2.2,
-            "Green": 0.2,
-            "Blue": 0.2,
-        },
-        "DiffuseColour": {
-            "Name": None,
-            "Red": 2.2,
-            "Green": 0.2,
-            "Blue": 0.2,
-        },
-        "Transparency": 0.0,
-        "ReflectanceMethod": "PLASTIC",
-    },
-    )
-    run(
-        "style.assign_material_style",
-        ifc_file,
-        material=ifc_material,
-        style=style,
-        context=context,
-    )  
-    
-    
+  
     
 
 
@@ -128,6 +107,10 @@ def load_ifc_automatically():
                     bpy.data.objects.remove(obj, do_unlink=True)
                     
                 bpy.data.collections.remove(collection)
+                
+        for material in bpy.data.materials:
+            material.user_clear()
+            bpy.data.materials.remove(material)
                 
         bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
         bpy.ops.bim.load_project(filepath=file_path)
