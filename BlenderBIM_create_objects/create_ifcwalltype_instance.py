@@ -34,7 +34,7 @@ layer = run("material.add_layer", ifc_file, layer_set=layer_set, material=ifc_ma
 layer.LayerThickness = 0.2
 
 
-ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype, name="ifcwalltype_instance")
+ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype,name="wall_demo_instance")
 
 representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=3,thickness=layer.LayerThickness)
 
@@ -49,7 +49,6 @@ matrix_1 = numpy.array(
 run("type.assign_type", ifc_file, related_object=ifc_walltype_instance, relating_type=ifc_walltype)   
 run("geometry.edit_object_placement",ifc_file,product=ifc_walltype_instance ,matrix=matrix_1)
 run("spatial.assign_container", ifc_file, relating_structure=storey, product=ifc_walltype_instance)
-
 run("geometry.assign_representation", ifc_file, product=ifc_walltype, representation=representation)
 
 
