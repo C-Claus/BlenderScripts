@@ -1,3 +1,4 @@
+import bpy
 import ifcopenshell
 from ifcopenshell.api import run
 import numpy
@@ -26,6 +27,31 @@ run("aggregate.assign_object", ifc_file, relating_object=building, product=store
 
 ifc_material = run("material.add_material", ifc_file, name="brick")
 
+
+style = run("style.add_style", ifc_file, name=ifc_material.Name)
+run(
+    "style.add_surface_style",
+    ifc_file,
+    style=style,
+    attributes={
+        "SurfaceColour": {
+            "Name": ifc_material.Name,
+            "Red": 0.8,
+            "Green": 0.5,
+            "Blue": 0.2,
+        },
+        "Transparency": 0,
+        "ReflectanceMethod": "PLASTIC",
+    },
+)
+run(
+    "style.assign_material_style",
+    ifc_file,
+    material=ifc_material,
+    style=style,
+    context=context,
+)
+
 ifc_walltype = run("root.create_entity", ifc_file, ifc_class="IfcWallType", name="wall_demo")
 relating_material = run("material.assign_material", ifc_file, product=ifc_walltype, type="IfcMaterialLayerSet")
 layer_set = relating_material.RelatingMaterial
@@ -33,7 +59,8 @@ layer = run("material.add_layer", ifc_file, layer_set=layer_set, material=ifc_ma
 layer.LayerThickness = 0.2
 
 
-ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype)
+ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWall")
+run("type.assign_type", ifc_file, related_object=ifc_walltype_instance, relating_type=ifc_walltype)
 
 representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=6,thickness=layer.LayerThickness)
 
@@ -57,3 +84,30 @@ filename = "place_ifcwalltype_instance_1.ifc"
 file_path = (folder_path + filename)
 print (file_path)
 ifc_file.write(file_path)
+
+
+def load_ifc_automatically():
+
+    if (bool(ifc_file)) == True:
+        project = ifc_file.by_type('IfcProject')
+        
+        if project is not None:
+            for i in project:
+                collection_name = 'IfcProject/' + i.Name
+                
+            collection = bpy.data.collections.get(str(collection_name))
+             
+            if collection is not None:
+                for obj in collection.objects:
+                    bpy.data.objects.remove(obj, do_unlink=True)
+                    
+                bpy.data.collections.remove(collection)
+                
+        for material in bpy.data.materials:
+            material.user_clear()
+            bpy.data.materials.remove(material)
+        
+        bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
+        bpy.ops.bim.load_project(filepath=file_path)
+               
+load_ifc_automatically()
