@@ -38,13 +38,13 @@ ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallSt
 representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=6,thickness=layer.LayerThickness)
 
 matrix_1 = numpy.array(
-        (
-            (0.0, 0.0, 1.0, 0.0),
-            (0.0, 1.0, 0.0, 0.0),
-            (1.0, 0.0, 0.0, 0.0),
-            (0.0, 0.0, 0.0, 1.0),
+            (
+                (1.0, 0.0, 0.0, 0.0),
+                (0.0, 1.0, 0.0, 0.0),
+                (0.0, 0.0, 1.0, 0.0),
+                (0.0, 0.0, 0.0, 1.0),
+            )
         )
-    )
     
 run("geometry.edit_object_placement",ifc_file,product=ifc_walltype_instance ,matrix=matrix_1,is_si=False)
 run("spatial.assign_container", ifc_file, relating_structure=storey, product=ifc_walltype_instance)

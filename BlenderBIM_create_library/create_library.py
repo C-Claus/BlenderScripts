@@ -21,6 +21,7 @@ run("aggregate.assign_object", ifc_file, relating_object=project, product=site)
 run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
 run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
 
+
 def read_from_csv():
     print ('read from csv')
 
@@ -34,7 +35,7 @@ def create_wall():
     layer.LayerThickness = 0.2
 
 
-    ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype)
+    ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype, name='walltype_instance')
 
     representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=3,thickness=layer.LayerThickness)
 
@@ -49,8 +50,41 @@ def create_wall():
         
     run("geometry.edit_object_placement",ifc_file,product=ifc_walltype_instance ,matrix=matrix_1,is_si=False)
     run("spatial.assign_container", ifc_file, relating_structure=storey, product=ifc_walltype_instance)
-
     run("geometry.assign_representation", ifc_file, product=ifc_walltype_instance, representation=representation)
+    
+    """
+    
+    style = ifcopenshell.api.run("style.add_style", ifc_file, name="brick")
+    run(
+                "style.add_surface_style",
+                ifc_file,
+                style=style,
+                attributes={
+                    "SurfaceColour": {
+                        "Name": None,
+                        "Red": 2.2,
+                        "Green": 0.8,
+                        "Blue": 0.5,
+                    },
+                    "DiffuseColour": {
+                        "Name": None,
+                        "Red": 2.2,
+                        "Green": 0.8,
+                        "Blue": 0.5,
+                    },
+                    "Transparency": 0.0,
+                    "ReflectanceMethod": "PLASTIC",
+                },
+            )
+    run(
+        "style.assign_material_style",
+        ifc_file,
+        material=ifc_material,
+        style=style,
+        context=context,
+    )  
+    
+    """
     
 
 
