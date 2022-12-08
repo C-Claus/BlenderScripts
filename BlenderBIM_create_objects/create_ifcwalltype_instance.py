@@ -1,6 +1,7 @@
 import ifcopenshell
 from ifcopenshell.api import run
 import numpy
+import bpy
 
 ifc_file = ifcopenshell.file()
 
@@ -33,9 +34,9 @@ layer = run("material.add_layer", ifc_file, layer_set=layer_set, material=ifc_ma
 layer.LayerThickness = 0.2
 
 
-ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype)
+ifc_walltype_instance = run("root.create_entity", ifc_file, ifc_class="IfcWallStandardCase", relating_type=ifc_walltype, name="ifcwalltype_instance")
 
-representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=6,thickness=layer.LayerThickness)
+representation = run("geometry.add_wall_representation",ifc_file,context=body,length=5,height=3,thickness=layer.LayerThickness)
 
 matrix_1 = numpy.array(
             (
@@ -45,15 +46,41 @@ matrix_1 = numpy.array(
                 (0.0, 0.0, 0.0, 1.0),
             )
         )
-    
-run("geometry.edit_object_placement",ifc_file,product=ifc_walltype_instance ,matrix=matrix_1,is_si=False)
+run("type.assign_type", ifc_file, related_object=ifc_walltype_instance, relating_type=ifc_walltype)   
+run("geometry.edit_object_placement",ifc_file,product=ifc_walltype_instance ,matrix=matrix_1)
 run("spatial.assign_container", ifc_file, relating_structure=storey, product=ifc_walltype_instance)
 
-run("geometry.assign_representation", ifc_file, product=ifc_walltype_instance, representation=representation)
+run("geometry.assign_representation", ifc_file, product=ifc_walltype, representation=representation)
 
 
+
+
+
+
+file_name="ifcwalltype_instance"
 folder_path = "C:\\Algemeen\\00_prive\\BlenderScripts\\BlenderBIM_create_objects\\ifc_library\\" 
-filename = "place_ifcwalltype_instance_1.ifc"
+filename = str(file_name) + ".ifc"
 file_path = (folder_path + filename)
-print (file_path)
 ifc_file.write(file_path)
+
+def load_ifc_automatically():
+
+    if (bool(ifc_file)) == True:
+        project = ifc_file.by_type('IfcProject')
+        
+        if project is not None:
+            for i in project:
+                collection_name = 'IfcProject/' + i.Name
+                
+            collection = bpy.data.collections.get(str(collection_name))
+             
+            if collection is not None:
+                for obj in collection.objects:
+                    bpy.data.objects.remove(obj, do_unlink=True)
+                    
+                bpy.data.collections.remove(collection)
+                
+        bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
+        bpy.ops.bim.load_project(filepath=file_path)
+               
+load_ifc_automatically()
