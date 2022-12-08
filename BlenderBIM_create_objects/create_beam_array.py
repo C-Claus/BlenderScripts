@@ -17,7 +17,7 @@ beam_inbetween_distance = 2#=beam_length_y = 3
 
 
 ifc_file = ifcopenshell.api.run("project.create_file")
-project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcProject", name="BlenderBIM Demo")
+project = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class="IfcProject", name="BlenderBIM Haagse Hogeschool Demo")
 ifcopenshell.api.run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
 
 model = ifcopenshell.api.run("context.add_context", ifc_file, context_type="Model")
@@ -93,7 +93,7 @@ profile.ProfileName = "square_profile"
 
 for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
     
-  
+    print (i)
     matrix_2 = numpy.array(
                     (
                         (0.0, 1.0, 0.0, beam_profile_y/2),
@@ -110,7 +110,8 @@ for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
     ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_2) 
     ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
     ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
-    
+ 
+ 
 for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
     matrix_3 = numpy.array(
                     (
@@ -128,6 +129,7 @@ for i in range(0, beam_total_length_n_y, beam_inbetween_distance )[:-1]:
     ifcopenshell.api.run("geometry.edit_object_placement",ifc_file, product=occurrence, matrix=matrix_3) 
     ifcopenshell.api.run("spatial.assign_container", ifc_file, relating_structure=storey, product=occurrence)
     ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)     
+
 
 for i in range(0, beam_total_length_n_y, beam_inbetween_distance ): 
     
@@ -150,42 +152,14 @@ for i in range(0, beam_total_length_n_y, beam_inbetween_distance ):
     
     ifcopenshell.api.run("geometry.assign_representation", ifc_file, product=occurrence, representation=representation)
 
-    """
+   
     context = ifc_file.createIfcGeometricRepresentationContext()
     style = ifcopenshell.api.run("style.add_style", ifc_file, name="concrete")
-    ifcopenshell.api.run(
-                "style.add_surface_style",
-                ifc_file,
-                style=style,
-                attributes={
-                    "SurfaceColour": {
-                        "Name": None,
-                        "Red": 2.2,
-                        "Green": 0.8,
-                        "Blue": 0.5,
-                    },
-                    "DiffuseColour": {
-                        "Name": None,
-                        "Red": 2.2,
-                        "Green": 0.8,
-                        "Blue": 0.5,
-                    },
-                    "Transparency": 0.0,
-                    "ReflectanceMethod": "PLASTIC",
-                },
-            )
-    ifcopenshell.api.run(
-        "style.assign_material_style",
-        ifc_file,
-        material=material,
-        style=style,
-        context=context,
-    )  
-    """
+
+   
 
 
-
-            
+           
      
      
             

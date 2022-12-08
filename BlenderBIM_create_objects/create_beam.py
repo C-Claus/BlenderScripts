@@ -42,7 +42,7 @@ ifcopenshell.api.run("aggregate.assign_object", ifc_file, relating_object=buildi
 
 element_name='simple_beam'
 material = ifcopenshell.api.run("material.add_material", ifc_file, name='beam_material')
-profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.5, YDim=0.5)
+profile = ifc_file.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=0.9, YDim=0.5)
 
 element = ifcopenshell.api.run("root.create_entity", ifc_file, ifc_class='IfcBeamType', name=element_name)
 rel = ifcopenshell.api.run("material.assign_material", ifc_file, product=element, type="IfcMaterialProfileSet")
