@@ -19,93 +19,13 @@ class CreateArray(bpy.types.Operator):
         
         self.load_ifc(ifc_file, file_path)
 
-        """
-
-        ifc_file = run("project.create_file")
-        project = run("root.create_entity", ifc_file, ifc_class="IfcProject", name="BlenderBIM Demo")
-        run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "METERS"})
-
-        model = run("context.add_context", ifc_file, context_type="Model")
-        plan = run("context.add_context", ifc_file, context_type="Plan")
-
-
-        representations = {
-            "body": run(
-                "context.add_context",
-                ifc_file,
-                context_type="Model",
-                context_identifier="Body",
-                target_view="MODEL_VIEW",
-                parent=model,
-            ),
-            "annotation": run(
-                "context.add_context",
-                ifc_file,
-                context_type="Plan",
-                context_identifier="Annotation",
-                target_view="PLAN_VIEW",
-                parent=plan,
-            ),
-        }
-
-
-
-        site = run("root.create_entity", ifc_file, ifc_class="IfcSite", name="My Site")
-        building = run("root.create_entity", ifc_file, ifc_class="IfcBuilding", name="Building A")
-        storey = run("root.create_entity", ifc_file, ifc_class="IfcBuildingStorey", name="Ground Floor")
-
-        run("aggregate.assign_object", ifc_file, relating_object=project, product=site)
-        run("aggregate.assign_object", ifc_file, relating_object=site, product=building)
-        run("aggregate.assign_object", ifc_file, relating_object=building, product=storey)
-
-        
-
-
-
-        
-        length_x = 20.0
-        length_y = 20.0
-        beam_name = 'beam_200x200mm'
-        beam_length_x = 7
-        beam_profile_y = 0.7
-        beam_profile_x = 0.2
-        beam_total_length_n_y = 10
-        beam_inbetween_distance = 2
-      
-        folder_path = "C:\\Algemeen\\07_ifcopenshell\\00_ifc\\02_ifc_library\\" 
-        filename = str(beam_name) + ".ifc"
-        file_path = (folder_path + filename)
-        ifc_file.write(file_path)
-
-
-         
-        self.create_beam_array(ifc_file,
-                               representations,
-                               site,
-                               building,
-                               storey,
-                               beam_name,
-                               beam_profile_x,
-                               beam_profile_y,
-                               beam_length_x,
-                               beam_total_length_n_y,
-                               beam_inbetween_distance)
-        """
-
-
-        #self.load_ifc(ifc_file, file_path)
-
-
-
-
 
         return {'FINISHED'}
 
 
     def create_project(self, file_path):
         
-        
-       
+
         model = ifcopenshell.file()
 
 
@@ -207,7 +127,7 @@ class CreateArray(bpy.types.Operator):
         representation = run("geometry.add_profile_representation", model, context=representations["body"], profile=profile, depth=5) 
 
 
-        matrix_2 = numpy.array(
+        matrix_origin = numpy.array(
                             (
                                 (1.0, 0.0, 0.0, 0.0),
                                 (1.0, 1.0, 1.0, 0.0),
@@ -215,7 +135,7 @@ class CreateArray(bpy.types.Operator):
                                 (0.0, 0.0, 0.0, 0.0),
                             )
                         )       
-        run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_2) 
+        run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_origin) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
 
