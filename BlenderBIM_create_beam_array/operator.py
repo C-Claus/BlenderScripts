@@ -4,7 +4,7 @@ import numpy
 import ifcopenshell.api
 from ifcopenshell.api import run
 
-print ('hallo uit operator')
+
 
 class CreateArray(bpy.types.Operator):
     """Create Beam Array"""
@@ -76,13 +76,26 @@ class CreateArray(bpy.types.Operator):
 
     def create_beam(self, model, body, storey):
 
+       
+
+        beam_name = 'my_beam'
+        length_total_x = 10
+        length_total_y = 5
+        beam_length_y = 5
+        x_N = 10
+        y_N = 5
+        x_dim = 200
+        y_dim = 500
+        center_to_center_distance = 1
+
+
         #create material
         material_concrete = run("material.add_material", model, name='concrete')
 
         #create profile
-        profile = model.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=200,YDim=500)
+        profile = model.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=x_dim,YDim=y_dim)
 
-        beam = run("root.create_entity", model, ifc_class='IfcBeamType', name='my_beam')
+        beam = run("root.create_entity", model, ifc_class='IfcBeamType', name=beam_name)
 
         rel = run("material.assign_material", model, product=beam, type="IfcMaterialProfileSet")
 
@@ -94,7 +107,7 @@ class CreateArray(bpy.types.Operator):
 
         profile.ProfileName = "square_profile"
 
-        occurrence = run("root.create_entity", model, ifc_class="IfcBeam", name='beam_name' )
+        occurrence = run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name )
 
         run("type.assign_type", model, related_object=occurrence, relating_type=beam)
 
@@ -122,10 +135,11 @@ class CreateArray(bpy.types.Operator):
                 parent=plan,
             ),
         }
-  
+
          
 
-        
+        """
+        #just one simple beamtype instance
         matrix_origin = numpy.array(
                             (
                                 (1.0, 0.0, 0.0, 0.0),
@@ -140,9 +154,11 @@ class CreateArray(bpy.types.Operator):
         run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_origin) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
+        """
+        
 
 
-        for i in range(0, 10, 1):
+        for i in range(0, x_N, center_to_center_distance):
             matrix_x = numpy.array(
                             (
                                 (1.0, 0.0, 0.0, i),
@@ -154,12 +170,39 @@ class CreateArray(bpy.types.Operator):
                         
             matrix_x = numpy.array(matrix_x)
 
-            occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name='element_name')
-            representation = run("geometry.add_profile_representation", model, context=representations["body"], profile=profile, depth=5) 
+            occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
+            representation = run("geometry.add_profile_representation", model, context=representations["body"], profile=profile, depth=beam_length_y) 
         
             run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_x) 
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
+        
+        for i in range(0, y_N, center_to_center_distance )[:-1]:
+
+            # [ [ x_x, y_x, z_x, x   ]
+            #   [ x_y, y_y, z_y, y   ]
+            #   [ x_z, y_z, z_z, z   ]
+            #   [ 0.0, 0.0, 0.0, 1.0 ] ]
+
+            matrix_y = numpy.array(
+                            (
+                                (1.0, 1.0, 1.0, 0.0),
+                                (1.0, 0.0, 0.0, 0.0),
+                                (0.0, 0.0, 0.0, 0.0),
+                                (0.0, 0.0, 0.0, 1.0),
+                            )
+                        )
+                        
+            matrix_y = numpy.array(matrix_y)
+
+            occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
+            representation = run("geometry.add_profile_representation", model, context=representations["body"], profile=profile, depth=10) 
+        
+            run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
+            run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
+            run("geometry.assign_representation", model, product=occurrence, representation=representation)
+
+
 
 
 
