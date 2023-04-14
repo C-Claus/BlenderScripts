@@ -5,11 +5,10 @@ import ifcopenshell.api
 from ifcopenshell.api import run
 
 
-
 class CreateBeamArray(bpy.types.Operator):
     """Create Beam Array"""
     bl_idname = "create.array"
-    bl_label = "Create array"
+    bl_label = "Create Beam System"
 
     def execute(self, context):
 
@@ -39,45 +38,68 @@ class CreateBeamArray(bpy.types.Operator):
         run("aggregate.assign_object", model, relating_object=site, product=building)
         run("aggregate.assign_object", model, relating_object=building, product=storey)
 
-        #self.create_wall(model, body, storey)
-        self.create_beam(model, body, storey)
+
+        beam_name = 'my_beam'
+
+        beam_length_y = 6
+        x_dim = 200
+        y_dim = 500
+        center_to_center_distance = 3
+        x_N = 6
+
+
+
+
+        self.create_wall(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N)
+        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y)
 
         model.write(file_path)
 
         return model
 
  
-    def create_wall(self, model, body, storey):
+    def create_wall(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N):
 
-        wall = run("root.create_entity", model, ifc_class="IfcWall")
-        representation = run("geometry.add_wall_representation", model, context=body, length=10, height=6, thickness=0.2)
-        run("geometry.assign_representation", model, product=wall, representation=representation)
-        run("spatial.assign_container", model, relating_structure=storey, product=wall)
+        length_total_x = (x_N*center_to_center_distance)
 
-    def create_beam(self, model, body, storey):
 
-        beam_name = 'my_beam'
+        for i in range(0, length_total_x, center_to_center_distance)[:-1]:
+           
+            matrix_x = numpy.array(
+                            (
+                                (1.0, 0.0, 0.0, (x_dim/1000)/2+i),
+                                (1.0, 1.0, 1.0, (x_dim/1000)/2),
+                                (0.0, 0.0, 0.0, y_dim/1000/2),
+                                (0.0, 0.0, 0.0, 1.0),
+                            )
+                        )
+                        
+            matrix_x = numpy.array(matrix_x)
 
-        beam_length_y = 6
+    
+            wall = run("root.create_entity", model, ifc_class="IfcWall")
+            representation = run("geometry.add_wall_representation", model, context=body, length=center_to_center_distance-x_dim/1000, height=6, thickness=y_dim/1000)
+            run("geometry.assign_representation", model, product=wall, representation=representation)
+            run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
+            run("spatial.assign_container", model, relating_structure=storey, product=wall)
+
+    def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y):
+
         
-        x_dim = 200
-        y_dim = 500
-        center_to_center_distance = 3
 
-        x_N = 6
         length_total_x = (x_N*center_to_center_distance)
         profile_offset_y = (x_dim/1000)/2
 
         material_concrete = run("material.add_material", model, name='concrete')
-        #profile = model.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=x_dim,YDim=y_dim)
-        profile = model.create_entity("IfcIShapeProfileDef",
-                                    ProfileType="AREA",
-                                    OverallWidth=x_dim,
-                                    OverallDepth=y_dim,
-                                    WebThickness=0.1,
-                                    FlangeThickness=0.1,
-                                    FilletRadius=0.2,
-                                    ) 
+        profile = model.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=x_dim,YDim=y_dim)
+        #profile = model.create_entity("IfcIShapeProfileDef",
+        #                            ProfileType="AREA",
+        #                            OverallWidth=x_dim,
+        #                            OverallDepth=y_dim,
+        #                            WebThickness=0.1,
+        #                            FlangeThickness=0.1,
+        #                            FilletRadius=0.2,
+        #                            ) 
     
         beam = run("root.create_entity", model, ifc_class='IfcBeamType', name=beam_name)
         rel = run("material.assign_material", model, product=beam, type="IfcMaterialProfileSet")
@@ -213,6 +235,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 def register():
     bpy.utils.register_class(CreateBeamArray)
+
 
 
 def unregister():
