@@ -4,7 +4,10 @@ import numpy
 import ifcopenshell.api
 from ifcopenshell.api import run
 
-
+#https://github.com/buildingSMART/IFC4.3.x-development/blob/master/docs/schemas/shared/IfcSharedBldgElements/Entities/IfcWall.md
+#1 make checbox to include insulation
+#2 make button which bakes an IfcRelAggregates to an IfcProjectLibrary
+#3 should behave as an IfcWall, test with IfcOpeningElements
 class CreateBeamArray(bpy.types.Operator):
     """Create Beam Array"""
     bl_idname = "create.array"
@@ -41,10 +44,10 @@ class CreateBeamArray(bpy.types.Operator):
 
         beam_name = 'my_beam'
 
-        beam_length_y = 10
+        beam_length_y = 3
         x_dim = 100
         y_dim = 300
-        center_to_center_distance = 3
+        center_to_center_distance = 1
         x_N = 5
 
 
@@ -55,8 +58,16 @@ class CreateBeamArray(bpy.types.Operator):
 
         model.write(file_path)
 
+        ifc_file = ifcopenshell.open(file_path)
+        products = ifc_file.by_type('IfcProduct')
 
-        #rel_aggregates = ifc_file.createIfcRelAggregates(obj1.GlobalId, [obj2.GlobalId])
+        global_id_list = []
+        for product in products:
+            global_id_list.append(product.GlobalId)
+
+
+        rel_aggregates = ifc_file.createIfcRelAggregates('1AEAi$cjvFNxxkPAdOIzkr', global_id_list)
+        print ('REL AGGREGATES', rel_aggregates)
 
         # set the Name attribute of the IfcRelAggregates object
         #rel_aggregates.Name = "Example Aggregation"
