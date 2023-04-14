@@ -41,11 +41,11 @@ class CreateBeamArray(bpy.types.Operator):
 
         beam_name = 'my_beam'
 
-        beam_length_y = 3
+        beam_length_y = 10
         x_dim = 100
         y_dim = 200
-        center_to_center_distance = 1
-        x_N = 6
+        center_to_center_distance = 3
+        x_N = 5
 
 
 
@@ -54,6 +54,15 @@ class CreateBeamArray(bpy.types.Operator):
         self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y)
 
         model.write(file_path)
+
+
+        #rel_aggregates = ifc_file.createIfcRelAggregates(obj1.GlobalId, [obj2.GlobalId])
+
+        # set the Name attribute of the IfcRelAggregates object
+        #rel_aggregates.Name = "Example Aggregation"
+
+        # add the IfcRelAggregates object to the IFC file
+        #ifc_file.add(rel_aggregates)
 
         return model
 
@@ -153,11 +162,11 @@ class CreateBeamArray(bpy.types.Operator):
         }
 
         #beams over the X-axis
-        for i in range(0, length_total_x, center_to_center_distance):
+        for x in range(0, length_total_x, center_to_center_distance):
            
             matrix_x = numpy.array(
                             (
-                                (1.0, 0.0, 0.0, i),
+                                (1.0, 0.0, 0.0, x),
                                 (1.0, 1.0, 1.0, profile_offset_y),
                                 (0.0, 0.0, 0.0, 0.0),
                                 (0.0, 0.0, 0.0, 1.0),
@@ -173,9 +182,65 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+
+
+
+        matrix_y = numpy.array(
+                            (
+                                (1.0, 1.0, 1.0, -(x_dim/1000)/2),
+                                (1.0, 0.0, 0.0, 0.0),
+                                (0.0, 0.0, 0.0, 0.0),
+                                (0.0, 0.0, 0.0, 1.0),
+                            )
+                        )
+                        
+        matrix_y = numpy.array(matrix_y)
+        occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
+        representation = run("geometry.add_profile_representation",
+                            model,
+                            context=representations["body"],
+                            profile=profile,
+                            depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
+    
+        run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
+        run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
+        run("geometry.assign_representation", model, product=occurrence, representation=representation)
+        run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+
+
+
+
+        matrix_y = numpy.array(
+                            (
+                                (1.0, 1.0, 1.0, -(x_dim/1000)/2),
+                                (1.0, 0.0, 0.0, beam_length_y+(x_dim/1000)),
+                                (0.0, 0.0, 0.0, 0.0),
+                                (0.0, 0.0, 0.0, 1.0),
+                            )
+                        )
+                        
+        matrix_y = numpy.array(matrix_y)
+        occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
+        representation = run("geometry.add_profile_representation",
+                            model,
+                            context=representations["body"],
+                            profile=profile,
+                            depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
+    
+        run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
+        run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
+        run("geometry.assign_representation", model, product=occurrence, representation=representation)
+        run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+
+
+
+
         
-        #beam on the 0,0 x axis
-        for i in range(0, beam_length_y, center_to_center_distance )[:-1]:
+        """
+        #beam on the 0,0 x axis over the Y axis
+        for i in range(0, beam_length_y):
+
+            print (i)
 
             # [ [ x_x, y_x, z_x, x   ]
             #   [ x_y, y_y, z_y, y   ]
@@ -184,8 +249,8 @@ class CreateBeamArray(bpy.types.Operator):
 
             matrix_y = numpy.array(
                             (
-                                (1.0, 1.0, 1.0, -profile_offset_y),
-                                (1.0, 0.0, 0.0, 0.0),
+                                (1.0, 1.0, 1.0, 0.0),
+                                (1.0, 0.0, 0.0, beam_length_y),
                                 (0.0, 0.0, 0.0, 0.0),
                                 (0.0, 0.0, 0.0, 1.0),
                             )
@@ -204,7 +269,8 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-
+        
+        
         for i in range(0, beam_length_y, center_to_center_distance )[:-1]:
 
             # [ [ x_x, y_x, z_x, x   ]
@@ -234,6 +300,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+        """
 
 
     def load_ifc(self, ifc_file, file_path):
