@@ -43,7 +43,7 @@ class CreateBeamArray(bpy.types.Operator):
 
         beam_length_y = 10
         x_dim = 100
-        y_dim = 200
+        y_dim = 300
         center_to_center_distance = 3
         x_N = 5
 
@@ -94,13 +94,8 @@ class CreateBeamArray(bpy.types.Operator):
                         
             matrix_x = numpy.array(matrix_x)
 
-        
-        
-        #ifcfile.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[ifc_wall], RelatingMaterial=material_layer_set_usage)
-
-    
             wall = run("root.create_entity", model, ifc_class="IfcWall")
-            #model.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[wall], RelatingMaterial=material_layer_set_usage)
+          
             representation = run("geometry.add_wall_representation", model, context=body, length=center_to_center_distance-x_dim/1000, height=beam_length_y, thickness=y_dim/1000)
             run("geometry.assign_representation", model, product=wall, representation=representation)
             run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
@@ -184,7 +179,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
 
-
+        #bottom beam
         matrix_y = numpy.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -209,7 +204,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
 
-
+        #top beam
         matrix_y = numpy.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -231,76 +226,6 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-
-
-
-
-        
-        """
-        #beam on the 0,0 x axis over the Y axis
-        for i in range(0, beam_length_y):
-
-            print (i)
-
-            # [ [ x_x, y_x, z_x, x   ]
-            #   [ x_y, y_y, z_y, y   ]
-            #   [ x_z, y_z, z_z, z   ]
-            #   [ 0.0, 0.0, 0.0, 1.0 ] ]
-
-            matrix_y = numpy.array(
-                            (
-                                (1.0, 1.0, 1.0, 0.0),
-                                (1.0, 0.0, 0.0, beam_length_y),
-                                (0.0, 0.0, 0.0, 0.0),
-                                (0.0, 0.0, 0.0, 1.0),
-                            )
-                        )
-                        
-            matrix_y = numpy.array(matrix_y)
-
-            occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
-            representation = run("geometry.add_profile_representation",
-                                model,
-                                context=representations["body"],
-                                profile=profile,
-                                depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
-        
-            run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
-            run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
-            run("geometry.assign_representation", model, product=occurrence, representation=representation)
-            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-        
-        
-        for i in range(0, beam_length_y, center_to_center_distance )[:-1]:
-
-            # [ [ x_x, y_x, z_x, x   ]
-            #   [ x_y, y_y, z_y, y   ]
-            #   [ x_z, y_z, z_z, z   ]
-            #   [ 0.0, 0.0, 0.0, 1.0 ] ]
-
-            matrix_y = numpy.array(
-                            (
-                                (1.0, 1.0, 1.0, -profile_offset_y),
-                                (1.0, 0.0, 0.0, beam_length_y+(profile_offset_y*2)),
-                                (0.0, 0.0, 0.0, 0.0),
-                                (0.0, 0.0, 0.0, 1.0),
-                            )
-                        )
-                        
-            matrix_y = numpy.array(matrix_y)
-
-            occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
-            representation = run("geometry.add_profile_representation",
-                                model,
-                                context=representations["body"],
-                                profile=profile,
-                                depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
-        
-            run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
-            run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
-            run("geometry.assign_representation", model, product=occurrence, representation=representation)
-            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-        """
 
 
     def load_ifc(self, ifc_file, file_path):
