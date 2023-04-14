@@ -41,16 +41,16 @@ class CreateBeamArray(bpy.types.Operator):
 
         beam_name = 'my_beam'
 
-        beam_length_y = 6
-        x_dim = 200
-        y_dim = 500
-        center_to_center_distance = 3
+        beam_length_y = 3
+        x_dim = 100
+        y_dim = 200
+        center_to_center_distance = 1
         x_N = 6
 
 
 
 
-        self.create_wall(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N)
+        self.create_wall(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y)
         self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y)
 
         model.write(file_path)
@@ -58,9 +58,18 @@ class CreateBeamArray(bpy.types.Operator):
         return model
 
  
-    def create_wall(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N):
+    def create_wall(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y):
 
         length_total_x = (x_N*center_to_center_distance)
+
+
+        style = run("style.add_style", model, name="My style")
+   
+        run("style.add_surface_style", model, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
+                    "SurfaceColour": { "Name": None, "Red": 1., "Green": 1.0, "Blue": 0. }
+                })
+      
+
 
 
         for i in range(0, length_total_x, center_to_center_distance)[:-1]:
@@ -76,12 +85,18 @@ class CreateBeamArray(bpy.types.Operator):
                         
             matrix_x = numpy.array(matrix_x)
 
+        
+        
+        #ifcfile.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[ifc_wall], RelatingMaterial=material_layer_set_usage)
+
     
             wall = run("root.create_entity", model, ifc_class="IfcWall")
-            representation = run("geometry.add_wall_representation", model, context=body, length=center_to_center_distance-x_dim/1000, height=6, thickness=y_dim/1000)
+            #model.createIfcRelAssociatesMaterial(create_guid(), owner_history, RelatedObjects=[wall], RelatingMaterial=material_layer_set_usage)
+            representation = run("geometry.add_wall_representation", model, context=body, length=center_to_center_distance-x_dim/1000, height=beam_length_y, thickness=y_dim/1000)
             run("geometry.assign_representation", model, product=wall, representation=representation)
             run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y):
 
@@ -89,6 +104,12 @@ class CreateBeamArray(bpy.types.Operator):
 
         length_total_x = (x_N*center_to_center_distance)
         profile_offset_y = (x_dim/1000)/2
+
+        style = run("style.add_style", model, name="My style")
+   
+        run("style.add_surface_style", model, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
+                    "SurfaceColour": { "Name": None, "Red": 1., "Green": 0.5, "Blue": 0. }
+                })
 
         material_concrete = run("material.add_material", model, name='concrete')
         profile = model.create_entity("IfcRectangleProfileDef", ProfileType="AREA", XDim=x_dim,YDim=y_dim)
@@ -151,6 +172,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_x) 
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
         
         #beam on the 0,0 x axis
         for i in range(0, beam_length_y, center_to_center_distance )[:-1]:
@@ -181,6 +203,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
         for i in range(0, beam_length_y, center_to_center_distance )[:-1]:
 
@@ -210,6 +233,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
 
     def load_ifc(self, ifc_file, file_path):
