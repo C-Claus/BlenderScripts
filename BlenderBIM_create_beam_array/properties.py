@@ -8,7 +8,7 @@ from bpy.props import BoolProperty
 # from bpy.props import CollectionProperty
 # from bpy.props import EnumProperty
 from bpy.props import FloatProperty
-# from bpy.props import IntProperty
+from bpy.props import IntProperty
 # from bpy.props import PointerProperty
 # from bpy.props import StringProperty
 # from bpy.props import PropertyGroup
@@ -18,8 +18,18 @@ from bpy.props import FloatProperty
 #
 class DimensionProperties(bpy.types.PropertyGroup):
 
-     
-    my_height: bpy.props.FloatProperty(default=0.1, min=1, max=100)
+    my_length: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Length")
+    my_height: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Height")
+    my_center_to_center_distance: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Center to Center")
+
+    my_profile_x: bpy.props.FloatProperty(default=0.1, min=1, max=100)
+    my_profile_y: bpy.props.FloatProperty(default=0.1, min=0.1, max=100)
+
+
+
+    my_covering_exterior: bpy.props.BoolProperty(default=True)
+    my_covering_interior: bpy.props.BoolProperty(default=True)
+    my_insulation: bpy.props.BoolProperty(default=True)
 
 # This is where you assign any variables you need in your script. Note that they
 # won't always be assigned to the Scene object but it's a good place to start.

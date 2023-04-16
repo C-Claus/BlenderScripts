@@ -3,6 +3,8 @@ import bpy
 import numpy
 import ifcopenshell.api
 from ifcopenshell.api import run
+from . import operator
+import math
 
 #https://github.com/buildingSMART/IFC4.3.x-development/blob/master/docs/schemas/shared/IfcSharedBldgElements/Entities/IfcWall.md
 #1 make checbox to include insulation
@@ -17,14 +19,16 @@ class CreateBeamArray(bpy.types.Operator):
 
         file_path = "C:\\Algemeen\\07_ifcopenshell\\00_ifc\\02_ifc_library\\model.ifc"
 
-        ifc_file = self.create_project(file_path)
+        ifc_file = self.create_project(context,file_path)
         
         self.load_ifc(ifc_file, file_path)
 
         return {'FINISHED'}
 
 
-    def create_project(self, file_path):
+    def create_project(self, context, file_path):
+
+        dimension_properties = context.scene.dimension_properties
         
         model = ifcopenshell.file()
         project = run("root.create_entity", model, ifc_class="IfcProject", name="My Project")
@@ -43,20 +47,28 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         beam_name = 'my_beam'
-
-        beam_length_y = 3
         x_dim = 50
         y_dim = 200
-        center_to_center_distance = 1
-        x_N = 6
+        center_to_center_distance = dimension_properties.my_center_to_center_distance
+        #x_N = 6
+        
+        #print ('HIER', test)
         covering_thickness = 0.02
+
+        beam_length_y = dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
+
+        total_length_x = (dimension_properties.my_length)
+        x_N = round(dimension_properties.my_length/center_to_center_distance)
+
+        print ('TOTAL LENGTH X , x_N', total_length_x, x_N)
+        
 
       
 
 
-        #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness)
-        self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y)
-        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y)
+        #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+        #self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
+        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
 
         model.write(file_path)
 
@@ -79,10 +91,10 @@ class CreateBeamArray(bpy.types.Operator):
 
         return model
 
-    def create_covering(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness):
+    def create_covering(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
         print ('create coviering')
 
-        length_total_x = (x_N*center_to_center_distance)
+     
 
         style = run("style.add_style", model, name="My style")
    
@@ -101,7 +113,7 @@ class CreateBeamArray(bpy.types.Operator):
 
         wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
           
-        representation = run("geometry.add_wall_representation", model, context=body, length=length_total_x-center_to_center_distance+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
+        representation = run("geometry.add_wall_representation", model, context=body, length=5, height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
         run("geometry.assign_representation", model, product=wall, representation=representation)
         run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
         run("spatial.assign_container", model, relating_structure=storey, product=wall)
@@ -133,18 +145,10 @@ class CreateBeamArray(bpy.types.Operator):
 
 
 
-
-
-
-
-
-
-
-
  
-    def create_insulation(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y):
+    def create_insulation(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x):
 
-        length_total_x = (x_N*center_to_center_distance)
+        #length_total_x = (x_N*center_to_center_distance)
 
 
         style = run("style.add_style", model, name="My style")
@@ -156,7 +160,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
 
-        for i in range(0, length_total_x, center_to_center_distance)[:-1]:
+        for i in range(0, total_length_x, center_to_center_distance)[:-1]:
            
             matrix_x = numpy.array(
                             (
@@ -177,11 +181,13 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
-    def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y):
+    def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
 
         
 
-        length_total_x = (x_N*center_to_center_distance)
+        #length_total_x = (x_N*center_to_center_distance)
+        #print ('TOTAAL X UIT CREATE BEAM ARRAY', total_length_x)
+
         profile_offset_y = (x_dim/1000)/2
 
         style = run("style.add_style", model, name="My style")
@@ -233,7 +239,10 @@ class CreateBeamArray(bpy.types.Operator):
         }
 
         #beams over the X-axis
-        for x in range(0, length_total_x, center_to_center_distance):
+        for x in range(0, total_length_x, x_N):
+            print (x)
+            
+        for x in range(0, 3, 1):
            
             matrix_x = numpy.array(
                             (
@@ -260,6 +269,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #bottom beam
+        """
         matrix_y = numpy.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -275,7 +285,7 @@ class CreateBeamArray(bpy.types.Operator):
                             model,
                             context=representations["body"],
                             profile=profile,
-                            depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
+                            depth=total_length_x-center_to_center_distance+(x_dim/1000)) 
     
         run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
@@ -300,12 +310,13 @@ class CreateBeamArray(bpy.types.Operator):
                             model,
                             context=representations["body"],
                             profile=profile,
-                            depth=length_total_x-center_to_center_distance+(x_dim/1000)) 
+                            depth=total_length_x-center_to_center_distance+(x_dim/1000)) 
     
         run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+        """
 
 
     def load_ifc(self, ifc_file, file_path):

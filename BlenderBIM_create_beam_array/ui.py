@@ -27,6 +27,12 @@ class PANEL_PT_demo(Panel):
         box = layout.box()
         row = box.row()
         row.prop(dimension_properties, 'my_height')
+
+        #box = layout.box()
+        #row = box.row()
+        box.prop(dimension_properties, 'my_length')
+
+        box.prop(dimension_properties, "my_center_to_center_distance")
         
         box = layout.box()
         row = box.row()
