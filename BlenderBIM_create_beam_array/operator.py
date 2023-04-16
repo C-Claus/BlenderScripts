@@ -48,13 +48,13 @@ class CreateBeamArray(bpy.types.Operator):
         x_dim = 50
         y_dim = 200
         center_to_center_distance = 1
-        x_N = 5
+        x_N = 6
         covering_thickness = 0.02
 
       
 
 
-        self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness)
+        #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness)
         self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y)
         self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y)
 

@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Panel
-#from . import  prop, operator
+from . import  properties, operator
 
 
 
@@ -19,10 +19,17 @@ class PANEL_PT_demo(Panel):
     #bl_context = 'render'
 
     def draw(self, context):
-        row = self.layout.row()
-        #row.prop(context.scene, 'my_property')
-    
-        # bpy.ops.mesh.primitive_cube_add()
+
+        dimension_properties = context.scene.dimension_properties
+
+        layout = self.layout
+
+        box = layout.box()
+        row = box.row()
+        row.prop(dimension_properties, 'my_height')
+        
+        box = layout.box()
+        row = box.row()
         row.operator("create.array")
      
 
