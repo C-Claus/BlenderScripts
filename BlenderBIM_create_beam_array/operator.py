@@ -1,6 +1,6 @@
 import os
 import bpy
-import numpy
+import numpy as np
 import ifcopenshell.api
 from ifcopenshell.api import run
 from . import operator
@@ -33,6 +33,9 @@ class CreateBeamArray(bpy.types.Operator):
         model = ifcopenshell.file()
         project = run("root.create_entity", model, ifc_class="IfcProject", name="My Project")
         run("unit.assign_unit", model)
+        
+        #, length={"is_metric": True, "raw": "METERS"})
+        #run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "MILIMETERS"})
 
         context = run("context.add_context", model, context_type="Model")
         body = run("context.add_context", model, context_type="Model",context_identifier="Body", target_view="MODEL_VIEW", parent=context)
@@ -44,6 +47,7 @@ class CreateBeamArray(bpy.types.Operator):
         run("aggregate.assign_object", model, relating_object=project, product=site)
         run("aggregate.assign_object", model, relating_object=site, product=building)
         run("aggregate.assign_object", model, relating_object=building, product=storey)
+
 
 
         beam_name = 'my_beam'
@@ -58,7 +62,7 @@ class CreateBeamArray(bpy.types.Operator):
         beam_length_y = dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
 
         total_length_x = (dimension_properties.my_length)
-        x_N = round(dimension_properties.my_length/center_to_center_distance)
+        x_N = round(dimension_properties.my_length/center_to_center_distance)/1000
 
         print ('TOTAL LENGTH X , x_N', total_length_x, x_N)
         
@@ -91,6 +95,11 @@ class CreateBeamArray(bpy.types.Operator):
 
         return model
 
+    def decimal_range(self, start, stop, increment):
+        while start < stop: # and not math.isclose(start, stop): Py>3.5
+            yield start
+            start += increment
+
     def create_covering(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
         print ('create coviering')
 
@@ -102,7 +111,7 @@ class CreateBeamArray(bpy.types.Operator):
                     "SurfaceColour": { "Name": None, "Red": 2.2, "Green": 2.2, "Blue": 2.2 }
                 })
 
-        matrix_x = numpy.array(
+        matrix_x = np.array(
                             (
                                 (1.0, 0.0, 0.0, -(x_dim/1000)/2),
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -125,7 +134,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #top covering
-        matrix_x = numpy.array(
+        matrix_x = np.array(
                             (
                                 (1.0, 0.0, 0.0, -(x_dim/1000)/2),
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -239,12 +248,21 @@ class CreateBeamArray(bpy.types.Operator):
         }
 
         #beams over the X-axis
-        for x in range(0, total_length_x, x_N):
-            print (x)
-            
-        for x in range(0, 3, 1):
+        #for x in range(0, total_length_x, x_N):
+
+        start = 0.0
+        stop = total_length_x
+        increment = center_to_center_distance
+
+        #need to find a way to make the first and last beam are corresonding with dimenson length x
+        #center of center distance can never be bigger than length
+
+        for x in np.arange(start, stop+increment, increment):
+            print('test',x)
+            print()
+
            
-            matrix_x = numpy.array(
+            matrix_x = np.array(
                             (
                                 (1.0, 0.0, 0.0, x),
                                 (1.0, 1.0, 1.0, profile_offset_y),
@@ -253,7 +271,7 @@ class CreateBeamArray(bpy.types.Operator):
                             )
                         )
                         
-            matrix_x = numpy.array(matrix_x)
+            matrix_x = np.array(matrix_x)
 
             occurrence =  run("root.create_entity", model, ifc_class="IfcMember", name=beam_name)
             representation = run("geometry.add_profile_representation",
@@ -317,7 +335,7 @@ class CreateBeamArray(bpy.types.Operator):
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
         """
-
+    
 
     def load_ifc(self, ifc_file, file_path):
 
