@@ -20,7 +20,7 @@ class DimensionProperties(bpy.types.PropertyGroup):
 
     my_length: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Length")
     my_height: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Height")
-    my_center_to_center_distance: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Center to Center")
+    my_center_to_center_distance: bpy.props.FloatProperty(default=0.01, min=0.01, max=100, name="Center to Center")
 
     my_profile_x: bpy.props.FloatProperty(default=0.1, min=1, max=100)
     my_profile_y: bpy.props.FloatProperty(default=0.1, min=0.1, max=100)
