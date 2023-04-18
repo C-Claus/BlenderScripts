@@ -190,10 +190,7 @@ class CreateBeamArray(bpy.types.Operator):
 
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
 
-        
 
-        #length_total_x = (x_N*center_to_center_distance)
-        #print ('TOTAAL X UIT CREATE BEAM ARRAY', total_length_x)
 
         profile_offset_y = (x_dim/1000)/2
 
@@ -245,15 +242,8 @@ class CreateBeamArray(bpy.types.Operator):
             ),
         }
 
-        #beams over the X-axis
-        #for x in range(0, total_length_x, x_N):
 
-        print ('TOTAL LENGTH X', total_length_x)
-        print ('x_N', x_N)
-
-
-
-        for x in np.arange(0, total_length_x, center_to_center_distance):
+        for x in np.arange(0, total_length_x+center_to_center_distance, center_to_center_distance):
           
             matrix_x = np.array(
                             (

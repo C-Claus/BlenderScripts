@@ -17,7 +17,7 @@ from bpy.props import IntProperty
 # Add additional functions or classes here
 #
 def update_length(self, context):
-    self.my_length = (self.my_n * round(self.my_center_to_center_distance,2))  # Don't forget to cast the value since you're using a string.
+    self.my_length = (self.my_n * round(self.my_center_to_center_distance,2)) #- round(self.my_center_to_center_distance,2)
 class DimensionProperties(bpy.types.PropertyGroup):
 
     my_height: bpy.props.FloatProperty(default=3.0, min=1, max=100, name="Height")
