@@ -51,23 +51,16 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         beam_name = 'my_beam'
-        x_dim = 50
-        y_dim = 200
+ 
+        x_dim = dimension_properties.my_profile_x
+        y_dim = dimension_properties.my_profile_y
         center_to_center_distance = dimension_properties.my_center_to_center_distance
-        #x_N = 6
-        
-        #print ('HIER', test)
         covering_thickness = 0.02
-
         beam_length_y = dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
-        #total_length_x = 10#(center_to_center_distance * dimension_properties.my_n) #float(dimension_properties.my_length)
-        #total_length_x = (center_to_center_distance * dimension_properties.my_n)
         total_length_x = float(dimension_properties.my_length)
         x_N = dimension_properties.my_n
 
       
-
-
         #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
         self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
         self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
@@ -101,8 +94,6 @@ class CreateBeamArray(bpy.types.Operator):
     def create_covering(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
         print ('create coviering')
 
-     
-
         style = run("style.add_style", model, name="My style")
    
         run("style.add_surface_style", model, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
@@ -126,11 +117,6 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=wall)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
-
-
-
-
-
         #top covering
         matrix_x = np.array(
                             (
@@ -150,13 +136,7 @@ class CreateBeamArray(bpy.types.Operator):
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
 
-
-
- 
     def create_insulation(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x):
-
-        #length_total_x = (x_N*center_to_center_distance)
-
 
         style = run("style.add_style", model, name="My style")
    
@@ -164,10 +144,6 @@ class CreateBeamArray(bpy.types.Operator):
                     "SurfaceColour": { "Name": None, "Red": 1., "Green": 1.0, "Blue": 0. }
                 })
       
-
-
-
-        #for i in range(0, total_length_x, center_to_center_distance)[:-1]:
         for i in np.arange(0, total_length_x+center_to_center_distance, center_to_center_distance)[:-1]:
            
             matrix_x = np.array(
@@ -190,8 +166,6 @@ class CreateBeamArray(bpy.types.Operator):
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
-
-
 
         profile_offset_y = (x_dim/1000)/2
 
@@ -269,9 +243,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
-
         #bottom beam
-        
         matrix_y = np.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
@@ -293,7 +265,6 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-
 
 
         #top beam

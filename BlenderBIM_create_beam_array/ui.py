@@ -3,20 +3,11 @@ from bpy.types import Panel
 from . import  properties, operator
 
 
-
-#bl_label = "BlenderBIM Spreadsheet"
-#    bl_space_type = "VIEW_3D"
-#    bl_region_type = "UI"
-#    bl_category = "BlenderBIM | Spreadsheet"
-#    bl_options = {"DEFAULT_CLOSED"}
-
 class PANEL_PT_demo(Panel):
     bl_label = 'Panel demo'
     bl_space_type = 'VIEW_3D'
     bl_region_type = "UI"
     bl_category = "Bim"
-    #bl_region_type= 'WINDOW'
-    #bl_context = 'render'
 
     def draw(self, context):
 
@@ -25,13 +16,23 @@ class PANEL_PT_demo(Panel):
         layout = self.layout
 
         box = layout.box()
+        box.label(text = "Total Dimensions")
         row = box.row()
+        
         row.prop(dimension_properties, 'my_height')
 
         box.prop(dimension_properties, "my_n")
         box.prop(dimension_properties, "my_center_to_center_distance")
         box.prop(dimension_properties,'my_length',emboss=False)
-     
+
+
+        box = layout.box()
+        row = box.row()
+        box.label(text = "Profile Dimensions")
+        box.prop(dimension_properties, "my_profile_x")
+        box.prop(dimension_properties, "my_profile_y")
+
+
         box = layout.box()
         row = box.row()
         row.operator("create.array")
