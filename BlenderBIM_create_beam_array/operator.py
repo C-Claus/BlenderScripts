@@ -68,10 +68,12 @@ class CreateBeamArray(bpy.types.Operator):
 
         if dimension_properties.my_covering_interior:
             isexternal = False
+            covering_thickness = dimension_properties.my_covering_interior_thickness
             self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
 
         if dimension_properties.my_covering_exterior:
             isexternal = True
+            covering_thickness = dimension_properties.my_covering_exterior_thickness
             self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
         
         

@@ -17,10 +17,16 @@ class DimensionProperties(bpy.types.PropertyGroup):
     my_profile_x: bpy.props.IntProperty(default=50, step=1, min=10, max=10000, name='Profile X')
     my_profile_y: bpy.props.IntProperty(default=200,step=1, min=10, max=10000, name='Profile Y')
 
+    my_covering_exterior_thickness: bpy.props.FloatProperty(default=0.02, min=0.01, max=100, name="Covering Exterior thickness")
+    my_covering_interior_thickness: bpy.props.FloatProperty(default=0.02, min=0.01, max=100, name="Covering Interior thickness")
+
     my_covering_exterior: bpy.props.BoolProperty(default=True, name='Include Exterior Covering')
     my_covering_interior: bpy.props.BoolProperty(default=True, name='Include Interior Covering')
-    
     my_insulation: bpy.props.BoolProperty(default=True, name='Include Insulation')
+
+    
+
+    
 
 
 def register():

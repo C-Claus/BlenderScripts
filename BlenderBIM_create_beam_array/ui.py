@@ -34,6 +34,12 @@ class PANEL_PT_demo(Panel):
 
         box = layout.box()
         row = box.row()
+        box.label(text = "Covering Thickness")
+        box.prop(dimension_properties, "my_covering_exterior_thickness")
+        box.prop(dimension_properties, "my_covering_interior_thickness")
+
+        box = layout.box()
+        row = box.row()
         box.label(text = "General Settings")
         box.prop(dimension_properties, "my_covering_exterior")
         box.prop(dimension_properties, "my_covering_interior")
