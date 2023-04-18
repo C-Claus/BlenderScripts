@@ -286,7 +286,7 @@ class CreateBeamArray(bpy.types.Operator):
                             model,
                             context=representations["body"],
                             profile=profile,
-                            depth=total_length_x-center_to_center_distance+(x_dim/1000)) 
+                            depth=total_length_x+(x_dim/1000)) 
     
         run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
@@ -311,7 +311,7 @@ class CreateBeamArray(bpy.types.Operator):
                             model,
                             context=representations["body"],
                             profile=profile,
-                            depth=total_length_x-center_to_center_distance+(x_dim/1000)) 
+                            depth=total_length_x+(x_dim/1000)) 
     
         run("geometry.edit_object_placement",model, product=occurrence, matrix=matrix_y) 
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)

@@ -21,9 +21,9 @@ def update_length(self, context):
 class DimensionProperties(bpy.types.PropertyGroup):
 
     my_height: bpy.props.FloatProperty(default=3.0, min=1, max=100, name="Height")
-    my_n: bpy.props.IntProperty(default=3,name="N", step=1, min=2, max=100, update=update_length)
-    my_center_to_center_distance: bpy.props.FloatProperty(default=0.1, min=0.1, max=100, name="Center to Center", update=update_length)
-    my_length: bpy.props.FloatProperty(name="Length")
+    my_n: bpy.props.IntProperty(default=10,name="N", step=1, min=2, max=100, update=update_length)
+    my_center_to_center_distance: bpy.props.FloatProperty(default=1, min=0.1, max=100, name="Center to Center", update=update_length)
+    my_length: bpy.props.FloatProperty(default=10,name="Length")
 
     #my_n: bpy.props.IntProperty(default=1,name="N", step=1, min=2, max=100)
     #my_height: bpy.props.FloatProperty(default=0.1, min=1, max=100, name="Height")
