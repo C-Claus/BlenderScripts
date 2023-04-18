@@ -60,12 +60,10 @@ class CreateBeamArray(bpy.types.Operator):
         covering_thickness = 0.02
 
         beam_length_y = dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
-
-        total_length_x = (dimension_properties.my_length)
-        x_N = round(dimension_properties.my_length/center_to_center_distance)/1000
-
-        print ('TOTAL LENGTH X , x_N', total_length_x, x_N)
-        
+        #total_length_x = 10#(center_to_center_distance * dimension_properties.my_n) #float(dimension_properties.my_length)
+        #total_length_x = (center_to_center_distance * dimension_properties.my_n)
+        total_length_x = float(dimension_properties.my_length)
+        x_N = dimension_properties.my_n
 
       
 
@@ -250,18 +248,13 @@ class CreateBeamArray(bpy.types.Operator):
         #beams over the X-axis
         #for x in range(0, total_length_x, x_N):
 
-        start = 0.0
-        stop = total_length_x
-        increment = center_to_center_distance
+        print ('TOTAL LENGTH X', total_length_x)
+        print ('x_N', x_N)
 
-        #need to find a way to make the first and last beam are corresonding with dimenson length x
-        #center of center distance can never be bigger than length
 
-        for x in np.arange(start, stop+increment, increment):
-            print('test',x)
-            print()
 
-           
+        for x in np.arange(0, total_length_x, center_to_center_distance):
+          
             matrix_x = np.array(
                             (
                                 (1.0, 0.0, 0.0, x),
@@ -287,8 +280,8 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #bottom beam
-        """
-        matrix_y = numpy.array(
+        
+        matrix_y = np.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
                                 (1.0, 0.0, 0.0, 0.0),
@@ -297,7 +290,7 @@ class CreateBeamArray(bpy.types.Operator):
                             )
                         )
                         
-        matrix_y = numpy.array(matrix_y)
+        matrix_y = np.array(matrix_y)
         occurrence =  run("root.create_entity", model, ifc_class="IfcMember", name=beam_name)
         representation = run("geometry.add_profile_representation",
                             model,
@@ -313,7 +306,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #top beam
-        matrix_y = numpy.array(
+        matrix_y = np.array(
                             (
                                 (1.0, 1.0, 1.0, -(x_dim/1000)/2),
                                 (1.0, 0.0, 0.0, beam_length_y+(x_dim/1000)),
@@ -322,7 +315,7 @@ class CreateBeamArray(bpy.types.Operator):
                             )
                         )
                         
-        matrix_y = numpy.array(matrix_y)
+        matrix_y = np.array(matrix_y)
         occurrence =  run("root.create_entity", model, ifc_class="IfcBeam", name=beam_name)
         representation = run("geometry.add_profile_representation",
                             model,
@@ -334,7 +327,7 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
-        """
+       
     
 
     def load_ifc(self, ifc_file, file_path):
