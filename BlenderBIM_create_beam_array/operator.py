@@ -69,7 +69,7 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
-        #self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
+        self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
         self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
 
         model.write(file_path)
@@ -167,9 +167,10 @@ class CreateBeamArray(bpy.types.Operator):
 
 
 
-        for i in range(0, total_length_x, center_to_center_distance)[:-1]:
+        #for i in range(0, total_length_x, center_to_center_distance)[:-1]:
+        for i in np.arange(0, total_length_x+center_to_center_distance, center_to_center_distance)[:-1]:
            
-            matrix_x = numpy.array(
+            matrix_x = np.array(
                             (
                                 (1.0, 0.0, 0.0, (x_dim/1000)/2+i),
                                 (1.0, 1.0, 1.0, (x_dim/1000)/2),
@@ -178,7 +179,7 @@ class CreateBeamArray(bpy.types.Operator):
                             )
                         )
                         
-            matrix_x = numpy.array(matrix_x)
+            matrix_x = np.array(matrix_x)
 
             wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
           
