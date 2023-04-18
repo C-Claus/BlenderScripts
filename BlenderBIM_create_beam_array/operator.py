@@ -121,7 +121,7 @@ class CreateBeamArray(bpy.types.Operator):
 
             wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
             
-            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x, height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
+            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
             run("geometry.assign_representation", model, product=wall, representation=representation)
             run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
@@ -140,7 +140,7 @@ class CreateBeamArray(bpy.types.Operator):
 
             wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
             
-            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x-center_to_center_distance+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
+            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
             run("geometry.assign_representation", model, product=wall, representation=representation)
             run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
