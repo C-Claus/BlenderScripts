@@ -5,7 +5,7 @@ import ifcopenshell.api
 from ifcopenshell.api import run
 from . import operator
 import math
-
+from blenderbim.bim.ifc import IfcStore
 #https://github.com/buildingSMART/IFC4.3.x-development/blob/master/docs/schemas/shared/IfcSharedBldgElements/Entities/IfcWall.md
 #1 make checbox to include insulation
 #2 make button which bakes an IfcRelAggregates to an IfcProjectLibrary
@@ -13,10 +13,12 @@ import math
 class CreateBeamArray(bpy.types.Operator):
     """Create Beam Array"""
     bl_idname = "create.array"
-    bl_label = "Create Beam System"
+    bl_label = "Create System"
 
     def execute(self, context):
 
+        dimension_properties = context.scene.dimension_properties
+        #file_path = IfcStore.path
         file_path = "C:\\Algemeen\\07_ifcopenshell\\00_ifc\\02_ifc_library\\model.ifc"
 
         ifc_file = self.create_project(context,file_path)

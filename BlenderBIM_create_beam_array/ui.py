@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Panel
 from . import  properties, operator
-
+from blenderbim.bim.ifc import IfcStore
 
 class PANEL_PT_demo(Panel):
     bl_label = 'Panel demo'
@@ -16,7 +16,7 @@ class PANEL_PT_demo(Panel):
         layout = self.layout
 
         box = layout.box()
-        box.label(text = "IFC file")
+        #box.label(text = "IFC File Path")
         row = box.row()
         row.prop(dimension_properties, 'my_ifcfile')
 
