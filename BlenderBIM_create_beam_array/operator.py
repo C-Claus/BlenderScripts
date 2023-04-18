@@ -60,12 +60,21 @@ class CreateBeamArray(bpy.types.Operator):
         total_length_x = float(dimension_properties.my_length)
         x_N = dimension_properties.my_n
 
-      
-        #self.create_covering(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+
+        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
 
         if dimension_properties.my_insulation:
             self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
-        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
+
+        if dimension_properties.my_covering_interior:
+            isexternal = False
+            self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+
+        if dimension_properties.my_covering_exterior:
+            isexternal = True
+            self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+        
+        
 
         model.write(file_path)
 
@@ -88,13 +97,10 @@ class CreateBeamArray(bpy.types.Operator):
 
         return model
 
-    def decimal_range(self, start, stop, increment):
-        while start < stop: # and not math.isclose(start, stop): Py>3.5
-            yield start
-            start += increment
-
-    def create_covering(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
+    def create_covering(self, isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
         print ('create coviering')
+
+        
 
         style = run("style.add_style", model, name="My style")
    
@@ -102,40 +108,43 @@ class CreateBeamArray(bpy.types.Operator):
                     "SurfaceColour": { "Name": None, "Red": 2.2, "Green": 2.2, "Blue": 2.2 }
                 })
 
-        matrix_x = np.array(
-                            (
-                                (1.0, 0.0, 0.0, -(x_dim/1000)/2),
-                                (1.0, 1.0, 1.0, -(x_dim/1000)/2),
-                                (0.0, 0.0, 0.0, (-y_dim/1000)/2),
-                                (0.0, 0.0, 0.0, 1.0),
-                            )
-                        )
+        if isexternal == False:
 
-        wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
-          
-        representation = run("geometry.add_wall_representation", model, context=body, length=5, height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
-        run("geometry.assign_representation", model, product=wall, representation=representation)
-        run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
-        run("spatial.assign_container", model, relating_structure=storey, product=wall)
-        run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+            matrix_x = np.array(
+                                (
+                                    (1.0, 0.0, 0.0, -(x_dim/1000)/2),
+                                    (1.0, 1.0, 1.0, -(x_dim/1000)/2),
+                                    (0.0, 0.0, 0.0, (-y_dim/1000)/2),
+                                    (0.0, 0.0, 0.0, 1.0),
+                                )
+                            )
+
+            wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
+            
+            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x, height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
+            run("geometry.assign_representation", model, product=wall, representation=representation)
+            run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
+            run("spatial.assign_container", model, relating_structure=storey, product=wall)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
         #top covering
-        matrix_x = np.array(
-                            (
-                                (1.0, 0.0, 0.0, -(x_dim/1000)/2),
-                                (1.0, 1.0, 1.0, -(x_dim/1000)/2),
-                                (0.0, 0.0, 0.0, (y_dim/1000)/2+covering_thickness),
-                                (0.0, 0.0, 0.0, 1.0),
+        if isexternal == True:
+            matrix_x = np.array(
+                                (
+                                    (1.0, 0.0, 0.0, -(x_dim/1000)/2),
+                                    (1.0, 1.0, 1.0, -(x_dim/1000)/2),
+                                    (0.0, 0.0, 0.0, (y_dim/1000)/2+covering_thickness),
+                                    (0.0, 0.0, 0.0, 1.0),
+                                )
                             )
-                        )
 
-        wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
-          
-        representation = run("geometry.add_wall_representation", model, context=body, length=length_total_x-center_to_center_distance+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
-        run("geometry.assign_representation", model, product=wall, representation=representation)
-        run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
-        run("spatial.assign_container", model, relating_structure=storey, product=wall)
-        run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+            wall = run("root.create_entity", model, ifc_class="IfcCovering",name="insulation")
+            
+            representation = run("geometry.add_wall_representation", model, context=body, length=total_length_x-center_to_center_distance+(x_dim/1000), height=beam_length_y+(x_dim/1000)*2, thickness=covering_thickness)
+            run("geometry.assign_representation", model, product=wall, representation=representation)
+            run("geometry.edit_object_placement",model, product=wall, matrix=matrix_x) 
+            run("spatial.assign_container", model, relating_structure=storey, product=wall)
+            run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
 
     def create_insulation(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x):
