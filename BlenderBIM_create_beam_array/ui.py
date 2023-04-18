@@ -32,6 +32,13 @@ class PANEL_PT_demo(Panel):
         box.prop(dimension_properties, "my_profile_x")
         box.prop(dimension_properties, "my_profile_y")
 
+        box = layout.box()
+        row = box.row()
+        box.label(text = "General Settings")
+        box.prop(dimension_properties, "my_covering_exterior")
+        box.prop(dimension_properties, "my_covering_interior")
+        box.prop(dimension_properties, "my_insulation")
+
 
         box = layout.box()
         row = box.row()
