@@ -19,6 +19,7 @@ class DimensionProperties(bpy.types.PropertyGroup):
 
     my_covering_exterior: bpy.props.BoolProperty(default=True, name='Include Exterior Covering')
     my_covering_interior: bpy.props.BoolProperty(default=True, name='Include Interior Covering')
+    
     my_insulation: bpy.props.BoolProperty(default=True, name='Include Insulation')
 
 
