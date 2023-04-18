@@ -16,11 +16,14 @@ class PANEL_PT_demo(Panel):
         layout = self.layout
 
         box = layout.box()
+        box.label(text = "IFC file")
+        row = box.row()
+        row.prop(dimension_properties, 'my_ifcfile')
+
+        box = layout.box()
         box.label(text = "Total Dimensions")
         row = box.row()
-        
         row.prop(dimension_properties, 'my_height')
-
         box.prop(dimension_properties, "my_n")
         box.prop(dimension_properties, "my_center_to_center_distance")
         box.prop(dimension_properties,'my_length',emboss=False)

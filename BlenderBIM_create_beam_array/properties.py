@@ -9,6 +9,12 @@ def update_length(self, context):
     self.my_length = (self.my_n * round(self.my_center_to_center_distance,2)) #- round(self.my_center_to_center_distance,2)
 class DimensionProperties(bpy.types.PropertyGroup):
 
+    my_ifcfile:           bpy.props.StringProperty(         name="IFC",
+                                                            description="path to your IFC",
+                                                            default="",
+                                                            maxlen=1024,
+                                                            subtype="FILE_PATH")
+
     my_height: bpy.props.FloatProperty(default=3.0, min=1, max=100, name="Height")
     my_n: bpy.props.IntProperty(default=10,name="N", step=1, min=2, max=100, update=update_length)
     my_center_to_center_distance: bpy.props.FloatProperty(default=1, min=0.1, max=100, name="Center to Center", update=update_length)
