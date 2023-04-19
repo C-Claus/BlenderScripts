@@ -31,9 +31,34 @@ class CreateBeamArray(bpy.types.Operator):
     def create_project(self, context, file_path):
 
         dimension_properties = context.scene.dimension_properties
-        
-        model = ifcopenshell.file()
+
+
+        model = ifcopenshell.open(IfcStore.path)
+
+        #ifc_file = ifcopenshell.open(file_path)
+        #products = ifc_file.by_type('IfcProduct')
+        #project = ifc_file.by_type('IfcProject')
+        #site = ifc_file.by_type('IfcSite')
+        #building = ifc_file.by_type('IfcBuilding')
+        #storey = ifc_file.by_type('IfcBuildingStorey')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #model = ifcopenshell.file()
         project = run("root.create_entity", model, ifc_class="IfcProject", name="My Project")
+
         run("unit.assign_unit", model)
         
         #, length={"is_metric": True, "raw": "METERS"})
@@ -86,11 +111,27 @@ class CreateBeamArray(bpy.types.Operator):
         products = ifc_file.by_type('IfcProduct')
 
         global_id_list = []
+        exclude_list = ['IfcSite','IfcBuilding','IfcBuildingStorey']
+
         for product in products:
-            global_id_list.append(product.GlobalId)
+           
+            if (product.is_a()) not in exclude_list:
+                print (product.is_a())
+                global_id_list.append(product.GlobalId)
 
 
-        #rel_aggregates = ifc_file.createIfcRelAggregates('1AEAi$cjvFNxxkPAdOIzkr', global_id_list)
+        #run("aggregate.assign_object", model, product, relating_object=product)
+
+    # The site has a building
+    #run("aggregate.assign_object", model, product=subelement, relating_object=element)
+                
+       # bpy.ops.bim.assign_class(obj="Assembly", ifc_class="IfcElementAssembly")
+
+
+
+
+
+        #rel_aggregates = ifc_file.createIfcRelAggregates(ifcopenshell.guid.new(), global_id_list)
         #print ('REL AGGREGATES', rel_aggregates)
 
         # set the Name attribute of the IfcRelAggregates object
