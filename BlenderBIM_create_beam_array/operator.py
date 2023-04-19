@@ -46,6 +46,11 @@ class CreateBeamArray(bpy.types.Operator):
         #store array information of ifcrelaggregate
         #store more relevant data in json file
         #experiment with types in ifcrelaggregate
+        #guid moet ergens gestord worden
+        #object moet gevonden worden in ifc verwijderd en opnieuw gemaakt en geladen worden 
+        
+        #https://blenderbim.org/docs-python/ifcopenshell-python/hello_world.html
+
 
 
 
