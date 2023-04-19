@@ -33,7 +33,7 @@ class CreateBeamArray(bpy.types.Operator):
         dimension_properties = context.scene.dimension_properties
 
 
-        model = ifcopenshell.open(IfcStore.path)
+        #model = ifcopenshell.open(IfcStore.path)
 
         #ifc_file = ifcopenshell.open(file_path)
         #products = ifc_file.by_type('IfcProduct')
@@ -42,6 +42,10 @@ class CreateBeamArray(bpy.types.Operator):
         #building = ifc_file.by_type('IfcBuilding')
         #storey = ifc_file.by_type('IfcBuildingStorey')
 
+        #store guid of ifcelementassembly ifc relaggregate for roundtripping experiment
+        #store array information of ifcrelaggregate
+        #store more relevant data in json file
+        #experiment with types in ifcrelaggregate
 
 
 
@@ -56,7 +60,8 @@ class CreateBeamArray(bpy.types.Operator):
 
 
 
-        #model = ifcopenshell.file()
+
+        model = ifcopenshell.file()
         project = run("root.create_entity", model, ifc_class="IfcProject", name="My Project")
 
         run("unit.assign_unit", model)
