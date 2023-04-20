@@ -34,13 +34,10 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         #model = ifcopenshell.open(IfcStore.path)
-
-        #ifc_file = ifcopenshell.open(file_path)
-        #products = ifc_file.by_type('IfcProduct')
-        #project = ifc_file.by_type('IfcProject')
-        #site = ifc_file.by_type('IfcSite')
-        #building = ifc_file.by_type('IfcBuilding')
-        #storey = ifc_file.by_type('IfcBuildingStorey')
+        #project = model.by_type('IfcProject')
+        #site = model.by_type('IfcSite')
+        #building = model.by_type('IfcBuilding')
+        #storey = model.by_type('IfcBuildingStorey')
 
         #store guid of ifcelementassembly ifc relaggregate for roundtripping experiment
         #store array information of ifcrelaggregate
@@ -50,6 +47,15 @@ class CreateBeamArray(bpy.types.Operator):
         #object moet gevonden worden in ifc verwijderd en opnieuw gemaakt en geladen worden 
         
         #https://blenderbim.org/docs-python/ifcopenshell-python/hello_world.html
+
+        #optie om member beams van naam te wijzigen
+        #optie om vlakken isolatie glas te maken naar ifcwindow
+        #optie voor vertical vlakverdeling
+        #optie om baksteen wand te maken
+        #optie voor dakpannen
+        #paneel covering
+        #convert wall to hsb wall
+
 
 
 
@@ -74,8 +80,21 @@ class CreateBeamArray(bpy.types.Operator):
         #, length={"is_metric": True, "raw": "METERS"})
         #run("unit.assign_unit", ifc_file, length={"is_metric": True, "raw": "MILIMETERS"})
 
+        ##10=IfcGeometricRepresentationContext($,'Model',3,1.E-05,#9,$)
         context = run("context.add_context", model, context_type="Model")
+
+        ##11=IfcGeometricRepresentationSubContext('Body','Model',*,*,*,*,#10,$,.MODEL_VIEW.,$)
         body = run("context.add_context", model, context_type="Model",context_identifier="Body", target_view="MODEL_VIEW", parent=context)
+
+        #context = model.by_type("IfcGeometricRepresentationContext")
+        #print ('CONTEXT',context)
+
+        #body = model.by_type("IfcGeometricRepresentationSubContext")
+        #print ('BODY',body)
+       
+
+
+
 
         site = run("root.create_entity", model, ifc_class="IfcSite", name="My Site")
         building = run("root.create_entity", model, ifc_class="IfcBuilding", name="Building A")
@@ -98,63 +117,47 @@ class CreateBeamArray(bpy.types.Operator):
         x_N = dimension_properties.my_n
 
 
-        self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
+        beams = self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
 
         if dimension_properties.my_insulation:
-            self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
+            insulation = self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
 
         if dimension_properties.my_covering_interior:
             isexternal = False
             covering_thickness = dimension_properties.my_covering_interior_thickness
-            self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+            covering = self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
 
         if dimension_properties.my_covering_exterior:
             isexternal = True
             covering_thickness = dimension_properties.my_covering_exterior_thickness
-            self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
+            covering = self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
         
-        
+        assembled_list =  insulation + covering + beams
+      
+        self.create_assembly(model, element_list=assembled_list)
+
+
+
 
         model.write(file_path)
 
-        ifc_file = ifcopenshell.open(file_path)
-        products = ifc_file.by_type('IfcProduct')
-
-        global_id_list = []
-        exclude_list = ['IfcSite','IfcBuilding','IfcBuildingStorey']
-
-        for product in products:
-           
-            if (product.is_a()) not in exclude_list:
-                print (product.is_a())
-                global_id_list.append(product.GlobalId)
-
-
-        #run("aggregate.assign_object", model, product, relating_object=product)
-
-    # The site has a building
-    #run("aggregate.assign_object", model, product=subelement, relating_object=element)
-                
-       # bpy.ops.bim.assign_class(obj="Assembly", ifc_class="IfcElementAssembly")
-
-
-
-
-
-        #rel_aggregates = ifc_file.createIfcRelAggregates(ifcopenshell.guid.new(), global_id_list)
-        #print ('REL AGGREGATES', rel_aggregates)
-
-        # set the Name attribute of the IfcRelAggregates object
-        #rel_aggregates.Name = "Example Aggregation"
-
-        # add the IfcRelAggregates object to the IFC file
-        #ifc_file.add(rel_aggregates)
-
         return model
 
-    def create_covering(self, isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
-        print ('create coviering')
+    def create_assembly(self, model, element_list):
+        print ('create assembly')
 
+        assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly",name='my_collection')
+        #print (element_list)
+
+        for i in element_list:
+            print (assembled_element, i)
+            run("aggregate.assign_object", model, product=assembled_element, relating_object=i)
+
+        #run("aggregate.assign_object", model, product=assembled_element, relating_object=insulation)
+
+    def create_covering(self, isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
+        print ('create covering')
+        covering_array = []
         
 
         style = run("style.add_style", model, name="My style")
@@ -182,6 +185,11 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
+            #run("aggregate.assign_object", model, product=storey, relating_object=wall)
+            covering_array.append(wall)
+
+            
+
         #top covering
         if isexternal == True:
             matrix_x = np.array(
@@ -201,9 +209,17 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
+            covering_array.append(wall)
+
+            #run("aggregate.assign_object", model, product=storey, relating_object=wall)
+
+
+        return covering_array
+
 
     def create_insulation(self, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x):
 
+        insulation_array = []
         style = run("style.add_style", model, name="My style")
    
         run("style.add_surface_style", model, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
@@ -231,10 +247,14 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=wall)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
 
+            insulation_array.append(wall)
+
+        return insulation_array
+
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
 
         profile_offset_y = (x_dim/1000)/2
-
+        beam_array = []
         style = run("style.add_style", model, name="My style")
    
         run("style.add_surface_style", model, style=style, ifc_class="IfcSurfaceStyleShading", attributes={
@@ -308,6 +328,8 @@ class CreateBeamArray(bpy.types.Operator):
             run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+            beam_array.append(occurrence)
+         
 
         #bottom beam
         matrix_y = np.array(
@@ -331,6 +353,7 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+        beam_array.append(occurrence)
 
 
         #top beam
@@ -355,6 +378,9 @@ class CreateBeamArray(bpy.types.Operator):
         run("spatial.assign_container", model, relating_structure=storey, product=occurrence)
         run("geometry.assign_representation", model, product=occurrence, representation=representation)
         run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
+        beam_array.append(occurrence)
+
+        return beam_array
        
     
 
