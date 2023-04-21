@@ -34,6 +34,9 @@ class AddReferenceImage(bpy.types.Operator):
                                                             "image B": "image B file path"})
 
         ifc.write(IfcStore.path)
+        #add image
+        #make transformations
+        #store image path and transformations
 
         print (image_path + ' has been added to the properties of IfcBuilding')
         self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
@@ -79,6 +82,8 @@ class LoadReferenceImage(bpy.types.Operator):
 
     def load_reference_images(self, context, property):
 
+        """tutorials\
+
         image_obj = bpy.context.active_object
 
         # Get the current position, rotation, and scale of the image
@@ -90,6 +95,7 @@ class LoadReferenceImage(bpy.types.Operator):
         print("Position:", position)
         print("Rotation:", rotation)
         print("Scale:", scale)
+        """
 
 
         bpy.context.area.type = 'VIEW_3D'
