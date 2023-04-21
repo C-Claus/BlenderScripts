@@ -18,10 +18,14 @@ class AddReferenceImage(bpy.types.Operator):
         #store image file path in custom property
         #read custom property
         #save image settings
+        image_properties = context.scene.image_properties
+        print (image_properties.my_reference_image_A)
 
         print ('excecute')
 
         #dimension_properties = context.scene.dimension_properties
+
+        return {'FINISHED'}
 
     def add_image_path_to_ifcproperty(self,context, image_path):
 
