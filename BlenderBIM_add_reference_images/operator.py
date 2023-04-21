@@ -31,15 +31,43 @@ class AddReferenceImage(bpy.types.Operator):
 
     def add_image_path_to_ifcproperty(self,context, image_path):
 
-        ifc     =   ifcopenshell.open(IfcStore.path)
-        element =   ifc.by_type("IfcBuilding")[0]
-        pset    =   run("pset.add_pset", ifc, product=element, name="Reference Images")
+        ifc                 =   ifcopenshell.open(IfcStore.path)
+        element             =   ifc.by_type("IfcBuilding")[0]
+        propertyset_name    =   'Reference Image'
+        image_properties    =   context.scene.image_properties
 
-        run("pset.edit_pset", ifc, pset=pset, properties={"image A": str(image_path), "image B": "image B file path"})
+        #check if image path already exists:
+        #if image_properties.my_reference_image_A:
+
+        pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
+
+        run("pset.edit_pset", ifc, pset=pset, properties={  "image A": str(image_path),
+                                                            "image B": "image B file path"})
 
         ifc.write(IfcStore.path)
 
         print (image_path + ' has been added to the properties of IfcBuilding')
+        self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
+
+    def load_ifc(self, ifc_file, file_path):
+
+        if (bool(ifc_file)) == True:
+            project = ifc_file.by_type('IfcProject')
+            
+            if project is not None:
+                for i in project:
+                    collection_name = 'IfcProject/' + i.Name
+                    
+                collection = bpy.data.collections.get(str(collection_name))
+                
+                if collection is not None:
+                    for obj in collection.objects:
+                        bpy.data.objects.remove(obj, do_unlink=True)
+                        
+                    bpy.data.collections.remove(collection)
+                    
+            bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
+            bpy.ops.bim.load_project(filepath=file_path)
 
         #ifc_file = ifcopenshell.open(IfcStore.path)
         #ifc_element = ifc_file.by_type("IfcBuildingStorey")[0]
@@ -64,19 +92,23 @@ class LoadReferenceImage(bpy.types.Operator):
 
     def execute(self, context):
 
-        #when first add images
-        image_properties = context.scene.image_properties
+       
 
-        self.load_reference_images(context, property=None)
+        ifc                 =   ifcopenshell.open(IfcStore.path)
+        element             =   ifc.by_type("IfcBuilding")[0]
+        propertyset_name    =   'Reference Image'
+
+        property_value = ifcopenshell.util.element.get_pset(element, propertyset_name, "image A")
+
+       
+        self.load_reference_images(context, property=property_value)
 
         return {'FINISHED'}
 
     def load_reference_images(self, context, property):
 
-        ifc         =   ifcopenshell.open(IfcStore.path)
-        element     =   ifc.by_type("IfcBuilding")[0]
-        image_path  =   ifcopenshell.util.element.get_pset(element, "Reference Images","image A")
-
+       
+ 
         bpy.context.area.type = 'VIEW_3D'
         bpy.ops.view3d.view_axis(type='TOP')
 
@@ -87,10 +119,9 @@ class LoadReferenceImage(bpy.types.Operator):
                                 rotation=(0, -0, 0),
                                 scale=(1, 1, 1))
 
-        bpy.ops.object.load_reference_image(filepath=image_path)
+        bpy.ops.object.load_reference_image(filepath=property)
 
-        print ('load reference images')
-
+      
 
 
 def register():
