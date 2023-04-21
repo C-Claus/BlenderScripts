@@ -16,13 +16,13 @@ class PANEL_PT_demo(Panel):
         layout = self.layout
 
         box = layout.box()
-      
         row = box.row()
         row.prop(image_properties, 'my_reference_image_A')
 
         box = layout.box()
         row = box.row()
-        row.operator("add.referenceimage")
+        box.operator("add.referenceimage")
+        box.operator("load.referenceimage")
 
 def register():
     bpy.utils.register_class(PANEL_PT_demo)
