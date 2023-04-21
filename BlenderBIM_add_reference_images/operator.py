@@ -7,6 +7,12 @@ from . import operator
 import math
 from blenderbim.bim.ifc import IfcStore
 
+#program flow
+#1. load image in planar Z
+#2. make transformations to that image
+#3. store the image and its tranformations in IFC
+#4. upon loading the new ifc image with transformations should appear
+
 class AddReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "add.referenceimage"
@@ -22,24 +28,71 @@ class AddReferenceImage(bpy.types.Operator):
 
     def add_image_path_to_ifcproperty(self,context, image_path):
 
+        image_properties    =   context.scene.image_properties
+
+        #add image
+        bpy.context.area.type = 'VIEW_3D'
+        bpy.ops.view3d.view_axis(type='TOP')
+
+        bpy.ops.object.empty_add(type='IMAGE',
+                                radius=1,
+                                align='VIEW',
+                                location=(0, 0, 0),
+                                rotation=(0, 0, 0),
+                                scale=(1, 1, 1))
+
+        image = bpy.data.images.load(image_properties.my_reference_image_A)
+
+        # Set the image name
+        image.name = str(image_properties.my_reference_image_A)
+
+        bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image_A)
+
+
+
+
+class StoreReferenceImage(bpy.types.Operator):
+    """Store Reference Image"""
+    bl_idname = "store.referenceimage"
+    bl_label = "Store Reference Image"
+
+    def execute(self, context):
+
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
         propertyset_name    =   'Reference Image'
         image_properties    =   context.scene.image_properties
+        image_path          =   image_properties.my_reference_image_A
 
+        #get transformations
+        image_obj = bpy.context.active_object
+
+        position = image_obj.location
+        rotation = image_obj.rotation_euler
+        scale   =   image_obj.scale
+
+        # Print the transformation values to the console
+        print("Position:", position.x)
+        print("Rotation:", rotation)
+        print("Scale:", scale)
 
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
-
         run("pset.edit_pset", ifc, pset=pset, properties={  "image A": str(image_path),
-                                                            "image B": "image B file path"})
-
+                                                            "Position X": str(position.x),
+                                                            "Position Y": str(position.y),
+                                                            "Position Z": str(position.z),
+                                                            "Rotation X": str(rotation.x),
+                                                            "Rotation Y": str(rotation.y),
+                                                            "Rotation Z": str(rotation.z),
+                                                            "Scale X": str(scale.x),
+                                                            "Scale Y": str(scale.y),
+                                                            "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
-        #add image
-        #make transformations
-        #store image path and transformations
-
         print (image_path + ' has been added to the properties of IfcBuilding')
+
         self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
+
+        return {'FINISHED'}
 
     def load_ifc(self, ifc_file, file_path):
 
@@ -61,7 +114,6 @@ class AddReferenceImage(bpy.types.Operator):
             bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
             bpy.ops.bim.load_project(filepath=file_path)
 
-
 class LoadReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "load.referenceimage"
@@ -73,52 +125,41 @@ class LoadReferenceImage(bpy.types.Operator):
         element             =   ifc.by_type("IfcBuilding")[0]
         propertyset_name    =   'Reference Image'
 
-        property_value = ifcopenshell.util.element.get_pset(element, propertyset_name, "image A")
+        property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image A")
+        location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
+        location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
+        location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
+        rotation_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation X")
+        rotation_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Y")
+        rotation_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Z")
+        scale_x        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale X")
+        scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
+        scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
 
-       
-        self.load_reference_images(context, property=property_value)
+
+        image = bpy.ops.object.load_reference_image(filepath=property_value)
+
+        obj = bpy.context.active_object
+
+        # Set the location, rotation, and scale of the object
+        obj.location = (float(location_x), float(location_y), float(location_z))
+        obj.rotation_euler = (float(rotation_x), float(rotation_y), float(rotation_z))
+        obj.scale = (float(scale_x), float(scale_x), float(scale_x))
+
 
         return {'FINISHED'}
 
-    def load_reference_images(self, context, property):
 
-        """tutorials\
-
-        image_obj = bpy.context.active_object
-
-        # Get the current position, rotation, and scale of the image
-        position = image_obj.location
-        rotation = image_obj.rotation_euler
-        scale = image_obj.scale
-
-        # Print the transformation values to the console
-        print("Position:", position)
-        print("Rotation:", rotation)
-        print("Scale:", scale)
-        """
-
-
-        bpy.context.area.type = 'VIEW_3D'
-        bpy.ops.view3d.view_axis(type='TOP')
-
-        bpy.ops.object.empty_add(type='IMAGE',
-                                radius=1,
-                                align='VIEW',
-                                location=(0, 0, 0),
-                                rotation=(0, -0, 0),
-                                scale=(1, 1, 1))
-
-        bpy.ops.object.load_reference_image(filepath=property)
-
-      
 
 
 def register():
     bpy.utils.register_class(AddReferenceImage)
+    bpy.utils.register_class(StoreReferenceImage)
     bpy.utils.register_class(LoadReferenceImage)
 
 
 
 def unregister():
     bpy.utils.unregister_class(AddReferenceImage)
+    bpy.utils.unregister_class(StoreReferenceImage)
     bpy.utils.unregister_class(LoadReferenceImage)

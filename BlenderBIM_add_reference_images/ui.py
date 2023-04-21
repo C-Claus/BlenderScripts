@@ -22,6 +22,7 @@ class PANEL_PT_demo(Panel):
         box = layout.box()
         row = box.row()
         box.operator("add.referenceimage")
+        box.operator("store.referenceimage")
         box.operator("load.referenceimage")
 
 def register():
