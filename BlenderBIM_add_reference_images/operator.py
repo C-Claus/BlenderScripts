@@ -7,7 +7,6 @@ from . import operator
 import math
 from blenderbim.bim.ifc import IfcStore
 
-
 class AddReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "add.referenceimage"
@@ -15,17 +14,9 @@ class AddReferenceImage(bpy.types.Operator):
 
     def execute(self, context):
 
-        #when first add images
         image_properties = context.scene.image_properties
 
         self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image_A)
-
-
-        #when image paths are stored as a property in IFC
-
-        #psets = ifcopenshell.util.element.get_psets(element)
-        #ifcopenshell.api.run("pset.edit_pset", ifc, pset=ifc.by_id(psets["Pset_Name"]["id"]), properties={"foo": "changed"})
-        #print(ifcopenshell.util.element.get_psets(element))
 
         return {'FINISHED'}
 
@@ -36,8 +27,6 @@ class AddReferenceImage(bpy.types.Operator):
         propertyset_name    =   'Reference Image'
         image_properties    =   context.scene.image_properties
 
-        #check if image path already exists:
-        #if image_properties.my_reference_image_A:
 
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
 
@@ -69,21 +58,6 @@ class AddReferenceImage(bpy.types.Operator):
             bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)         
             bpy.ops.bim.load_project(filepath=file_path)
 
-        #ifc_file = ifcopenshell.open(IfcStore.path)
-        #ifc_element = ifc_file.by_type("IfcBuildingStorey")[0]
-        #image = ifcopenshell.util.element.get_pset(element, "My Images","StringProperty")
-        #bpy.context.area.type = 'VIEW_3D'
-        #bpy.ops.view3d.view_axis(type='TOP')
-
-        #bpy.ops.object.empty_add(type='IMAGE',
-        #                        radius=1,
-        #                        align='VIEW',
-        #                        location=(0, 0, 0),
-        #                        rotation=(0, -0, 0),
-        #                        scale=(1, 1, 1))
-
-        #bpy.ops.object.load_reference_image(filepath=image_path)
-
 
 class LoadReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
@@ -91,8 +65,6 @@ class LoadReferenceImage(bpy.types.Operator):
     bl_label = "Load Reference Image"
 
     def execute(self, context):
-
-       
 
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
@@ -107,8 +79,7 @@ class LoadReferenceImage(bpy.types.Operator):
 
     def load_reference_images(self, context, property):
 
-       
- 
+
         bpy.context.area.type = 'VIEW_3D'
         bpy.ops.view3d.view_axis(type='TOP')
 
