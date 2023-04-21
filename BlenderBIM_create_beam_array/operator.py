@@ -171,7 +171,7 @@ class CreateBeamArray(bpy.types.Operator):
     def create_assembly(self, model, element_list):
         print ('create assembly')
 
-        assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly",name='my_collection')
+        assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly",name='Assembly')
  
 
         for i in element_list:
