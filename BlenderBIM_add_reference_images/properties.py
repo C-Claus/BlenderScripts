@@ -13,3 +13,12 @@ class ImageProperties(bpy.types.PropertyGroup):
                                                                         default="",
                                                                         maxlen=1024,
                                                                         subtype="FILE_PATH")
+
+def register():
+    bpy.utils.register_class(ImageProperties)
+    bpy.types.Scene.dimension_properties = bpy.props.PointerProperty(type=DimensionProperties)
+
+def unregister():
+ 
+    bpy.utils.unregister_class(ImageProperties)
+    del bpy.types.Scene.dimension_properties
