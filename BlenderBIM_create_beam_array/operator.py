@@ -112,13 +112,12 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         beam_name = 'my_beam'
-        x_dim = dimension_properties.my_profile_x
-        y_dim = dimension_properties.my_profile_y
-        center_to_center_distance = dimension_properties.my_center_to_center_distance
-        covering_thickness = 0.02
-        beam_length_y = dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
-        total_length_x = float(dimension_properties.my_length)
-        x_N = dimension_properties.my_n
+        x_dim                       =   dimension_properties.my_profile_x
+        y_dim                       =   dimension_properties.my_profile_y
+        center_to_center_distance   =   dimension_properties.my_center_to_center_distance
+        beam_length_y               =   dimension_properties.my_height - x_dim/1000 - (x_dim/1000)/2
+        total_length_x              =   float(dimension_properties.my_length)
+        x_N                         =   dimension_properties.my_n
 
         ######################################################################################          ↑
         ######################################################################################          |
@@ -134,9 +133,9 @@ class CreateBeamArray(bpy.types.Operator):
         ######################################################################################          |
         ######################################################################################          ↓
         #
-        #<----------------->
+        # <----------------->  <----------------->  <----------------->  <----------------->
         #
-        #<------------------------------------------------------------------------------>
+        #<----------------------------------------------------------------------------------->
         #
         #                                       X-axis        
 
@@ -218,7 +217,7 @@ class CreateBeamArray(bpy.types.Operator):
 
             #run("aggregate.assign_object", model, product=storey, relating_object=wall)
             covering_array.append(wall)
-            run("aggregate.assign_object", model, product=assembled_element, relating_object=wall)
+     
 
             
 
@@ -285,7 +284,6 @@ class CreateBeamArray(bpy.types.Operator):
 
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
 
-        print ('ASSEMBLED ELEMENT', assembled_element)
 
         profile_offset_y = (x_dim/1000)/2
         beam_array = []
@@ -363,7 +361,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
             beam_array.append(occurrence)
-            run("aggregate.assign_object", model, product=assembled_element, relating_object=occurrence)
+           
          
 
         #bottom beam
