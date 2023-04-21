@@ -6,10 +6,13 @@ from ifcopenshell.api import run
 from . import operator
 import math
 from blenderbim.bim.ifc import IfcStore
-#https://github.com/buildingSMART/IFC4.3.x-development/blob/master/docs/schemas/shared/IfcSharedBldgElements/Entities/IfcWall.md
-#1 make checbox to include insulation
-#2 make button which bakes an IfcRelAggregates to an IfcProjectLibrary
-#3 should behave as an IfcWall, test with IfcOpeningElements
+
+#1. create assembly
+#2. make assembly vertical
+#3. roundtrip element in existing IFC
+#4. dropdown to swap profiles
+#5. refactor entire code
+
 class CreateBeamArray(bpy.types.Operator):
     """Create Beam Array"""
     bl_idname = "create.array"
@@ -116,7 +119,9 @@ class CreateBeamArray(bpy.types.Operator):
         total_length_x = float(dimension_properties.my_length)
         x_N = dimension_properties.my_n
 
-
+        covering = []
+        insulation = []
+        
         beams = self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
 
         if dimension_properties.my_insulation:
@@ -133,11 +138,10 @@ class CreateBeamArray(bpy.types.Operator):
             covering = self.create_covering(isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x)
         
         assembled_list =  insulation + covering + beams
+
+        print (assembled_list)
       
-        self.create_assembly(model, element_list=assembled_list)
-
-
-
+        #self.create_assembly(model, element_list=assembled_list)
 
         model.write(file_path)
 
@@ -147,13 +151,15 @@ class CreateBeamArray(bpy.types.Operator):
         print ('create assembly')
 
         assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly",name='my_collection')
-        #print (element_list)
+ 
 
         for i in element_list:
-            print (assembled_element, i)
+            
             run("aggregate.assign_object", model, product=assembled_element, relating_object=i)
 
-        #run("aggregate.assign_object", model, product=assembled_element, relating_object=insulation)
+
+ 
+
 
     def create_covering(self, isexternal, model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, covering_thickness, total_length_x):
         print ('create covering')
@@ -381,6 +387,7 @@ class CreateBeamArray(bpy.types.Operator):
         beam_array.append(occurrence)
 
         return beam_array
+
        
     
 
