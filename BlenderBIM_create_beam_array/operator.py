@@ -13,6 +13,8 @@ from blenderbim.bim.ifc import IfcStore
 #4. dropdown to swap profiles
 #5. refactor entire code
 
+
+
 class CreateBeamArray(bpy.types.Operator):
     """Create Beam Array"""
     bl_idname = "create.array"
@@ -110,7 +112,6 @@ class CreateBeamArray(bpy.types.Operator):
 
 
         beam_name = 'my_beam'
- 
         x_dim = dimension_properties.my_profile_x
         y_dim = dimension_properties.my_profile_y
         center_to_center_distance = dimension_properties.my_center_to_center_distance
@@ -119,10 +120,33 @@ class CreateBeamArray(bpy.types.Operator):
         total_length_x = float(dimension_properties.my_length)
         x_N = dimension_properties.my_n
 
+        ######################################################################################          ↑
+        ######################################################################################          |
+        ##                   ##                   ##                   ##                   ##   ↑      |
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   |      |    Y-axis
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   |      |
+        ##                   ##                   ##                   ##                   ##   ↓      |
+        ######################################################################################          |
+        ######################################################################################          ↓
+        #
+        #<----------------->
+        #
+        #<------------------------------------------------------------------------------>
+        #
+        #                                       X-axis        
+
         covering = []
         insulation = []
+        assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly", name='my_collection')
+        run("aggregate.assign_object", model, relating_object=storey, product=assembled_element)
         
         beams = self.create_beam_array(model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x)
+
 
         if dimension_properties.my_insulation:
             insulation = self.create_insulation(model, body, storey, center_to_center_distance, x_dim, y_dim, x_N, beam_length_y, total_length_x)
@@ -139,8 +163,9 @@ class CreateBeamArray(bpy.types.Operator):
         
         assembled_list =  insulation + covering + beams
 
+
         print (assembled_list)
-      
+        #assembled_element = run("root.create_entity", model, ifc_class="IfcElementAssembly",name='my_collection')
         #self.create_assembly(model, element_list=assembled_list)
 
         model.write(file_path)
@@ -193,6 +218,7 @@ class CreateBeamArray(bpy.types.Operator):
 
             #run("aggregate.assign_object", model, product=storey, relating_object=wall)
             covering_array.append(wall)
+            run("aggregate.assign_object", model, product=assembled_element, relating_object=wall)
 
             
 
@@ -258,6 +284,8 @@ class CreateBeamArray(bpy.types.Operator):
         return insulation_array
 
     def create_beam_array(self, model, body, storey, beam_name, x_dim, y_dim, center_to_center_distance, x_N, beam_length_y, total_length_x):
+
+        print ('ASSEMBLED ELEMENT', assembled_element)
 
         profile_offset_y = (x_dim/1000)/2
         beam_array = []
@@ -335,6 +363,7 @@ class CreateBeamArray(bpy.types.Operator):
             run("geometry.assign_representation", model, product=occurrence, representation=representation)
             run("style.assign_representation_styles", model, shape_representation=representation, styles=[style])
             beam_array.append(occurrence)
+            run("aggregate.assign_object", model, product=assembled_element, relating_object=occurrence)
          
 
         #bottom beam
