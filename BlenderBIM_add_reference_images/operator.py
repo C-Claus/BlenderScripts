@@ -79,6 +79,18 @@ class LoadReferenceImage(bpy.types.Operator):
 
     def load_reference_images(self, context, property):
 
+        image_obj = bpy.context.active_object
+
+        # Get the current position, rotation, and scale of the image
+        position = image_obj.location
+        rotation = image_obj.rotation_euler
+        scale = image_obj.scale
+
+        # Print the transformation values to the console
+        print("Position:", position)
+        print("Rotation:", rotation)
+        print("Scale:", scale)
+
 
         bpy.context.area.type = 'VIEW_3D'
         bpy.ops.view3d.view_axis(type='TOP')
