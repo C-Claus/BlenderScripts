@@ -16,9 +16,9 @@ class ImageProperties(bpy.types.PropertyGroup):
 
 def register():
     bpy.utils.register_class(ImageProperties)
-    bpy.types.Scene.dimension_properties = bpy.props.PointerProperty(type=DimensionProperties)
+    bpy.types.Scene.image_properties = bpy.props.PointerProperty(type=ImageProperties)
 
 def unregister():
  
     bpy.utils.unregister_class(ImageProperties)
-    del bpy.types.Scene.dimension_properties
+    del bpy.types.Scene.image_properties

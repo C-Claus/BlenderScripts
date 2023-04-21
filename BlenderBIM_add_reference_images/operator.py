@@ -15,6 +15,10 @@ class AddReferenceImage(bpy.types.Operator):
 
     def execute(self, context):
 
+        #store image file path in custom property
+        #read custom property
+        #save image settings
+
         print ('excecute')
 
         #dimension_properties = context.scene.dimension_properties
