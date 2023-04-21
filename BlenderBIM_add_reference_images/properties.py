@@ -8,7 +8,7 @@ from bpy.props import IntProperty
 
 class ImageProperties(bpy.types.PropertyGroup):
 
-    my_reference_image_A:           bpy.props.StringProperty(         name="Reference Image A",
+    my_reference_image_A:           bpy.props.StringProperty(           name="Reference Image A",
                                                                         description="path to your reference image",
                                                                         default="",
                                                                         maxlen=1024,
