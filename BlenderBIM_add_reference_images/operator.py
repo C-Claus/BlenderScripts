@@ -131,6 +131,7 @@ class LoadReferenceImage(bpy.types.Operator):
         image = bpy.ops.object.load_reference_image(filepath=property_value)
 
         obj = bpy.context.active_object
+        obj.name = os.path.basename(property_value)
 
         # Set the location, rotation, and scale of the object
         obj.location = (float(location_x), float(location_y), float(location_z))
