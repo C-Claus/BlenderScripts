@@ -34,19 +34,10 @@ class AddReferenceImage(bpy.types.Operator):
         bpy.context.area.type = 'VIEW_3D'
         bpy.ops.view3d.view_axis(type='TOP')
 
-        bpy.ops.object.empty_add(type='IMAGE',
-                                radius=1,
-                                align='VIEW',
-                                location=(0, 0, 0),
-                                rotation=(0, 0, 0),
-                                scale=(1, 1, 1))
-
-        image = bpy.data.images.load(image_properties.my_reference_image_A)
-
-        # Set the image name
-        image.name = str(image_properties.my_reference_image_A)
 
         bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image_A)
+        empty_obj = bpy.context.active_object
+        empty_obj.name = os.path.basename(image_properties.my_reference_image_A)
 
 
 
