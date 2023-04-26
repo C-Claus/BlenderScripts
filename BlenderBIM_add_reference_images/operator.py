@@ -20,14 +20,33 @@ class AddReferenceImage(bpy.types.Operator):
     bl_idname = "add.referenceimage"
     bl_label = "Add Image"
 
+    index: bpy.props.IntProperty(default=-1)
+
     def execute(self, context):
 
-        image_collection    =   context.scene.image_collection 
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
+
+
+        print (self.index)
+        print (image_item.image)
+
+        if image_item.image:
+
+            bpy.context.area.type = 'VIEW_3D'
+            bpy.ops.view3d.view_axis(type='TOP')
+
+            bpy.ops.object.load_reference_image(filepath=image_item.image)
+            obj = bpy.context.active_object
+            obj.name = os.path.basename(image_item.image)
 
 
         
-        for i, item in enumerate(image_collection.items):
-            print (i, item.image, item.name)
+        #for i, item in enumerate(image_collection.items):
+        #    print (i, item.image, item.name)
+
+
+
 
 
         #image_properties = context.scene.image_properties
@@ -124,7 +143,7 @@ class StoreReferenceImage(bpy.types.Operator):
 class LoadReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "load.referenceimage"
-    bl_label = "Load image from IFC"
+    bl_label = "Load image(s) from IFC"
 
     def execute(self, context):
 
@@ -168,6 +187,9 @@ class ImageCollectionActions(bpy.types.Operator):
 
         if self.action == "add":        
             image_item =  image_collection.items.add()  
+         
+
+         
  
         if self.action == "remove":
             image_collection.items.remove(self.index)

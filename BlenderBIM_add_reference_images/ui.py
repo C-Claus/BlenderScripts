@@ -42,14 +42,40 @@ class PANEL_PT_demo(Panel):
         #    row.operator("clear.clear_properties", text="Clear Properties")
        
         for i, item in enumerate(image_collection.items):
+
+
+
+
+            row = box.row(align=True)
+            row.prop(item, "image")
+
+            op = row.operator("add.referenceimage", text="", icon="RIGHTARROW")
+            op.index = i
+            
+            row.operator("store.referenceimage", text="", icon="PLUS")
+
+
+            op = row.operator("image.collection_actions", text="", icon="REMOVE")
+            op.action = "remove"
+            op.index = i 
+
+
+            """
           
             row = box.row(align=True)
             row.prop(item, "image")
             row.operator("add.referenceimage", text="", icon="RIGHTARROW")
+            #op = row.operator("add.referenceimage", text="", icon="RIGHTARROW")
+            #op.index = i
+
             row.operator("store.referenceimage", text="", icon="PLUS")
             op = row.operator("image.collection_actions", text="", icon="REMOVE")
             op.action = "remove"
-            op.index = i  
+            op.index = i
+            """
+
+
+      
 
 
             #row = box.row(align=True)
