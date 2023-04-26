@@ -22,10 +22,17 @@ class AddReferenceImage(bpy.types.Operator):
 
     def execute(self, context):
 
+        image_collection    =   context.scene.image_collection 
 
-        image_properties = context.scene.image_properties
 
-        self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image)
+        
+        for i, item in enumerate(image_collection.items):)
+            print (i, item.image, item.name)
+
+
+        #image_properties = context.scene.image_properties
+
+        #self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image)
 
 
         return {'FINISHED'}
@@ -33,6 +40,14 @@ class AddReferenceImage(bpy.types.Operator):
     def add_image_path_to_ifcproperty(self,context, image_path):
 
         
+        
+
+
+        
+
+
+
+
 
         image_properties    =   context.scene.image_properties
         #add image
@@ -157,9 +172,9 @@ class ImageCollectionActions(bpy.types.Operator):
         if self.action == "remove":
             image_collection.items.remove(self.index)
 
-        for item in image_collection.items:
-            print (dir(item))
-            print (item.image, item.name)
+        #for item in image_collection.items:
+        #    print (dir(item))
+        #    print (item.image, item.name)
 
         return {"FINISHED"}  
 
