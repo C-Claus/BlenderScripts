@@ -130,10 +130,32 @@ class LoadReferenceImage(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class ImageCollectionActions(bpy.types.Operator):
+    bl_idname = "image.collection_actions"
+    bl_label = "Execute"
+    action: bpy.props.EnumProperty(items=(("add",) * 3,("remove",) * 3,),)
+ 
+    index: bpy.props.IntProperty(default=-1)
+
+    def execute(self, context):
+
+        image_collection = context.scene.image_collection
+
+        if self.action == "add":        
+            image_item =  image_collection.items.add()  
+ 
+        if self.action == "remove":
+            image_collection.items.remove(self.index)
+
+        return {"FINISHED"}  
+
+        
+
 
 
 
 def register():
+    bpy.utils.register_class(ImageCollectionActions)
     bpy.utils.register_class(AddReferenceImage)
     bpy.utils.register_class(StoreReferenceImage)
     bpy.utils.register_class(LoadReferenceImage)
@@ -141,6 +163,7 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(ImageCollectionActions)
     bpy.utils.unregister_class(AddReferenceImage)
     bpy.utils.unregister_class(StoreReferenceImage)
     bpy.utils.unregister_class(LoadReferenceImage)

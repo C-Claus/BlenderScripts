@@ -14,25 +14,31 @@ class ImageProperties(bpy.types.PropertyGroup):
                                                                         maxlen=1024,
                                                                         subtype="FILE_PATH")
 
-class CustomItem(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty(name         ="Property",
-                                   description  ="Use the PropertySet name and Property name divided by a .",
-                                   default      ="PropertySet.Property"
-                                   )
+class ImageItem(bpy.types.PropertyGroup):
+    #name: bpy.props.StringProperty(name         ="Property",
+    #                               description  ="Use the PropertySet name and Property name divided by a .",
+    #                               default      ="PropertySet.Property"
+    #                               )
+
+    image:           bpy.props.StringProperty(              name="Image",
+                                                            description="path to your reference image",
+                                                            default="",
+                                                            subtype="FILE_PATH")                               
     
-class CustomCollection(bpy.types.PropertyGroup):
-    items: bpy.props.CollectionProperty(type=CustomItem)
+class ImageCollection(bpy.types.PropertyGroup):
+    items: bpy.props.CollectionProperty(type=ImageItem)
 
 
 def register():
-    bpy.utils.register_class(CustomItem)
-    bpy.utils.register_class(CustomCollection)
+    bpy.utils.register_class(ImageItem)
+    bpy.utils.register_class(ImageCollection)
     bpy.utils.register_class(ImageProperties)
     bpy.types.Scene.image_properties = bpy.props.PointerProperty(type=ImageProperties)
+    bpy.types.Scene.image_collection = bpy.props.PointerProperty(type=ImageCollection)
 
 def unregister():
-    bpy.utils.unregister_class(CustomItem)
-    bpy.utils.unregister_class(CustomCollection)
- 
+    bpy.utils.unregister_class(ImageItem)
+    bpy.utils.unregister_class(ImageCollection)
     bpy.utils.unregister_class(ImageProperties)
     del bpy.types.Scene.image_properties
+    del bpy.types.Scene.image_collection
