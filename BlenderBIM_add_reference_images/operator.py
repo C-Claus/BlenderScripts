@@ -82,8 +82,8 @@ class StoreReferenceImage(bpy.types.Operator):
                                                             "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
         print (image_item.image + ' has been added to the properties of IfcBuilding')
-        self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
-        print ('IFC has been reloaded into BlenderBIM')
+        #self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
+        print ('Please Refresh your IFC')
 
       
 
