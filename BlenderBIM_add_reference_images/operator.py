@@ -13,43 +13,53 @@ from blenderbim.bim.ifc import IfcStore
 #3. store the image and its tranformations in IFC
 #4. upon loading the new ifc image with transformations should appear
 
+
 class AddReferenceImage(bpy.types.Operator):
-    """Add Reference Image"""
+    """Import Reference Image"""
     bl_idname = "add.referenceimage"
-    bl_label = "Add Reference Image"
+    bl_label = "Add Image"
+
+    index: bpy.props.IntProperty(default=-1)
 
     def execute(self, context):
 
-        image_properties = context.scene.image_properties
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
 
-        self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image_A)
+        print (self.index)
+        print (image_item.image)
+
+        if image_item.image:
+
+            bpy.context.area.type = 'VIEW_3D'
+            bpy.ops.view3d.view_axis(type='TOP')
+
+            bpy.ops.object.load_reference_image(filepath=image_item.image)
+            obj = bpy.context.active_object
+            obj.name = os.path.basename(image_item.image)
+
 
         return {'FINISHED'}
 
-    def add_image_path_to_ifcproperty(self,context, image_path):
-
-        image_properties    =   context.scene.image_properties
-        #add image
-        bpy.context.area.type = 'VIEW_3D'
-        bpy.ops.view3d.view_axis(type='TOP')
-
-        bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image_A)
-        obj = bpy.context.active_object
-        obj.name = os.path.basename(image_properties.my_reference_image_A)
 
 
 class StoreReferenceImage(bpy.types.Operator):
     """Store Reference Image"""
     bl_idname = "store.referenceimage"
-    bl_label = "Store Reference Image"
+    bl_label = "Store image path and transformation in IFC"
+
+    index: bpy.props.IntProperty(default=-1)
 
     def execute(self, context):
 
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
+     
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        propertyset_name    =   'Reference Image'
+        propertyset_name    =   str(os.path.basename(image_item.image))
         image_properties    =   context.scene.image_properties
-        image_path          =   image_properties.my_reference_image_A
+        #image_path          =   image_properties.my_reference_image
 
         #get transformations
         image_obj = bpy.context.active_object
@@ -59,7 +69,7 @@ class StoreReferenceImage(bpy.types.Operator):
         scale    = image_obj.scale
 
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
-        run("pset.edit_pset", ifc, pset=pset, properties={  "image A": str(image_path),
+        run("pset.edit_pset", ifc, pset=pset, properties={  "image": str(image_item.image),
                                                             "Position X": str(position.x),
                                                             "Position Y": str(position.y),
                                                             "Position Z": str(position.z),
@@ -70,9 +80,11 @@ class StoreReferenceImage(bpy.types.Operator):
                                                             "Scale Y": str(scale.y),
                                                             "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
-        print (image_path + ' has been added to the properties of IfcBuilding')
-        self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
-        print ('IFC has been reloaded into BlenderBIM')
+        print (image_item.image + ' has been added to the properties of IfcBuilding')
+        #self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
+        print ('Please Refresh your IFC')
+
+      
 
         return {'FINISHED'}
 
@@ -99,15 +111,24 @@ class StoreReferenceImage(bpy.types.Operator):
 class LoadReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "load.referenceimage"
-    bl_label = "Load Reference Image"
+    bl_label = "Load image(s) from IFC"
+
+    index: bpy.props.IntProperty(default=-1)
 
     def execute(self, context):
 
+        
+
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
+
+  
+
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        propertyset_name    =   'Reference Image'
+        propertyset_name    =   str(os.path.basename(image_item.image))
 
-        property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image A")
+        property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
         location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
         location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
         location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
@@ -130,10 +151,39 @@ class LoadReferenceImage(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class ImageCollectionActions(bpy.types.Operator):
+    bl_idname = "image.collection_actions"
+    bl_label = "Execute"
+    action: bpy.props.EnumProperty(items=(("add",) * 3,("remove",) * 3,),)
+ 
+    index: bpy.props.IntProperty(default=-1)
+
+    def execute(self, context):
+
+        image_collection = context.scene.image_collection
+
+        if self.action == "add":        
+            image_item =  image_collection.items.add()  
+         
+
+         
+ 
+        if self.action == "remove":
+            image_collection.items.remove(self.index)
+
+        #for item in image_collection.items:
+        #    print (dir(item))
+        #    print (item.image, item.name)
+
+        return {"FINISHED"}  
+
+        
+
 
 
 
 def register():
+    bpy.utils.register_class(ImageCollectionActions)
     bpy.utils.register_class(AddReferenceImage)
     bpy.utils.register_class(StoreReferenceImage)
     bpy.utils.register_class(LoadReferenceImage)
@@ -141,6 +191,7 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(ImageCollectionActions)
     bpy.utils.unregister_class(AddReferenceImage)
     bpy.utils.unregister_class(StoreReferenceImage)
     bpy.utils.unregister_class(LoadReferenceImage)
