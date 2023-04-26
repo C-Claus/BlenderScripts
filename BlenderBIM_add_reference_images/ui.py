@@ -45,13 +45,15 @@ class PANEL_PT_demo(Panel):
           
             row = box.row(align=True)
             row.prop(item, "image")
+            row.operator("add.referenceimage", text="", icon="RIGHTARROW")
+            row.operator("store.referenceimage", text="", icon="PLUS")
             op = row.operator("image.collection_actions", text="", icon="REMOVE")
             op.action = "remove"
             op.index = i  
 
 
             #row = box.row(align=True)
-            row.operator("store.referenceimage", text="", icon="PLUS")
+            
             #op = row.operator("image.collection_actions", text="", icon="REMOVE")
             #op.action = "remove"
             #op.index = i

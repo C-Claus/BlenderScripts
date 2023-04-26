@@ -26,7 +26,7 @@ class AddReferenceImage(bpy.types.Operator):
 
 
         
-        for i, item in enumerate(image_collection.items):)
+        for i, item in enumerate(image_collection.items):
             print (i, item.image, item.name)
 
 
