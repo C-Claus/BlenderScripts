@@ -27,7 +27,6 @@ class AddReferenceImage(bpy.types.Operator):
         image_collection    =   context.scene.image_collection
         image_item          =   image_collection.items[self.index]
 
-
         print (self.index)
         print (image_item.image)
 
@@ -41,43 +40,8 @@ class AddReferenceImage(bpy.types.Operator):
             obj.name = os.path.basename(image_item.image)
 
 
-        
-        #for i, item in enumerate(image_collection.items):
-        #    print (i, item.image, item.name)
-
-
-
-
-
-        #image_properties = context.scene.image_properties
-
-        #self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image)
-
-
         return {'FINISHED'}
 
-    def add_image_path_to_ifcproperty(self,context, image_path):
-
-        
-        
-
-
-        
-
-
-
-
-
-        image_properties    =   context.scene.image_properties
-        #add image
-        bpy.context.area.type = 'VIEW_3D'
-        bpy.ops.view3d.view_axis(type='TOP')
-
-        bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image)
-        obj = bpy.context.active_object
-        obj.name = os.path.basename(image_properties.my_reference_image)
-
-       
 
 
 class StoreReferenceImage(bpy.types.Operator):
@@ -85,13 +49,18 @@ class StoreReferenceImage(bpy.types.Operator):
     bl_idname = "store.referenceimage"
     bl_label = "Store image path and transformation in IFC"
 
+    index: bpy.props.IntProperty(default=-1)
+
     def execute(self, context):
+
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
      
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        propertyset_name    =   'Reference Image'
+        propertyset_name    =   str(os.path.basename(image_item.image))
         image_properties    =   context.scene.image_properties
-        image_path          =   image_properties.my_reference_image
+        #image_path          =   image_properties.my_reference_image
 
         #get transformations
         image_obj = bpy.context.active_object
@@ -101,7 +70,7 @@ class StoreReferenceImage(bpy.types.Operator):
         scale    = image_obj.scale
 
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
-        run("pset.edit_pset", ifc, pset=pset, properties={  "image A": str(image_path),
+        run("pset.edit_pset", ifc, pset=pset, properties={  "image": str(image_item.image),
                                                             "Position X": str(position.x),
                                                             "Position Y": str(position.y),
                                                             "Position Z": str(position.z),
@@ -112,7 +81,7 @@ class StoreReferenceImage(bpy.types.Operator):
                                                             "Scale Y": str(scale.y),
                                                             "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
-        print (image_path + ' has been added to the properties of IfcBuilding')
+        print (image_item.image + ' has been added to the properties of IfcBuilding')
         self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
         print ('IFC has been reloaded into BlenderBIM')
 
@@ -145,13 +114,22 @@ class LoadReferenceImage(bpy.types.Operator):
     bl_idname = "load.referenceimage"
     bl_label = "Load image(s) from IFC"
 
+    index: bpy.props.IntProperty(default=-1)
+
     def execute(self, context):
+
+        
+
+        image_collection    =   context.scene.image_collection
+        image_item          =   image_collection.items[self.index]
+
+  
 
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        propertyset_name    =   'Reference Image'
+        propertyset_name    =   str(os.path.basename(image_item.image))
 
-        property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image A")
+        property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
         location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
         location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
         location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
