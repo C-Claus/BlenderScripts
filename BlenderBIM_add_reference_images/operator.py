@@ -13,7 +13,6 @@ from blenderbim.bim.ifc import IfcStore
 #3. store the image and its tranformations in IFC
 #4. upon loading the new ifc image with transformations should appear
 
-image_list = []
 
 class AddReferenceImage(bpy.types.Operator):
     """Import Reference Image"""
