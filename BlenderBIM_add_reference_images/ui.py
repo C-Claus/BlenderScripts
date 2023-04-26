@@ -17,19 +17,9 @@ class PANEL_PT_demo(Panel):
         image_properties = context.scene.image_properties
 
         layout = self.layout
-
-        #box = layout.box()
-        #row = box.row()
-        #row.prop(image_properties, 'my_reference_image')
-
         box = layout.box()
         row = box.row()
-        #box.operator("add.referenceimage")
-        #box.operator("store.referenceimage")
         box.operator("load.referenceimage")
-
-
-
 
         layout = self.layout
         box = layout.box()
@@ -43,15 +33,12 @@ class PANEL_PT_demo(Panel):
        
         for i, item in enumerate(image_collection.items):
 
-
-
-
             row = box.row(align=True)
             row.prop(item, "image")
 
             op = row.operator("add.referenceimage", text="", icon="RIGHTARROW")
             op.index = i
-            
+
             row.operator("store.referenceimage", text="", icon="PLUS")
 
 
@@ -59,32 +46,7 @@ class PANEL_PT_demo(Panel):
             op.action = "remove"
             op.index = i 
 
-
-            """
-          
-            row = box.row(align=True)
-            row.prop(item, "image")
-            row.operator("add.referenceimage", text="", icon="RIGHTARROW")
-            #op = row.operator("add.referenceimage", text="", icon="RIGHTARROW")
-            #op.index = i
-
-            row.operator("store.referenceimage", text="", icon="PLUS")
-            op = row.operator("image.collection_actions", text="", icon="REMOVE")
-            op.action = "remove"
-            op.index = i
-            """
-
-
-      
-
-
-            #row = box.row(align=True)
-            
-            #op = row.operator("image.collection_actions", text="", icon="REMOVE")
-            #op.action = "remove"
-            #op.index = i
-           
-     
+ 
 
 def register():
     bpy.utils.register_class(PANEL_PT_demo)
