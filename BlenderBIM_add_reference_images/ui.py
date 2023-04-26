@@ -18,14 +18,14 @@ class PANEL_PT_demo(Panel):
 
         layout = self.layout
 
-        box = layout.box()
-        row = box.row()
-        row.prop(image_properties, 'my_reference_image_A')
+        #box = layout.box()
+        #row = box.row()
+        #row.prop(image_properties, 'my_reference_image')
 
         box = layout.box()
         row = box.row()
-        box.operator("add.referenceimage")
-        box.operator("store.referenceimage")
+        #box.operator("add.referenceimage")
+        #box.operator("store.referenceimage")
         box.operator("load.referenceimage")
 
 
@@ -48,6 +48,14 @@ class PANEL_PT_demo(Panel):
             op = row.operator("image.collection_actions", text="", icon="REMOVE")
             op.action = "remove"
             op.index = i  
+
+
+            #row = box.row(align=True)
+            row.operator("store.referenceimage", text="", icon="PLUS")
+            #op = row.operator("image.collection_actions", text="", icon="REMOVE")
+            #op.action = "remove"
+            #op.index = i
+           
      
 
 def register():

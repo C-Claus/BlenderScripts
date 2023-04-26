@@ -13,43 +13,51 @@ from blenderbim.bim.ifc import IfcStore
 #3. store the image and its tranformations in IFC
 #4. upon loading the new ifc image with transformations should appear
 
+image_list = []
+
 class AddReferenceImage(bpy.types.Operator):
-    """Add Reference Image"""
+    """Import Reference Image"""
     bl_idname = "add.referenceimage"
-    bl_label = "Add Reference Image"
+    bl_label = "Add Image"
 
     def execute(self, context):
 
+
         image_properties = context.scene.image_properties
 
-        self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image_A)
+        self.add_image_path_to_ifcproperty(context, image_path=image_properties.my_reference_image)
+
 
         return {'FINISHED'}
 
     def add_image_path_to_ifcproperty(self,context, image_path):
+
+        
 
         image_properties    =   context.scene.image_properties
         #add image
         bpy.context.area.type = 'VIEW_3D'
         bpy.ops.view3d.view_axis(type='TOP')
 
-        bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image_A)
+        bpy.ops.object.load_reference_image(filepath=image_properties.my_reference_image)
         obj = bpy.context.active_object
-        obj.name = os.path.basename(image_properties.my_reference_image_A)
+        obj.name = os.path.basename(image_properties.my_reference_image)
+
+       
 
 
 class StoreReferenceImage(bpy.types.Operator):
     """Store Reference Image"""
     bl_idname = "store.referenceimage"
-    bl_label = "Store Reference Image"
+    bl_label = "Store image path and transformation in IFC"
 
     def execute(self, context):
-
+     
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
         propertyset_name    =   'Reference Image'
         image_properties    =   context.scene.image_properties
-        image_path          =   image_properties.my_reference_image_A
+        image_path          =   image_properties.my_reference_image
 
         #get transformations
         image_obj = bpy.context.active_object
@@ -73,6 +81,8 @@ class StoreReferenceImage(bpy.types.Operator):
         print (image_path + ' has been added to the properties of IfcBuilding')
         self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
         print ('IFC has been reloaded into BlenderBIM')
+
+      
 
         return {'FINISHED'}
 
@@ -99,7 +109,7 @@ class StoreReferenceImage(bpy.types.Operator):
 class LoadReferenceImage(bpy.types.Operator):
     """Add Reference Image"""
     bl_idname = "load.referenceimage"
-    bl_label = "Load Reference Image"
+    bl_label = "Load image from IFC"
 
     def execute(self, context):
 
@@ -146,6 +156,10 @@ class ImageCollectionActions(bpy.types.Operator):
  
         if self.action == "remove":
             image_collection.items.remove(self.index)
+
+        for item in image_collection.items:
+            print (dir(item))
+            print (item.image, item.name)
 
         return {"FINISHED"}  
 

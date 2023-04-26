@@ -8,11 +8,12 @@ from bpy.props import IntProperty
 
 class ImageProperties(bpy.types.PropertyGroup):
 
-    my_reference_image_A:           bpy.props.StringProperty(           name="Reference Image A",
+    my_reference_image:           bpy.props.StringProperty(           name="Image",
                                                                         description="path to your reference image",
                                                                         default="",
                                                                         maxlen=1024,
-                                                                        subtype="FILE_PATH")
+                                                                        subtype="FILE_PATH"
+                                                                        )
 
 class ImageItem(bpy.types.PropertyGroup):
     #name: bpy.props.StringProperty(name         ="Property",
