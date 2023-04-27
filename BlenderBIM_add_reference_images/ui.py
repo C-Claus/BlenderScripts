@@ -43,8 +43,8 @@ class PANEL_PT_demo(Panel):
             op = row.operator("store.referenceimage", text="", icon="PLUS")
             op.index = i 
 
-            op = row.operator("load.referenceimage",text="",icon="PINNED")
-            op.index = i
+            #op = row.operator("load.referenceimage",text="",icon="PINNED")
+            #op.index = i
 
 
             op = row.operator("image.collection_actions", text="", icon="REMOVE")

@@ -181,27 +181,32 @@ class LoadAllImages(bpy.types.Operator):
                                 if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).startswith('BBIM_reference_image_'):
                                     propertyset_name = (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
 
-                                    print (propertyset_name)
+                                    propertyset_list.append(propertyset_name)
 
-                                    property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
-                                    location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
-                                    location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
-                                    location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
-                                    rotation_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation X")
-                                    rotation_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Y")
-                                    rotation_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Z")
-                                    scale_x        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale X")
-                                    scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
-                                    scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
+        for propertyset_name in propertyset_list:
 
-                                    image       =   bpy.ops.object.load_reference_image(filepath=property_value)
-                                    obj         =   bpy.context.active_object
-                                    obj.name    =   os.path.basename(property_value)
+            print (propertyset_name)
 
-                                    # Set the location, rotation, and scale of the object
-                                    obj.location        =   (float(location_x), float(location_y), float(location_z))
-                                    obj.rotation_euler  =   (float(rotation_x), float(rotation_y), float(rotation_z))
-                                    obj.scale           =   (float(scale_x), float(scale_x), float(scale_x))
+            property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
+            location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
+            location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
+            location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
+            rotation_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation X")
+            rotation_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Y")
+            rotation_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Z")
+            scale_x        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale X")
+            scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
+            scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
+
+            image       =   bpy.ops.object.load_reference_image(filepath=property_value)
+            obj         =   bpy.context.active_object
+            obj.name    =   os.path.basename(property_value)
+
+            # Set the location, rotation, and scale of the object
+            obj.location        =   (float(location_x), float(location_y), float(location_z))
+            obj.rotation_euler  =   (float(rotation_x), float(rotation_y), float(rotation_z))
+            obj.scale           =   (float(scale_x), float(scale_x), float(scale_x))
+            continue
 
 
 
@@ -263,6 +268,20 @@ class ImageCollectionActions(bpy.types.Operator):
  
         if self.action == "remove":
             image_collection.items.remove(self.index)
+
+
+            ifc                 =   ifcopenshell.open(IfcStore.path)
+            element             =   ifc.by_type("IfcBuilding")[0]
+            propertyset_name    =   'BBIM_reference_image_' + str(self.index)
+
+
+            #wall_type = ifcopenshell.api.run("root.create_entity", model, ifc_class="IfcWallType")
+            pset = ifcopenshell.api.run("pset.add_pset", ifc, product=element, name=propertyset_name)
+
+
+
+
+            ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=pset)
 
         #for item in image_collection.items:
         #    print (dir(item))
