@@ -163,7 +163,7 @@ class LoadAllImages(bpy.types.Operator):
         print ('load all images')
 
         image_collection    =   context.scene.image_collection
-        image_item          =   image_collection.items[self.index]
+        #image_item          =   image_collection.items[self.index]
 
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
@@ -183,9 +183,7 @@ class LoadAllImages(bpy.types.Operator):
 
                                     propertyset_list.append(propertyset_name)
 
-        for propertyset_name in propertyset_list:
-
-            print (propertyset_name)
+        for i, propertyset_name in enumerate(propertyset_list):
 
             property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
             location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
@@ -206,43 +204,13 @@ class LoadAllImages(bpy.types.Operator):
             obj.location        =   (float(location_x), float(location_y), float(location_z))
             obj.rotation_euler  =   (float(rotation_x), float(rotation_y), float(rotation_z))
             obj.scale           =   (float(scale_x), float(scale_x), float(scale_x))
-            continue
-
-
-
-        #get all properties
-
-        #image_collection    =   context.scene.image_collection
-
-        #for image_item in image_collection.items:
-
-        #     print (image_item.image)
             
-        """
-            ifc                 =   ifcopenshell.open(IfcStore.path)
-            element             =   ifc.by_type("IfcBuilding")[0]
-            propertyset_name    =   str(os.path.basename(image_item.image))
+        
+            image_collection.items.add()
 
-            property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "image")
-            location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
-            location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
-            location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
-            rotation_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation X")
-            rotation_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Y")
-            rotation_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Rotation Z")
-            scale_x        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale X")
-            scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
-            scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
-
-            image       =   bpy.ops.object.load_reference_image(filepath=property_value)
-            obj         =   bpy.context.active_object
-            obj.name    =   os.path.basename(property_value)
-
-            # Set the location, rotation, and scale of the object
-            obj.location        =   (float(location_x), float(location_y), float(location_z))
-            obj.rotation_euler  =   (float(rotation_x), float(rotation_y), float(rotation_z))
-            obj.scale           =   (float(scale_x), float(scale_x), float(scale_x))
-        """
+            for x, y in zip(image_collection.items, propertyset_list):
+                print(x, y)
+                x.image = ifcopenshell.util.element.get_pset(element, y, "image")
 
 
         return {'FINISHED'}
