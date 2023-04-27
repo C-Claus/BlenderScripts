@@ -16,13 +16,14 @@ class PANEL_PT_demo(Panel):
 
         image_properties = context.scene.image_properties
 
-        layout = self.layout
-        box = layout.box()
-        row = box.row()
-        box.operator("load.referenceimage")
+        #layout = self.layout
+        #box = layout.box()
+        #row = box.row()
+        #box.operator("load.referenceimage")
 
         layout = self.layout
         box = layout.box()
+        box.operator("load.allimages", text="Load all images")
         box.operator("image.collection_actions", text="Add", icon="ADD").action = "add"
 
         image_collection = context.scene.image_collection
@@ -39,7 +40,11 @@ class PANEL_PT_demo(Panel):
             op = row.operator("add.referenceimage", text="", icon="RIGHTARROW")
             op.index = i
 
-            row.operator("store.referenceimage", text="", icon="PLUS")
+            op = row.operator("store.referenceimage", text="", icon="PLUS")
+            op.index = i 
+
+            op = row.operator("load.referenceimage",text="",icon="PINNED")
+            op.index = i
 
 
             op = row.operator("image.collection_actions", text="", icon="REMOVE")
