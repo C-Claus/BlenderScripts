@@ -41,9 +41,7 @@ class AddReferenceImage(bpy.types.Operator):
             obj = bpy.context.active_object
             obj.name = os.path.basename(image_item.image)
 
-
         return {'FINISHED'}
-
 
 
 class StoreReferenceImage(bpy.types.Operator):
@@ -54,8 +52,6 @@ class StoreReferenceImage(bpy.types.Operator):
     index: bpy.props.IntProperty(default=-1)
 
     def execute(self, context):
-
-        #print (image_properties.my_reference_image)
 
         image_collection    =   context.scene.image_collection
         image_item          =   image_collection.items[self.index]
@@ -178,13 +174,10 @@ class LoadAllImages(bpy.types.Operator):
             obj.rotation_euler  =   (float(rotation_x), float(rotation_y), float(rotation_z))
             obj.scale           =   (float(scale_x), float(scale_x), float(scale_x))
             
-        
             image_collection.items.add()
 
             for collection_image, property_image in zip(image_collection.items, propertyset_list):
-               
                 collection_image.image = ifcopenshell.util.element.get_pset(element, property_image, "Image Path")
-
 
         return {'FINISHED'}
 
@@ -204,13 +197,7 @@ class ImageCollectionActions(bpy.types.Operator):
         if self.action == "add":        
             image_item =  image_collection.items.add()  
           
- 
         if self.action == "remove":
-
-            print (bpy.context.active_object)
-            print (self.index)
-
-            #image_collection.items.remove(self.index)
 
             image_collection    =   context.scene.image_collection
             image_item          =   image_collection.items[self.index]
@@ -228,15 +215,10 @@ class ImageCollectionActions(bpy.types.Operator):
                             if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
                                 if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name):
 
-                                    #print (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
-
                                     if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name) == active_object_name:
-                                 
-                                        print ('remove from ifc')
+
                                         ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=ifcreldefinesbyproperties.RelatingPropertyDefinition)
 
-                                        
-                                            
                                         bpy.data.objects.remove(bpy.data.objects[image_name], do_unlink=True)
 
         image_collection.items.remove(self.index)
