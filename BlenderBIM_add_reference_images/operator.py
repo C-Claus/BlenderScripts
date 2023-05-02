@@ -13,6 +13,8 @@ from blenderbim.bim.ifc import IfcStore
 #2. make transformations to that image
 #3. store the image and its tranformations in IFC
 #4. upon loading the new ifc image with transformations should appear
+#5. toggle button for enable automatic reload
+#6. toggle button for absolute/relative path
 
 
 class AddReferenceImage(bpy.types.Operator):
@@ -53,12 +55,15 @@ class StoreReferenceImage(bpy.types.Operator):
 
     def execute(self, context):
 
+        #print (image_properties.my_reference_image)
+
         image_collection    =   context.scene.image_collection
         image_item          =   image_collection.items[self.index]
      
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        propertyset_name    =   'BBIM_reference_image_' + str(self.index) #str(os.path.basename(image_item.image))
+        image_path          =   os.path.basename(image_item.image)
+        propertyset_name    =   'BBIM_reference_image_' + str(image_path) #str(os.path.basename(image_item.image))
         image_properties    =   context.scene.image_properties
         #image_path          =   image_properties.my_reference_image
 
@@ -69,7 +74,9 @@ class StoreReferenceImage(bpy.types.Operator):
         rotation = image_obj.rotation_euler
         scale    = image_obj.scale
 
+
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
+
         run("pset.edit_pset", ifc, pset=pset, properties={  "Image Path": str(image_item.image),
                                                             "Image ID": str(uuid.uuid4()),
                                                             "Position X": str(position.x),
@@ -82,6 +89,8 @@ class StoreReferenceImage(bpy.types.Operator):
                                                             "Scale Y": str(scale.y),
                                                             "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
+
+        
         print (image_item.image + ' has been added to the properties of IfcBuilding')
         #self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
         print ('Please reload your IFC')
@@ -130,7 +139,7 @@ class LoadAllImages(bpy.types.Operator):
 
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
-        property_set_name   =   'BBIM_referenceimage_'
+        property_set_name   =   'BBIM_referenceimage'
         propertyset_list    =   []
 
         products = ifc.by_type('IfcProduct')
@@ -141,12 +150,13 @@ class LoadAllImages(bpy.types.Operator):
                     if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
                         if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
                             if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name):
-                                if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).startswith('BBIM_reference_image_'):
+                                if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).startswith('BBIM_reference_image'):
                                     propertyset_name = (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
-
+        
                                     propertyset_list.append(propertyset_name)
 
-        for i, propertyset_name in enumerate(propertyset_list):
+
+        for propertyset_name in propertyset_list:
 
             property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Image Path")
             location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
@@ -171,9 +181,9 @@ class LoadAllImages(bpy.types.Operator):
         
             image_collection.items.add()
 
-            for x, y in zip(image_collection.items, propertyset_list):
-                print(x, y)
-                x.image = ifcopenshell.util.element.get_pset(element, y, "Image Path")
+            for collection_image, property_image in zip(image_collection.items, propertyset_list):
+               
+                collection_image.image = ifcopenshell.util.element.get_pset(element, property_image, "Image Path")
 
 
         return {'FINISHED'}
@@ -193,30 +203,18 @@ class ImageCollectionActions(bpy.types.Operator):
 
         if self.action == "add":        
             image_item =  image_collection.items.add()  
-         
-
-         
+          
  
         if self.action == "remove":
+
             image_collection.items.remove(self.index)
 
-            #delete from blender
-            #print ('delete from blender')
-            #for item in (image_collection.items):
-            #    print (dir(item))
-
-            #delete from ifc
-            print ('delete from ifc')
-
-
-
+            active_obj = bpy.context.active_object
+            active_object_name = 'BBIM_reference_image_' + str(active_obj.name)
 
             ifc                 =   ifcopenshell.open(IfcStore.path)
             element             =   ifc.by_type("IfcBuilding")[0]
             products            =   ifc.by_type('IfcProduct')
-
-
-         
 
             for ifcproduct in products:
                 if ifcproduct.IsDefinedBy:        
@@ -224,25 +222,21 @@ class ImageCollectionActions(bpy.types.Operator):
                         if (ifcreldefinesbyproperties.is_a()) == 'IfcRelDefinesByProperties':
                             if ifcreldefinesbyproperties.RelatingPropertyDefinition.is_a() == 'IfcPropertySet':
                                 if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name):
-                                    if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name).startswith('BBIM_reference_image_'):
-                                        propertyset_name = (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
 
-                                        #print (propertyset_name)
+                                    #print (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
 
-                                        #werkt niet, want de index verandert als je er een verwijderd
+                                    if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name) == active_object_name:
+                                 
+                                        print ('remove from ifc')
+                                        ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=ifcreldefinesbyproperties.RelatingPropertyDefinition)
 
-            #                            if propertyset_name.endswith(str(self.index)):
-
-            #                                print (propertyset_name)
-
-
-
-
-            #ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=pset)
-
-        #for item in image_collection.items:
-        #    print (dir(item))
-        #    print (item.image, item.name)
+                                        print ('remove from blender collection')
+                                        for i in bpy.data.objects:
+                                          
+                                            if active_object_name.endswith(i.name):
+                                                print ('match')
+                                            
+                                                bpy.data.objects.remove(bpy.data.objects[i.name], do_unlink=True)
 
         return {"FINISHED"}  
 
@@ -255,7 +249,6 @@ def register():
     bpy.utils.register_class(ImageCollectionActions)
     bpy.utils.register_class(AddReferenceImage)
     bpy.utils.register_class(StoreReferenceImage)
-    bpy.utils.register_class(LoadReferenceImage)
     bpy.utils.register_class(LoadAllImages)
 
 
@@ -264,5 +257,4 @@ def unregister():
     bpy.utils.unregister_class(ImageCollectionActions)
     bpy.utils.unregister_class(AddReferenceImage)
     bpy.utils.unregister_class(StoreReferenceImage)
-    bpy.utils.unregister_class(LoadReferenceImage)
     bpy.utils.unregister_class(LoadAllImages)
