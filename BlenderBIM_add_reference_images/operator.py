@@ -137,7 +137,7 @@ class LoadAllImages(bpy.types.Operator):
 
         for propertyset_name in propertyset_list:
 
-            property_value =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Image Path")
+            path           =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Image Path")
             location_x     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position X")
             location_y     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Y")
             location_z     =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Position Z")
@@ -148,9 +148,10 @@ class LoadAllImages(bpy.types.Operator):
             scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
             scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
 
-            image       =   bpy.ops.object.load_reference_image(filepath=property_value)
+            #check if path is relative or absolute
+            image       =   bpy.ops.object.load_reference_image(filepath=path)
             obj         =   bpy.context.active_object
-            obj.name    =   os.path.basename(property_value)
+            obj.name    =   os.path.basename(path)
 
             # Set the location, rotation, and scale of the object
             obj.location        =   (float(location_x), float(location_y), float(location_z))
