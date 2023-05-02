@@ -207,10 +207,15 @@ class ImageCollectionActions(bpy.types.Operator):
  
         if self.action == "remove":
 
-            image_collection.items.remove(self.index)
+            print (bpy.context.active_object)
+            print (self.index)
 
-            active_obj = bpy.context.active_object
-            active_object_name = 'BBIM_reference_image_' + str(active_obj.name)
+            #image_collection.items.remove(self.index)
+
+            image_collection    =   context.scene.image_collection
+            image_item          =   image_collection.items[self.index]
+            image_name          =   os.path.basename(image_item.image)
+            active_object_name  =   'BBIM_reference_image_' + str(image_name)
 
             ifc                 =   ifcopenshell.open(IfcStore.path)
             element             =   ifc.by_type("IfcBuilding")[0]
@@ -230,13 +235,11 @@ class ImageCollectionActions(bpy.types.Operator):
                                         print ('remove from ifc')
                                         ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=ifcreldefinesbyproperties.RelatingPropertyDefinition)
 
-                                        print ('remove from blender collection')
-                                        for i in bpy.data.objects:
-                                          
-                                            if active_object_name.endswith(i.name):
-                                                print ('match')
+                                        
                                             
-                                                bpy.data.objects.remove(bpy.data.objects[i.name], do_unlink=True)
+                                        bpy.data.objects.remove(bpy.data.objects[image_name], do_unlink=True)
+
+        image_collection.items.remove(self.index)
 
         return {"FINISHED"}  
 
