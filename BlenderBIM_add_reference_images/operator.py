@@ -29,9 +29,6 @@ class AddReferenceImage(bpy.types.Operator):
         image_collection    =   context.scene.image_collection
         image_item          =   image_collection.items[self.index]
 
-        print (self.index)
-        print (image_item.image)
-
         if image_item.image:
 
             bpy.context.area.type = 'VIEW_3D'
@@ -59,17 +56,13 @@ class StoreReferenceImage(bpy.types.Operator):
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
         image_path          =   os.path.basename(image_item.image)
-        propertyset_name    =   'BBIM_reference_image_' + str(image_path) #str(os.path.basename(image_item.image))
+        propertyset_name    =   'BBIM_reference_image_' + str(image_path)
         image_properties    =   context.scene.image_properties
-        #image_path          =   image_properties.my_reference_image
 
-        #get transformations
         image_obj = bpy.context.active_object
-
         position = image_obj.location
         rotation = image_obj.rotation_euler
         scale    = image_obj.scale
-
 
         pset    =   run("pset.add_pset", ifc, product=element, name=propertyset_name)
 
@@ -86,14 +79,9 @@ class StoreReferenceImage(bpy.types.Operator):
                                                             "Scale Z": str(scale.z)})
         ifc.write(IfcStore.path)
 
-        
         print (image_item.image + ' has been added to the properties of IfcBuilding')
         #self.load_ifc(ifc_file=ifc, file_path=IfcStore.path)
         print ('Please reload your IFC')
-
-        #toggle button for enable automatic reload
-
-      
 
         return {'FINISHED'}
 
@@ -118,7 +106,6 @@ class StoreReferenceImage(bpy.types.Operator):
             bpy.ops.bim.load_project(filepath=file_path)
 
       
-
 class LoadAllImages(bpy.types.Operator):
     """Load All Images"""
     bl_idname = "load.allimages"
@@ -128,11 +115,8 @@ class LoadAllImages(bpy.types.Operator):
 
     def execute(self, context):
 
-        print ('load all images')
-
         image_collection    =   context.scene.image_collection
         #image_item          =   image_collection.items[self.index]
-
         ifc                 =   ifcopenshell.open(IfcStore.path)
         element             =   ifc.by_type("IfcBuilding")[0]
         property_set_name   =   'BBIM_referenceimage'
@@ -150,7 +134,6 @@ class LoadAllImages(bpy.types.Operator):
                                     propertyset_name = (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name)
         
                                     propertyset_list.append(propertyset_name)
-
 
         for propertyset_name in propertyset_list:
 
@@ -180,7 +163,6 @@ class LoadAllImages(bpy.types.Operator):
                 collection_image.image = ifcopenshell.util.element.get_pset(element, property_image, "Image Path")
 
         return {'FINISHED'}
-
 
 
 class ImageCollectionActions(bpy.types.Operator):
@@ -225,18 +207,11 @@ class ImageCollectionActions(bpy.types.Operator):
 
         return {"FINISHED"}  
 
-        
-
-
-
-
 def register():
     bpy.utils.register_class(ImageCollectionActions)
     bpy.utils.register_class(AddReferenceImage)
     bpy.utils.register_class(StoreReferenceImage)
     bpy.utils.register_class(LoadAllImages)
-
-
 
 def unregister():
     bpy.utils.unregister_class(ImageCollectionActions)
