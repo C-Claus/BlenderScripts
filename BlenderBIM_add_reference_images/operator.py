@@ -1,11 +1,12 @@
 import os
+from os.path import isabs
 import bpy
 import uuid
-import numpy as np
+#import numpy as np
 import ifcopenshell.api
 from ifcopenshell.api import run
 from . import operator
-import math
+#import math
 from blenderbim.bim.ifc import IfcStore
 
 #program flow
