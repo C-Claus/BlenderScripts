@@ -149,7 +149,7 @@ class LoadAllImages(bpy.types.Operator):
             scale_y        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Y")
             scale_z        =    ifcopenshell.util.element.get_pset(element, propertyset_name, "Scale Z")
 
-            #check if path is relative or absolute
+
             image       =   bpy.ops.object.load_reference_image(filepath=path)
             obj         =   bpy.context.active_object
             obj.name    =   os.path.basename(path)
@@ -163,6 +163,8 @@ class LoadAllImages(bpy.types.Operator):
 
             for collection_image, property_image in zip(image_collection.items, propertyset_list):
                 collection_image.image = ifcopenshell.util.element.get_pset(element, property_image, "Image Path")
+
+          
 
         return {'FINISHED'}
 
@@ -178,8 +180,12 @@ class ImageCollectionActions(bpy.types.Operator):
 
         image_collection = context.scene.image_collection
 
-        if self.action == "add":        
+        if self.action == "add":      
+
+            print ('dont understand why collection dissappers')  
             image_item =  image_collection.items.add()  
+
+            
           
         if self.action == "remove":
 
@@ -201,7 +207,7 @@ class ImageCollectionActions(bpy.types.Operator):
 
                                     if (ifcreldefinesbyproperties.RelatingPropertyDefinition.Name) == active_object_name:
 
-                                        ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=ifcreldefinesbyproperties.RelatingPropertyDefinition)
+                                        #ifcopenshell.api.run("pset.remove_pset", ifc, product=element, pset=ifcreldefinesbyproperties.RelatingPropertyDefinition)
 
                                         bpy.data.objects.remove(bpy.data.objects[image_name], do_unlink=True)
 
