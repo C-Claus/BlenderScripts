@@ -52,6 +52,15 @@ class AddReferenceImage(bpy.types.Operator):
 
             #####  image as plane
 
+            
+            path = Path(image_item.image)
+
+            #print (dir(path))
+            print ('path',path)
+            print ('path.parent', path.parent)
+            print ('path.name', path.name)
+            print ('path.siffux', path.suffix)
+
             print ('obj.name',obj.name)
             print ('image_item.image',image_item.image)
             bpy.ops.import_image.to_plane(files=    [{"name":"-01_foundation.png",
