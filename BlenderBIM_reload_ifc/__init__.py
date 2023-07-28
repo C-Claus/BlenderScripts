@@ -20,15 +20,16 @@ def register():
     from . import operator
     from . import ui
     properties.register()
-    #operator.register()
+    operator.register()
     ui.register()
+   
 
 def unregister():
     from . import properties
     from . import operator
     from . import ui
     properties.unregister()
-    #operator.unregister()
+    operator.unregister()
     ui.unregister()
 
 if __name__ == '__main__':
