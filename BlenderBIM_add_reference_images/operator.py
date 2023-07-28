@@ -1,5 +1,8 @@
 import os
 from os.path import isabs
+
+from pathlib import Path
+
 import bpy
 import uuid
 #import numpy as np
@@ -38,6 +41,34 @@ class AddReferenceImage(bpy.types.Operator):
             bpy.ops.object.load_reference_image(filepath=image_item.image)
             obj = bpy.context.active_object
             obj.name = os.path.basename(image_item.image)
+
+
+
+
+
+
+
+
+
+            #####  image as plane
+
+            
+            path = Path(image_item.image)
+
+            #print (dir(path))
+            print ('path',path)
+            print ('path.parent', path.parent)
+            print ('path.name', path.name)
+            print ('path.siffux', path.suffix)
+
+            print ('obj.name',obj.name)
+            print ('image_item.image',image_item.image)
+            bpy.ops.import_image.to_plane(files=    [{"name":"-01_foundation.png",
+                                                    "name":"-01_foundation.png"}],
+                                                    directory="C:\\Algemeen\\07_ifcopenshell\\00_ifc\\02_ifc_library\\15-2088_werktekeningen_uitvoering\\",
+                                                    align_axis='Z+',
+                                                    relative=False)
+
 
         return {'FINISHED'}
 
