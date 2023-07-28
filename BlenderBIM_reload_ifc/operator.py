@@ -2,6 +2,7 @@
 #user interface mutable versus immutable
 import bpy
 import blenderbim.tool as tool
+import ifcopenshell
 #immutable
 #>can’t change the object’s state after you’ve created it. 
 
@@ -79,3 +80,9 @@ class ReloadIfcFile(bpy.types.Operator, tool.Ifc.Operator):
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
+
+def register():
+    bpy.utils.register_class(ReloadIfcFile)
+
+def unregister():
+    bpy.utils.unregister_class(ReloadIfcFile)
