@@ -1,6 +1,7 @@
 
 #user interface mutable versus immutable
-
+import bpy
+import blenderbim.tool as tool
 #immutable
 #>can’t change the object’s state after you’ve created it. 
 
