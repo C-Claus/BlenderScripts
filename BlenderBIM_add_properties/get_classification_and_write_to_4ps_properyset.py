@@ -1,4 +1,3 @@
-
 import ifcopenshell
 import ifcopenshell.util.classification
 import ifcopenshell.api
